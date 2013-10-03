@@ -3,4 +3,4 @@ all:
 
 .PHONY: test
 test:
-	testify --summary --verbose test
+	testify --summary --verbose tests
