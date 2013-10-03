@@ -5,23 +5,8 @@ import mock
 import simplejson as json
 import testify as T
 
-from pyleus.storm import StormComponent, StormTuple, Bolt, Spout
-from pyleus.storm import is_tick
-
-
-class StormComponentTestCase(T.TestCase):
-
-    INSTANCE_CLS = StormComponent
-
-    @T.setup
-    def setup(self):
-        self.mock_input_stream = mock.Mock()
-        self.mock_output_stream = mock.Mock()
-
-        self.instance = self.INSTANCE_CLS(
-            input_stream=self.mock_input_stream,
-            output_stream=self.mock_output_stream,
-        )
+from pyleus.storm import StormTuple, Bolt, Spout, is_tick
+from pyleus.testing import StormComponentTestCase
 
 
 class StormComponentTest(StormComponentTestCase):

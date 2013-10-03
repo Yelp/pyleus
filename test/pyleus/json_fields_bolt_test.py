@@ -1,9 +1,8 @@
 import mock
 import testify as T
 
-from .storm_test import StormComponentTestCase
-
 from pyleus.json_fields_bolt import JSONFieldsBolt
+from pyleus.testing import StormComponentTestCase
 
 
 class JSONFieldsBoltTest(StormComponentTestCase):
