@@ -7,6 +7,7 @@ import traceback
 
 try:
     import simplejson as json
+    _ = json # pyflakes
 except ImportError:
     import json
 
