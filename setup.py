@@ -10,4 +10,5 @@ setup(
     author_email='plucas@yelp.com',
     description='Standard library and deployment tools for using Python with Storm',
     packages=['pyleus'],
+    scripts=['scripts/pyleus'],
 )
