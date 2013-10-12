@@ -1,4 +1,25 @@
 #!/usr/bin/python
+"""Command line tool for building a standalone storm jar ready to be submitted
+to a storm cluster. It is also able to staisfy all the dependencies needed by
+the source code if listed in a special requirements.txt file. Virtualenv and
+pip install are used for this task.
+
+Args:
+    TOPOLOGY_DIRECTORY - the directory where all the topology source files,
+        the YAML file describing the topology and the requirements.txt file
+        must to be placed.
+
+The script will validate the topology in order to ensure the presence of
+the aforementioned YAML file and also of the requirements.txt file, in case
+a virtualenv should be used. See _validate_tolopology() for detailed info.
+
+The output jar is built from a common base jar included in the pyleus package,
+if nothing different is specified, and will be named as the topology directory.
+
+NOTE: The names used for the YAML file and for the virtualenv CANNOT be changed
+without modifying accordingly the java code in charge of parsing the file and
+starting every bolt or spout.
+"""
 
 import optparse
 import glob
@@ -13,36 +34,31 @@ import zipfile
 
 BASE_JAR_PATH = "minimal.jar"
 RESOURCES_PATH = "resources/"
-YAML_DIRECTORY = "topology_yaml"
-REQUIREMENTS_FILE = "requirements.txt"
-TEST_DIRECTORY = "test"
-VIRTUALENV = "venv"
-PACKAGE_INDEX_URL = "http://pypi-dev.yelpcorp.com/simple/"
-DEPENDENCIES_PATH = "venv/lib/python2.6/site-packages/"
-PIP_FILES_EXTENSIONS = ["*.egg", "*.egg-info", "*.pth"]
+YAML_FILENAME = "pyleus_topology.yaml"
+REQUIREMENTS_FILENAME = "requirements.txt"
+VIRTUALENV = "pyleus_venv"
+DEPENDENCIES_PATH = os.path.join(VIRTUALENV, "lib/python2.6/site-packages/")
 
 PROG = os.path.basename(sys.argv[0])
 PYLEUS_ERROR_FMT = "{0}: error: {1}"
 
 
 class PyleusError(Exception):
+    """Base class for pyleus specific exceptions"""
     def __str__(self):
         return "[{0}] {1}".format(type(self).__name__, ", ".join(str(i) for i in self.args))
 
 
 class JarError(PyleusError): pass
-
-
 class TopologyError(PyleusError): pass
-
-
 class InvalidTopologyError(TopologyError): pass
-
-
 class DependenciesError(TopologyError): pass
 
 
 def _open_jar(base_jar):
+    """Open the base jar file.
+    Jar files are treated as zip files.
+    """
     if not os.path.exists(base_jar):
         raise JarError("Base jar not found")
 
@@ -54,59 +70,72 @@ def _open_jar(base_jar):
     return zip_file
 
 
-def _extract(zip_file, tmp_dir):
-    zip_file.extractall(tmp_dir)
+def _validate_topology(topology_dir, opts):
+    """Validate the topology in order to ensure the presence of the aforementioned
+    YAML file and of the requirements.txt file in case a virtualenv should be used.
 
+    In the latter case, look for any already existing file matching the name of
+    the virtualenv, in order to avoid name clashes.
 
-def _validate_topology(topology_dir):
+    If neither of the options concerning the use of a virtualend are specified,
+    deduce if a virtualenv is needed or not from the presence of the
+    requirements.txt file.
+
+    Exceptions with a meaningful message are raised in case of invalid topologies.
+    """
     if not os.path.exists(topology_dir):
         raise TopologyError("Topology directory not found")
 
     if not os.path.isdir(topology_dir):
         raise TopologyError("Topology directory is not a directory")
 
-    yaml = glob.glob(os.path.join(topology_dir, "*.yaml"))
-    if len(yaml) == 0:
+    yaml = glob.glob(os.path.join(topology_dir, YAML_FILENAME))
+    if not yaml:
         raise InvalidTopologyError("Yaml file not found")
-    elif len(yaml) > 1:
-        raise InvalidTopologyError("More than one yaml file."
-                                   " Topology shoud be specified in single yaml file")
 
-    req = glob.glob(os.path.join(topology_dir, REQUIREMENTS_FILE))
-    if len(req) == 0:
-        raise InvalidTopologyError("{0} file not found".format(REQUIREMENTS_FILE))
-    elif len(req) > 1:
-        raise InvalidTopologyError("More than one {0} file."
-                                   " Requirements shoud be specified in single file"
-                                   .format(REQUIREMENTS_FILE))
+    req = glob.glob(os.path.join(topology_dir, REQUIREMENTS_FILENAME))
+    if opts.use_virtualenv is None:
+        opts.use_virtualenv = False if not req else True
 
-    return yaml[0], req[0]
+    if opts.use_virtualenv is False:
+        return yaml[0], None
 
+    if opts.use_virtualenv is True:
+        if not req:
+            raise InvalidTopologyError("{0} file not found".format(REQUIREMENTS_FILENAME))
 
-def _pack_jar(tmp_dir, output_jar):
-    if os.path.exists(output_jar):
-        raise JarError("Output jar already exist")
-
-    zf = zipfile.ZipFile(output_jar, "w")
-    try:
-        _zip_dir(tmp_dir, zf)
-    finally:
-        zf.close()
+        venv = glob.glob(os.path.join(topology_dir, VIRTUALENV))
+        if venv:
+            raise InvalidTopologyError("Topology directory must not contain a file"
+                                       " named {0}".format(VIRTUALENV))
+        return yaml[0], req[0]
 
 
 def _virtualenv_pip_install(tmp_dir, req, options):
+    """Create a virtualenv with the specified options and run
+    pip install on the requirements.txt file in the topology directory.
+
+    Options:
+        system-site-packages - creating the virtualenv with this flag,
+        pip will not download and install in the virtualenv all the
+        dependencies already installed system-wide.
+        index-url - allow to specify the URL of the Python Package Index.
+        pip-log - a verbose log generated by pip install
+    """
     virtualenv_cmd = ["virtualenv", VIRTUALENV]
     if options.system:
         virtualenv_cmd.append("--system-site-packages")
 
-    pip_cmd = ["{0}/bin/pip".format(VIRTUALENV), "install",
-               "-i", PACKAGE_INDEX_URL,
-               "-r", req]
+    pip_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "install", "-r", req]
+
+    if options.index_url:
+        pip_cmd += ["-i", options.index_url]
+
     if options.pip_log:
         pip_cmd += ["--log", options.pip_log]
 
     out_stream = None
-    if options.quiet:
+    if not options.verbose:
         out_stream = open(os.devnull, "w")
 
     ret_code = subprocess.call(virtualenv_cmd, cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT)
@@ -120,16 +149,21 @@ def _virtualenv_pip_install(tmp_dir, req, options):
                                 "Run with --log for detailed info.")
 
 
-def _copy_yaml(yaml, dst):
-    os.mkdir(os.path.join(dst, YAML_DIRECTORY))
-    shutil.copy2(yaml, os.path.join(dst, YAML_DIRECTORY))
-
-
 def _copy_dir_content(src, dst, excluded):
+    """Copy the content of a directory excluding the paths
+    matching the patterns in the excluded list.
+
+    Filtering is applied only at the top level of the directory.
+
+    This functions is used instead of shutil.copytree() because
+    the latter always creates a top level directory, while only
+    the content need to be copied in this case..
+    """
     # From all content
     content = set(glob.glob(os.path.join(src, "*")))
     # Exclude everything matching the patterns specified in excluded
-    content -= set([q for x in excluded for q in glob.glob(os.path.join(src, x))])
+    if excluded:
+        content -= set([q for x in excluded for q in glob.glob(os.path.join(src, x))])
     # Then exclude links
     content = [t for t in content if not os.path.islink(t)]
 
@@ -140,7 +174,23 @@ def _copy_dir_content(src, dst, excluded):
             shutil.copy2(os.path.join(src, t), dst)
 
 
+def _output_path_exists(output_jar):
+    """Raise an exception, since nothing with that name should exist
+    in order to avoid undesired overwritings.
+    """
+    if os.path.exists(output_jar):
+        raise JarError("Output jar already exist")
+
+
 def _zip_dir(src, arc):
+    """Build a zip archive from the specified src.
+
+    NOTE: If the archive already exists, files will be simply
+    added to it, but the original archive will not be replaced.
+    At the current state, this script enforce the creation of
+    a brand new zip archive each time is run, otehrwise it will
+    raise an exception.
+    """
     src_re = re.compile(src + "/*")
     for root, dirs, files in os.walk(src):
         # hack for copying everithing but the top directory
@@ -150,30 +200,54 @@ def _zip_dir(src, arc):
             arc.write(os.path.join(root, f), os.path.join(prefix, f), zipfile.ZIP_DEFLATED)
 
 
-def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
+def _pack_jar(tmp_dir, output_jar):
+    """Build a jar from the temporary directory.
+    Jar are treated a zip files.
+    """
+    _output_path_exists(output_jar)
 
+    zf = zipfile.ZipFile(output_jar, "w")
+    try:
+        _zip_dir(tmp_dir, zf)
+    finally:
+        zf.close()
+
+
+def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
+    """Validate the topology, copy all the topology source files in the tmp directory,
+    install dependencies if necessary and create the final standalone jar ready to be
+    shippped.
+    """
     # Extract pyleus base jar content in a tmp dir
-    _extract(zip_file, tmp_dir)
+    zip_file.extractall(tmp_dir)
 
     # Validate topolgy and return requirements and yaml file path
-    yaml, req = _validate_topology(topology_dir)
+    yaml, req = _validate_topology(topology_dir, options)
 
     # Copy yaml into its directory
-    _copy_yaml(yaml, os.path.join(tmp_dir, RESOURCES_PATH))
+    shutil.copy2(yaml, os.path.join(tmp_dir, RESOURCES_PATH))
 
-    # Add the topology directory skipping yaml, requirements and the test directory
-    topo_exclude = [yaml, req, TEST_DIRECTORY]
+    # Add the topology directory skipping yaml and requirements
+    topo_exclude = [yaml]
+    if req is not None:
+        topo_exclude.append(req)
     _copy_dir_content(topology_dir, os.path.join(tmp_dir, RESOURCES_PATH), topo_exclude)
 
     # Virtualenv + pip install used to install dependencies listed in
     # requirements.txt
-    _virtualenv_pip_install(os.path.join(tmp_dir, RESOURCES_PATH), req, options)
+    if options.use_virtualenv:
+        _virtualenv_pip_install(os.path.join(tmp_dir, RESOURCES_PATH), req, options)
 
     # Pack the tmp directory into a jar
     _pack_jar(tmp_dir, output_jar)
 
 
 def _build_output_path(output_arg, topology_dir):
+    """Return the absolute path of the output jar file.
+
+    Default basename:
+        TOPOLOGY_DIRECTORY.jar
+    """
     if output_arg is not None:
         output_jar = os.path.abspath(output_arg)
     else:
@@ -182,30 +256,36 @@ def _build_output_path(output_arg, topology_dir):
 
 
 def main():
+    """Define the command line interface, convert avery path or argument in its
+    absolute form, open the base jar file and creates the tmp directory where
+    where everything will be copied before injecting topology source files.
+
+    All pyleus specific exceptions are caught here.
+    """
     parser = optparse.OptionParser(
-                usage="usage: {0} [options] <topology_directory>".format(PROG),
+                usage="usage: %prog [options] TOPOLOGY_DIRECTORY",
                 description="Build up a storm jar from a topology source directory")
-    parser.add_option("-b", "--base",
-                      dest="base_jar",
-                      metavar="<base_jar>",
-                      default=BASE_JAR_PATH,
+    parser.add_option("-b", "--base", dest="base_jar", default=BASE_JAR_PATH,
                       help="pyleus base jar file path")
-    parser.add_option("-o", "--out",
-                      dest="output_jar",
-                      metavar="<output_jar>",
-                      help="path of the jar file that will contain all the dependencies and the resources")
-    parser.add_option("-s", "--system-packages",
-                      dest="system",
-                      action="store_true",
+    parser.add_option("-o", "--out", dest="output_jar",
+                      help="path of the jar file that will contain"
+                      " all the dependencies and the resources")
+    parser.add_option("--use-virtualenv", dest="use_virtualenv",
+                      default=None, action="store_true",
+                      help="use virtualenv and pip install for dependencies."
+                      " Your TOPOLOGY_DIRECTORY must contain a file named {0}"
+                      .format(REQUIREMENTS_FILENAME))
+    parser.add_option("--no-use-virtualenv", dest="use_virtualenv", action="store_false",
+                      help="do not use virtualenv and pip for dependencies")
+    parser.add_option("-i", "--index-url", dest="index_url",
+                      help="base URL of Python Package Index used by pip"
+                      " (default https://pypi.python.org/simple/)")
+    parser.add_option("-s", "--system-packages", dest="system", action="store_true",
                       help="do not install packages already present in your system")
-    parser.add_option("--log",
-                      dest="pip_log",
-                      metavar="<file>",
-                      help="log location for pip")
-    parser.add_option("-q", "--quiet",
-                      dest="quiet",
-                      action="store_true",
-                      help="quiet")
+    parser.add_option("--log", dest="pip_log", help="log location for pip")
+    parser.add_option("-v", "--verbose", dest="verbose",
+                      default=False, action="store_true",
+                      help="verbose")
     (options, args) = parser.parse_args()
 
     if len(args) != 1:
@@ -219,6 +299,8 @@ def main():
         options.pip_log = os.path.abspath(options.pip_log)
 
     try:
+        # Check for output path existance for early failure
+        _output_path_exists(output_jar)
         # Open the base jar as a zip
         zip_file = _open_jar(base_jar)
     except PyleusError as e:
