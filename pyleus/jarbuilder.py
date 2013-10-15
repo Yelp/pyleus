@@ -181,14 +181,6 @@ def _copy_dir_content(src, dst, excluded):
             shutil.copy2(os.path.join(src, t), dst)
 
 
-def _output_path_exists(output_jar):
-    """Raise an exception, since nothing with that name should exist
-    in order to avoid undesired overwritings.
-    """
-    if os.path.exists(output_jar):
-        raise JarError("Output jar already exist")
-
-
 def _zip_dir(src, arc):
     """Build a zip archive from the specified src.
 
@@ -209,10 +201,9 @@ def _zip_dir(src, arc):
 
 
 def _pack_jar(tmp_dir, output_jar):
-    """Build a jar from the temporary directory.
-    Jar are treated a zip files.
-    """
-    _output_path_exists(output_jar)
+    """Build a jar from the temporary directory."""
+    if os.path.exists(output_jar):
+        raise JarError("Output jar already exist: {0}".format(output_jar))
 
     zf = zipfile.ZipFile(output_jar, "w")
     try:
@@ -314,9 +305,12 @@ def main():
     if options.pip_log is not None:
         options.pip_log = os.path.abspath(options.pip_log)
 
+    # Check for output path existence for early failure
+    if os.path.exists(output_jar):
+        e = JarError("Output jar already exist: {0}".format(output_jar))
+        sys.exit(PYLEUS_ERROR_FMT.format(PROG, str(e)))
+
     try:
-        # Check for output path existance for early failure
-        _output_path_exists(output_jar)
         # Open the base jar as a zip
         zip_file = _open_jar(base_jar)
     except PyleusError as e:
