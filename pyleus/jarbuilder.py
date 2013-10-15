@@ -1,24 +1,24 @@
 #!/usr/bin/python
-"""Command line tool for building a standalone storm jar ready to be submitted
-to a storm cluster. It is also able to staisfy all the dependencies needed by
-the source code if listed in a special requirements.txt file. Virtualenv and
-pip install are used for this task.
+"""Command-line tool for building a standalone, self-contained Pyleus topology
+JAR ready to be submitted to a Storm cluster. If an optional requirements.txt
+is provided, Pyleus will use virtualenv to collect and provide Python
+dependencies to the running topology.
 
 Args:
     TOPOLOGY_DIRECTORY - the directory where all the topology source files,
-        the YAML file describing the topology and the requirements.txt file
-        must to be placed.
+        the YAML file describing the topology (pyleus_topology.yaml) and the
+        optional requirements.txt are found.
 
-The script will validate the topology in order to ensure the presence of
-the aforementioned YAML file and also of the requirements.txt file, in case
-a virtualenv should be used. See _validate_tolopology() for detailed info.
+The script will attempt to ensure the contents of TOPOLOGY_DIRECTORY are in
+order, that nothing will be improperly overwritten and that mandatory files are
+present: pyleus_topology.yaml is always required and requirements.txt must
+exist if --use-virtualenv is explicitly stated.
 
-The output jar is built from a common base jar included in the pyleus package,
-if nothing different is specified, and will be named as the topology directory.
+The output JAR is built from a common base JAR included in the pyleus package by
+default, and will be named <TOPOLOGY_DIRECTORY>.jar.
 
 NOTE: The names used for the YAML file and for the virtualenv CANNOT be changed
-without modifying accordingly the java code in charge of parsing the file and
-starting every bolt or spout.
+without modifying the Java code accordingly.
 """
 
 import optparse
@@ -56,9 +56,7 @@ class DependenciesError(TopologyError): pass
 
 
 def _open_jar(base_jar):
-    """Open the base jar file.
-    Jar files are treated as zip files.
-    """
+    """Open the base jar file."""
     if not os.path.exists(base_jar):
         raise JarError("Base jar not found")
 
@@ -71,17 +69,12 @@ def _open_jar(base_jar):
 
 
 def _validate_topology(topology_dir, opts):
-    """Validate the topology in order to ensure the presence of the aforementioned
-    YAML file and of the requirements.txt file in case a virtualenv should be used.
+    """Validate topology_dir to ensure that:
 
-    In the latter case, look for any already existing file matching the name of
-    the virtualenv, in order to avoid name clashes.
-
-    If neither of the options concerning the use of a virtualend are specified,
-    deduce if a virtualenv is needed or not from the presence of the
-    requirements.txt file.
-
-    Exceptions with a meaningful message are raised in case of invalid topologies.
+        - it exists and is a directory
+        - TOPOLOGY_YAML exists inside
+        - requirements.txt exists if --use-virtualenv was explicitly stated
+        - nothing will be overwritten
     """
     if not os.path.exists(topology_dir):
         raise TopologyError("Topology directory not found: {0}".format(
@@ -115,8 +108,8 @@ def _validate_topology(topology_dir, opts):
 
 
 def _virtualenv_pip_install(tmp_dir, req, **kwargs):
-    """Create a virtualenv with the specified options and run
-    pip install on the requirements.txt file in the topology directory.
+    """Create a virtualenv with the specified options and run `pip install -r
+    requirements.txt`.
 
     Options:
         system-site-packages - creating the virtualenv with this flag,
@@ -163,7 +156,7 @@ def _copy_dir_content(src, dst, excluded):
 
     This functions is used instead of shutil.copytree() because
     the latter always creates a top level directory, while only
-    the content need to be copied in this case..
+    the content need to be copied in this case.
     """
     # From all content
     content = set(glob.glob(os.path.join(src, "*")))
@@ -213,15 +206,19 @@ def _pack_jar(tmp_dir, output_jar):
 
 
 def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
-    """Validate the topology, copy all the topology source files in the tmp directory,
-    install dependencies if necessary and create the final standalone jar ready to be
-    shippped.
-    """
-    # Extract pyleus base jar content in a tmp dir
-    zip_file.extractall(tmp_dir)
+    """Coordinate the creation of the the topology JAR:
 
+        - Validate the topology
+        - Extract the base JAR into a temporary directory
+        - Copy all source files into the directory
+        - If using virtualenv, create it and install dependencies
+        - Re-pack the temporary directory into the final JAR
+    """
     # Validate topolgy and return requirements and yaml file path
     yaml, req = _validate_topology(topology_dir, options)
+
+    # Extract pyleus base jar content in a tmp dir
+    zip_file.extractall(tmp_dir)
 
     # Copy yaml into its directory
     shutil.copy2(yaml, os.path.join(tmp_dir, RESOURCES_PATH))
@@ -261,12 +258,7 @@ def _build_output_path(output_arg, topology_dir):
 
 
 def main():
-    """Define the command line interface, convert avery path or argument in its
-    absolute form, open the base jar file and creates the tmp directory where
-    where everything will be copied before injecting topology source files.
-
-    All pyleus specific exceptions are caught here.
-    """
+    """Parse command-line arguments and invoke _inject()"""
     parser = optparse.OptionParser(
             usage="usage: %prog [options] TOPOLOGY_DIRECTORY",
             description="Build up a storm jar from a topology source directory")
