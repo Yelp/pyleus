@@ -17,7 +17,7 @@ exist if --use-virtualenv is explicitly stated.
 The output JAR is built from a common base JAR included in the pyleus package
 by default, and will be named <TOPOLOGY_DIRECTORY>.jar.
 
-NOTE: The names used for the YAML file and for the virtualenv CANNOT be changed
+Note: The names used for the YAML file and for the virtualenv CANNOT be changed
 without modifying the Java code accordingly.
 """
 
@@ -107,7 +107,7 @@ def _validate_topology(topology_dir, yaml, req, venv,  opts):
         - requirements.txt exists if --use-virtualenv was explicitly stated
         - nothing will be overwritten
 
-    SIDE EFFECT: opts.use_virtualenv is set to False or True
+    Side effect: opts.use_virtualenv is set to False or True
     """
     _validate_dir(topology_dir)
 
@@ -198,7 +198,7 @@ def _copy_dir_content(src, dst, exclude_req):
 def _zip_dir(src, arc):
     """Build a zip archive from the specified src.
 
-    NOTE: If the archive already exists, files will be simply
+    Note: If the archive already exists, files will be simply
     added to it, but the original archive will not be replaced.
     At the current state, this script enforce the creation of
     a brand new zip archive each time is run, otehrwise it will
@@ -249,7 +249,7 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
 
     # Add the topology directory skipping yaml and requirements
     _copy_dir_content(topology_dir, os.path.join(tmp_dir, RESOURCES_PATH),
-            exclude_req=not options.use_virtualenv)
+            exclude_req=options.use_virtualenv)
 
     # Virtualenv + pip install used to install dependencies listed in
     # requirements.txt
@@ -281,30 +281,30 @@ def main():
     """Parse command-line arguments and invoke _inject()"""
     parser = optparse.OptionParser(
             usage="usage: %prog [options] TOPOLOGY_DIRECTORY",
-            description="Build up a storm jar from a topology source directory")
+            description="Build up a Storm jar from a topology source directory")
     parser.add_option("-b", "--base", dest="base_jar", default=BASE_JAR_PATH,
-            help="pyleus base jar file path")
+            help="Pyleus base jar file path")
     parser.add_option("-o", "--out", dest="output_jar",
-            help="path of the jar file that will contain"
+            help="Path of the jar file that will contain"
             " all the dependencies and the resources")
     parser.add_option("--use-virtualenv", dest="use_virtualenv",
             default=None, action="store_true",
-            help="use virtualenv and pip install for dependencies."
+            help="Use virtualenv and pip install for dependencies."
             " Your TOPOLOGY_DIRECTORY must contain a file named {0}"
             .format(REQUIREMENTS_FILENAME))
     parser.add_option("--no-use-virtualenv",
             dest="use_virtualenv", action="store_false",
-            help="do not use virtualenv and pip for dependencies")
+            help="Do not use virtualenv and pip for dependencies")
     parser.add_option("-i", "--index-url", dest="index_url",
-            help="base URL of Python Package Index used by pip"
+            help="Base URL of Python Package Index used by pip"
             " (default https://pypi.python.org/simple/)")
-    parser.add_option("-s", "--system-packages", dest="system",
+    parser.add_option("-s", "--system-site-packages", dest="system",
             default=False, action="store_true",
-            help="do not install packages already present in your system")
-    parser.add_option("--log", dest="pip_log", help="log location for pip")
+            help="Do not install packages already present on your system")
+    parser.add_option("--log", dest="pip_log", help="Log location for pip")
     parser.add_option("-v", "--verbose", dest="verbose",
             default=False, action="store_true",
-            help="verbose")
+            help="Verbose")
     options, args = parser.parse_args()
 
     if len(args) != 1:

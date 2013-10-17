@@ -179,7 +179,7 @@ class JarbuilderTest(T.TestCase):
         mock_open.assert_called_once_with(os.devnull, "w")
 
     @mock.patch.object(glob, 'glob', autospec=True)
-    def test__exclude_content_no_exclude(self, mock_glob):
+    def test__exclude_content(self, mock_glob):
         mock_glob.return_value = ["foo/spam", "foo/ham", "foo/requirements.txt", "foo/pyleus_topology.yaml"]
         content = jarbuilder._exclude_content("foo", True)
         mock_glob.assert_called_once_with("foo/*")
