@@ -14,8 +14,8 @@ order, that nothing will be improperly overwritten and that mandatory files are
 present: pyleus_topology.yaml is always required and requirements.txt must
 exist if --use-virtualenv is explicitly stated.
 
-The output JAR is built from a common base JAR included in the pyleus package by
-default, and will be named <TOPOLOGY_DIRECTORY>.jar.
+The output JAR is built from a common base JAR included in the pyleus package
+by default, and will be named <TOPOLOGY_DIRECTORY>.jar.
 
 NOTE: The names used for the YAML file and for the virtualenv CANNOT be changed
 without modifying the Java code accordingly.
@@ -68,14 +68,8 @@ def _open_jar(base_jar):
     return zip_file
 
 
-def _validate_topology(topology_dir, opts):
-    """Validate topology_dir to ensure that:
-
-        - it exists and is a directory
-        - TOPOLOGY_YAML exists inside
-        - requirements.txt exists if --use-virtualenv was explicitly stated
-        - nothing will be overwritten
-    """
+def _validate_dir(topology_dir):
+    """Ensure that the directory exists and is a directory"""
     if not os.path.exists(topology_dir):
         raise TopologyError("Topology directory not found: {0}".format(
             topology_dir))
@@ -84,27 +78,49 @@ def _validate_topology(topology_dir, opts):
         raise TopologyError("Topology directory is not a directory: {0}".format(
             topology_dir))
 
-    yaml = os.path.join(topology_dir, YAML_FILENAME)
+
+def _validate_yaml(yaml):
+    """Ensure that TOPOLOGY_YAML exists inside the directory"""
     if not os.path.isfile(yaml):
         raise InvalidTopologyError("Topology YAML not found: {0}".format(yaml))
 
-    req = os.path.join(topology_dir, REQUIREMENTS_FILENAME)
+
+def _validate_req(req):
+    """Ensure that requirements.txt exists inside the directory"""
+    if not os.path.isfile(req):
+        raise InvalidTopologyError("{0} file not found".format(
+            REQUIREMENTS_FILENAME))
+
+
+def _validate_venv(topology_dir, venv):
+    """Ensure that VIRTUALENV does not exist inside the directory"""
+    if os.path.exists(venv):
+        raise InvalidTopologyError("Topology directory must not contain a "
+            "file named {0}".format(venv))
+
+
+def _validate_topology(topology_dir, yaml, req, venv,  opts):
+    """Validate topology_dir to ensure that:
+
+        - it exists and is a directory
+        - TOPOLOGY_YAML exists inside
+        - requirements.txt exists if --use-virtualenv was explicitly stated
+        - nothing will be overwritten
+
+    SIDE EFFECT: opts.use_virtualenv is set to False or True
+    """
+    _validate_dir(topology_dir)
+
+    _validate_yaml(yaml)
+
+    # if use_virtualenv is undefined (None), it will be assigned on the base of
+    # the requirements.txt file
     if opts.use_virtualenv is None:
         opts.use_virtualenv = False if not os.path.isfile(req) else True
 
-    if opts.use_virtualenv is False:
-        return yaml, None
-
-    if opts.use_virtualenv is True:
-        if not os.path.isfile(req):
-            raise InvalidTopologyError("{0} file not found".format(
-                REQUIREMENTS_FILENAME))
-
-        venv = os.path.exists(os.path.join(topology_dir, VIRTUALENV))
-        if venv:
-            raise InvalidTopologyError("Topology directory must not contain a "
-                "file named {0}".format(VIRTUALENV))
-        return yaml, req
+    if opts.use_virtualenv:
+        _validate_req(req)
+        _validate_venv(topology_dir, venv)
 
 
 def _virtualenv_pip_install(tmp_dir, req, **kwargs):
@@ -148,30 +164,35 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
             "topology. Run with --verbose for detailed info.")
 
 
-def _copy_dir_content(src, dst, excluded):
-    """Copy the content of a directory excluding the paths
-    matching the patterns in the excluded list.
-
+def _exclude_content(src, exclude_req):
+    """Remove from the content list all paths matching the patterns
+    in the exclude list.
     Filtering is applied only at the top level of the directory.
+    """
+    content = set(glob.glob(os.path.join(src, "*")))
+    yaml = os.path.join(src, YAML_FILENAME)
+    content -= set([yaml])
+    if exclude_req:
+        req = os.path.join(src, REQUIREMENTS_FILENAME)
+        content -= set([req])
+    return content
+
+
+def _copy_dir_content(src, dst, exclude_req):
+    """Copy the content of a directory excluding the paths
+    matching the patterns in the exclude list.
 
     This functions is used instead of shutil.copytree() because
     the latter always creates a top level directory, while only
     the content need to be copied in this case.
     """
-    # From all content
-    content = set(glob.glob(os.path.join(src, "*")))
-    # Exclude everything matching the patterns specified in excluded
-    if excluded:
-        content -= set([q for x in excluded for q in
-            glob.glob(os.path.join(src, x))])
-    # Then exclude links
-    content = [t for t in content if not os.path.islink(t)]
+    content = _exclude_content(src, exclude_req)
 
     for t in content:
         if os.path.isdir(t):
-            shutil.copytree(t, os.path.join(dst, os.path.basename(t)))
+            shutil.copytree(t, os.path.join(dst, os.path.basename(t)), symlinks=True)
         else:
-            shutil.copy2(os.path.join(src, t), dst)
+            shutil.copy2(t, dst)
 
 
 def _zip_dir(src, arc):
@@ -196,7 +217,7 @@ def _zip_dir(src, arc):
 def _pack_jar(tmp_dir, output_jar):
     """Build a jar from the temporary directory."""
     if os.path.exists(output_jar):
-        raise JarError("Output jar already exist: {0}".format(output_jar))
+        raise JarError("Output jar already exists: {0}".format(output_jar))
 
     zf = zipfile.ZipFile(output_jar, "w")
     try:
@@ -214,8 +235,11 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
         - If using virtualenv, create it and install dependencies
         - Re-pack the temporary directory into the final JAR
     """
+    yaml = os.path.join(topology_dir, YAML_FILENAME)
+    req = os.path.join(topology_dir, REQUIREMENTS_FILENAME)
+    venv = os.path.join(topology_dir, VIRTUALENV)
     # Validate topolgy and return requirements and yaml file path
-    yaml, req = _validate_topology(topology_dir, options)
+    _validate_topology(topology_dir, yaml, req, venv,  options)
 
     # Extract pyleus base jar content in a tmp dir
     zip_file.extractall(tmp_dir)
@@ -224,11 +248,8 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
     shutil.copy2(yaml, os.path.join(tmp_dir, RESOURCES_PATH))
 
     # Add the topology directory skipping yaml and requirements
-    topo_exclude = [yaml]
-    if req is not None:
-        topo_exclude.append(req)
     _copy_dir_content(topology_dir, os.path.join(tmp_dir, RESOURCES_PATH),
-            topo_exclude)
+            exclude_req=not options.use_virtualenv)
 
     # Virtualenv + pip install used to install dependencies listed in
     # requirements.txt
@@ -251,10 +272,9 @@ def _build_output_path(output_arg, topology_dir):
         TOPOLOGY_DIRECTORY.jar
     """
     if output_arg is not None:
-        output_jar = os.path.abspath(output_arg)
+        return os.path.abspath(output_arg)
     else:
-        output_jar = os.path.abspath(os.path.basename(topology_dir) + ".jar")
-    return output_jar
+        return os.path.abspath(os.path.basename(topology_dir) + ".jar")
 
 
 def main():
