@@ -163,6 +163,32 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
         raise DependenciesError("Failed to install dependencies for this "
             "topology. Run with --verbose for detailed info.")
 
+    freeze_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "freeze"]
+    freeze_out = tempfile.TemporaryFile()
+    ret_code = subprocess.call(freeze_cmd, cwd=tmp_dir, stdout=freeze_out,
+        stderr=out_stream)
+    if ret_code != 0:
+        raise DependenciesError("Failed to run pip freeze.")
+    pyleus_re = re.compile("pyleus==*")
+    installed = False
+    freeze_out.seek(0)
+    for line in freeze_out:
+        if re.match(pyleus_re, line) is not None:
+            installed = True
+
+    if not installed:
+        pyleus_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "install",
+                "pyleus"]
+
+        if kwargs.get("index_url") is not None:
+            pyleus_cmd += ["-i", kwargs["index_url"]]
+
+        ret_code = subprocess.call(pyleus_cmd, cwd=tmp_dir, stdout=out_stream,
+            stderr=subprocess.STDOUT)
+        if ret_code != 0:
+            raise DependenciesError("Failed to install pyleus package."
+                "Run with --verbose for detailed info.")
+
 
 def _exclude_content(src, exclude_req):
     """Remove from the content list all paths matching the patterns
