@@ -123,6 +123,28 @@ def _validate_topology(topology_dir, yaml, req, venv,  opts):
         _validate_venv(topology_dir, venv)
 
 
+def _call_dep_cmd(cmd, cwd, stdout, stderr, err_msg):
+    ret_code = subprocess.call(cmd, cwd=cwd, stdout=stdout,
+        stderr=stderr)
+    if ret_code != 0:
+        raise DependenciesError(err_msg)
+
+
+def _is_pyleus_installed(tmp_dir, err_stream):
+    freeze_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "freeze"]
+    freeze_out = tempfile.TemporaryFile()
+    _call_dep_cmd(freeze_cmd,
+        cwd=tmp_dir, stdout=freeze_out, stderr=err_stream,
+        err_msg="Failed to run pip freeze.")
+
+    pyleus_re = re.compile("pyleus==*")
+    freeze_out.seek(0)
+    for line in freeze_out:
+        if re.match(pyleus_re, line) is not None:
+            return True
+    return False
+
+
 def _virtualenv_pip_install(tmp_dir, req, **kwargs):
     """Create a virtualenv with the specified options and run `pip install -r
     requirements.txt`.
@@ -151,43 +173,29 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
     if kwargs.get("verbose") is False:
         out_stream = open(os.devnull, "w")
 
-    ret_code = subprocess.call(virtualenv_cmd, cwd=tmp_dir, stdout=out_stream,
-        stderr=subprocess.STDOUT)
-    if ret_code != 0:
-        raise DependenciesError("Failed to install dependencies for this "
-            "topology. Failed to create virtualenv.")
+    _call_dep_cmd(virtualenv_cmd,
+        cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
+        err_msg="Failed to install dependencies for this "
+        "topology. Failed to create virtualenv.")
 
-    ret_code = subprocess.call(pip_cmd, cwd=tmp_dir, stdout=out_stream,
-        stderr=subprocess.STDOUT)
-    if ret_code != 0:
-        raise DependenciesError("Failed to install dependencies for this "
-            "topology. Run with --verbose for detailed info.")
+    _call_dep_cmd(pip_cmd,
+        cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
+        err_msg="Failed to install dependencies for this "
+        "topology. Run with --verbose for detailed info.")
 
-    freeze_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "freeze"]
-    freeze_out = tempfile.TemporaryFile()
-    ret_code = subprocess.call(freeze_cmd, cwd=tmp_dir, stdout=freeze_out,
-        stderr=out_stream)
-    if ret_code != 0:
-        raise DependenciesError("Failed to run pip freeze.")
-    pyleus_re = re.compile("pyleus==*")
-    installed = False
-    freeze_out.seek(0)
-    for line in freeze_out:
-        if re.match(pyleus_re, line) is not None:
-            installed = True
-
-    if not installed:
+    # err_stream=out_stream
+    # if verbose then errors to output, else errors to /dev/null
+    if not _is_pyleus_installed(tmp_dir, err_stream=out_stream):
         pyleus_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "install",
                 "pyleus"]
 
         if kwargs.get("index_url") is not None:
             pyleus_cmd += ["-i", kwargs["index_url"]]
 
-        ret_code = subprocess.call(pyleus_cmd, cwd=tmp_dir, stdout=out_stream,
-            stderr=subprocess.STDOUT)
-        if ret_code != 0:
-            raise DependenciesError("Failed to install pyleus package."
-                "Run with --verbose for detailed info.")
+        _call_dep_cmd(pyleus_cmd,
+            cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
+            err_msg="Failed to install pyleus package."
+            "Run with --verbose for detailed info.")
 
 
 def _exclude_content(src, exclude_req):
