@@ -68,7 +68,8 @@ class JarbuilderTest(T.TestCase):
 
     @mock.patch.object(jarbuilder, '_validate_dir', autospec=True)
     @mock.patch.object(jarbuilder, '_validate_yaml', autospec=True)
-    def test__validate_topology_no_use_virtualenv(self, mock_valid_yaml, mock_valid_dir):
+    def test__validate_topology_no_use_virtualenv(
+            self, mock_valid_yaml, mock_valid_dir):
         mock_options = mock.Mock()
         mock_options.use_virtualenv = False
         topo_dir = "foo"
@@ -83,8 +84,9 @@ class JarbuilderTest(T.TestCase):
     @mock.patch.object(jarbuilder, '_validate_yaml', autospec=True)
     @mock.patch.object(jarbuilder, '_validate_req', autospec=True)
     @mock.patch.object(jarbuilder, '_validate_venv', autospec=True)
-    def test__validate_topology_use_virtualenv(self,
-            mock_valid_venv, mock_valid_req, mock_valid_yaml, mock_valid_dir):
+    def test__validate_topology_use_virtualenv(
+            self, mock_valid_venv, mock_valid_req,
+            mock_valid_yaml, mock_valid_dir):
         mock_options = mock.Mock()
         mock_options.use_virtualenv = True
         topo_dir = "foo"
@@ -100,8 +102,8 @@ class JarbuilderTest(T.TestCase):
     @mock.patch.object(jarbuilder, '_validate_dir', autospec=True)
     @mock.patch.object(jarbuilder, '_validate_yaml', autospec=True)
     @mock.patch.object(os.path, 'isfile', autospec=True)
-    def test__validate_topology_unspec_virtualenv_no_req(self,
-            mock_isfile, mock_valid_yaml, mock_valid_dir):
+    def test__validate_topology_unspec_virtualenv_no_req(
+            self, mock_isfile, mock_valid_yaml, mock_valid_dir):
         mock_isfile.return_value = False
         mock_options = mock.Mock()
         mock_options.use_virtualenv = None
@@ -120,8 +122,9 @@ class JarbuilderTest(T.TestCase):
     @mock.patch.object(os.path, 'isfile', autospec=True)
     @mock.patch.object(jarbuilder, '_validate_req', autospec=True)
     @mock.patch.object(jarbuilder, '_validate_venv', autospec=True)
-    def test__validate_topology_unspec_virtualenv_req(self,
-            mock_valid_venv, mock_valid_req, mock_isfile, mock_valid_yaml, mock_valid_dir):
+    def test__validate_topology_unspec_virtualenv_req(
+            self, mock_valid_venv, mock_valid_req, mock_isfile,
+            mock_valid_yaml, mock_valid_dir):
         mock_isfile.return_value = True
         mock_options = mock.Mock()
         mock_options.use_virtualenv = None
@@ -173,27 +176,31 @@ class JarbuilderTest(T.TestCase):
     @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
     @mock.patch.object(__builtin__, 'open', autospec=True)
     @mock.patch.object(jarbuilder, '_is_pyleus_installed', autospec=True)
-    def test__virtualenv_pip_install_all_options(self, mock_inst, mock_open, mock_dep_call):
+    def test__virtualenv_pip_install_all_options(
+            self, mock_inst, mock_open, mock_dep_call):
         mock_dep_call.side_effect = iter([0, 0, 0])
         mock_open.return_value = 42
         mock_inst.return_value = False
         jarbuilder._virtualenv_pip_install(
-                tmp_dir="foo",
-                req="bar",
-                system=True,
-                index_url="http://pypi-ninja.ninjacorp.com/simple",
-                pip_log="baz",
-                verbose=False)
+            tmp_dir="foo",
+            req="bar",
+            system=True,
+            index_url="http://pypi-ninja.ninjacorp.com/simple",
+            pip_log="baz",
+            verbose=False)
         expected = [
             mock.call(["virtualenv", "pyleus_venv", "--system-site-packages"],
-                cwd="foo", stdout=42, stderr=subprocess.STDOUT, err_msg=mock.ANY),
+                      cwd="foo", stdout=42, stderr=subprocess.STDOUT,
+                      err_msg=mock.ANY),
             mock.call(["pyleus_venv/bin/pip", "install", "-r", "bar",
-                "-i", "http://pypi-ninja.ninjacorp.com/simple",
-                "--log", "baz"],
-                cwd="foo", stdout=42, stderr=subprocess.STDOUT, err_msg=mock.ANY),
+                       "-i", "http://pypi-ninja.ninjacorp.com/simple",
+                       "--log", "baz"],
+                      cwd="foo", stdout=42, stderr=subprocess.STDOUT,
+                      err_msg=mock.ANY),
             mock.call(["pyleus_venv/bin/pip", "install", "pyleus",
-                "-i", "http://pypi-ninja.ninjacorp.com/simple"],
-                cwd="foo", stdout=42, stderr=subprocess.STDOUT, err_msg=mock.ANY)
+                       "-i", "http://pypi-ninja.ninjacorp.com/simple"],
+                      cwd="foo", stdout=42, stderr=subprocess.STDOUT,
+                      err_msg=mock.ANY)
         ]
         mock_dep_call.assert_has_calls(expected)
         mock_open.assert_called_once_with(os.devnull, "w")
@@ -201,7 +208,9 @@ class JarbuilderTest(T.TestCase):
 
     @mock.patch.object(glob, 'glob', autospec=True)
     def test__exclude_content(self, mock_glob):
-        mock_glob.return_value = ["foo/spam", "foo/ham", "foo/requirements.txt", "foo/pyleus_topology.yaml"]
+        mock_glob.return_value = ["foo/spam", "foo/ham",
+                                  "foo/requirements.txt",
+                                  "foo/pyleus_topology.yaml"]
         content = jarbuilder._exclude_content("foo", True)
         mock_glob.assert_called_once_with("foo/*")
         T.assert_sorted_equal(content, ["foo/spam", "foo/ham"])
@@ -210,14 +219,16 @@ class JarbuilderTest(T.TestCase):
     @mock.patch.object(os.path, 'isdir', autospec=True)
     @mock.patch.object(shutil, 'copytree', autospec=True)
     @mock.patch.object(shutil, 'copy2', autospec=True)
-    def test__copy_dir_content(self, mock_copy2, mock_copytree, mock_isdir, mock_exclude_cont):
+    def test__copy_dir_content(
+            self, mock_copy2, mock_copytree, mock_isdir, mock_exclude_cont):
         mock_exclude_cont.return_value = ["foo/ham", "foo/honey"]
         mock_isdir.side_effect = iter([True, False])
         jarbuilder._copy_dir_content("foo", "bar", True)
         mock_exclude_cont.assert_called_once_with("foo", True)
         expected = [mock.call("foo/ham"), mock.call("foo/honey")]
         mock_isdir.assert_has_calls(expected)
-        mock_copytree.assert_called_once_with("foo/ham", "bar/ham", symlinks=True)
+        mock_copytree.assert_called_once_with(
+            "foo/ham", "bar/ham", symlinks=True)
         mock_copy2.assert_called_once_with("foo/honey", "bar")
 
     @mock.patch.object(os, 'walk', autospec=True)

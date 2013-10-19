@@ -46,7 +46,7 @@ class PyleusError(Exception):
     """Base class for pyleus specific exceptions"""
     def __str__(self):
         return "[{0}] {1}".format(type(self).__name__,
-                ", ".join(str(i) for i in self.args))
+               ", ".join(str(i) for i in self.args))
 
 
 class JarError(PyleusError): pass
@@ -75,8 +75,8 @@ def _validate_dir(topology_dir):
             topology_dir))
 
     if not os.path.isdir(topology_dir):
-        raise TopologyError("Topology directory is not a directory: {0}".format(
-            topology_dir))
+        raise TopologyError("Topology directory is not a directory: {0}"
+                            .format(topology_dir))
 
 
 def _validate_yaml(yaml):
@@ -96,7 +96,7 @@ def _validate_venv(topology_dir, venv):
     """Ensure that VIRTUALENV does not exist inside the directory"""
     if os.path.exists(venv):
         raise InvalidTopologyError("Topology directory must not contain a "
-            "file named {0}".format(venv))
+                                   "file named {0}".format(venv))
 
 
 def _validate_topology(topology_dir, yaml, req, venv,  opts):
@@ -172,28 +172,28 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
         out_stream = open(os.devnull, "w")
 
     _call_dep_cmd(virtualenv_cmd,
-        cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
-        err_msg="Failed to install dependencies for this "
-        "topology. Failed to create virtualenv.")
+                  cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
+                  err_msg="Failed to install dependencies for this "
+                  "topology. Failed to create virtualenv.")
 
     _call_dep_cmd(pip_cmd,
-        cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
-        err_msg="Failed to install dependencies for this "
-        "topology. Run with --verbose for detailed info.")
+                  cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
+                  err_msg="Failed to install dependencies for this "
+                  "topology. Run with --verbose for detailed info.")
 
     # err_stream=out_stream
     # if verbose then errors to output, else errors to /dev/null
     if not _is_pyleus_installed(tmp_dir, err_stream=out_stream):
-        pyleus_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "install",
-                "pyleus"]
+        pyleus_cmd = [os.path.join(VIRTUALENV, "bin", "pip"),
+                      "install", "pyleus"]
 
         if kwargs.get("index_url") is not None:
             pyleus_cmd += ["-i", kwargs["index_url"]]
 
         _call_dep_cmd(pyleus_cmd,
-            cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
-            err_msg="Failed to install pyleus package."
-            "Run with --verbose for detailed info.")
+                      cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
+                      err_msg="Failed to install pyleus package."
+                      "Run with --verbose for detailed info.")
 
 
 def _exclude_content(src, exclude_req):
@@ -222,7 +222,8 @@ def _copy_dir_content(src, dst, exclude_req):
 
     for t in content:
         if os.path.isdir(t):
-            shutil.copytree(t, os.path.join(dst, os.path.basename(t)), symlinks=True)
+            shutil.copytree(t, os.path.join(dst, os.path.basename(t)),
+                            symlinks=True)
         else:
             shutil.copy2(t, dst)
 
@@ -243,7 +244,7 @@ def _zip_dir(src, arc):
         for f in files:
             # zipfile creates directories if missing
             arc.write(os.path.join(root, f), os.path.join(prefix, f),
-                    zipfile.ZIP_DEFLATED)
+                      zipfile.ZIP_DEFLATED)
 
 
 def _pack_jar(tmp_dir, output_jar):
@@ -281,17 +282,17 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
 
     # Add the topology directory skipping yaml and requirements
     _copy_dir_content(topology_dir, os.path.join(tmp_dir, RESOURCES_PATH),
-            exclude_req=options.use_virtualenv)
+                      exclude_req=options.use_virtualenv)
 
     # Virtualenv + pip install used to install dependencies listed in
     # requirements.txt
     if options.use_virtualenv:
         _virtualenv_pip_install(tmp_dir=os.path.join(tmp_dir, RESOURCES_PATH),
-                req=req,
-                system=options.system,
-                index_url=options.index_url,
-                pip_log=options.pip_log,
-                verbose=options.verbose)
+                                req=req,
+                                system=options.system,
+                                index_url=options.index_url,
+                                pip_log=options.pip_log,
+                                verbose=options.verbose)
 
     # Pack the tmp directory into a jar
     _pack_jar(tmp_dir, output_jar)
@@ -312,31 +313,33 @@ def _build_output_path(output_arg, topology_dir):
 def main():
     """Parse command-line arguments and invoke _inject()"""
     parser = optparse.OptionParser(
-            usage="usage: %prog [options] TOPOLOGY_DIRECTORY",
-            description="Build up a Storm jar from a topology source directory")
+        usage="usage: %prog [options] TOPOLOGY_DIRECTORY",
+        description="Build up a Storm jar from a topology source directory")
+
     parser.add_option("-b", "--base", dest="base_jar", default=BASE_JAR_PATH,
-            help="Pyleus base jar file path")
+                      help="Pyleus base jar file path")
     parser.add_option("-o", "--out", dest="output_jar",
-            help="Path of the jar file that will contain"
-            " all the dependencies and the resources")
+                      help="Path of the jar file that will contain"
+                      " all the dependencies and the resources")
     parser.add_option("--use-virtualenv", dest="use_virtualenv",
-            default=None, action="store_true",
-            help="Use virtualenv and pip install for dependencies."
-            " Your TOPOLOGY_DIRECTORY must contain a file named {0}"
-            .format(REQUIREMENTS_FILENAME))
+                      default=None, action="store_true",
+                      help="Use virtualenv and pip install for dependencies."
+                      " Your TOPOLOGY_DIRECTORY must contain a file named {0}"
+                      .format(REQUIREMENTS_FILENAME))
     parser.add_option("--no-use-virtualenv",
-            dest="use_virtualenv", action="store_false",
-            help="Do not use virtualenv and pip for dependencies")
+                      dest="use_virtualenv", action="store_false",
+                      help="Do not use virtualenv and pip for dependencies")
     parser.add_option("-i", "--index-url", dest="index_url",
-            help="Base URL of Python Package Index used by pip"
-            " (default https://pypi.python.org/simple/)")
+                      help="Base URL of Python Package Index used by pip"
+                      " (default https://pypi.python.org/simple/)")
     parser.add_option("-s", "--system-site-packages", dest="system",
-            default=False, action="store_true",
-            help="Do not install packages already present on your system")
+                      default=False, action="store_true",
+                      help="Do not install packages already present"
+                      "on your system")
     parser.add_option("--log", dest="pip_log", help="Log location for pip")
     parser.add_option("-v", "--verbose", dest="verbose",
-            default=False, action="store_true",
-            help="Verbose")
+                      default=False, action="store_true",
+                      help="Verbose")
     options, args = parser.parse_args()
 
     if len(args) != 1:
