@@ -124,26 +124,24 @@ def _validate_topology(topology_dir, yaml, req, venv,  opts):
 
 
 def _call_dep_cmd(cmd, cwd, stdout, stderr, err_msg):
-    ret_code = subprocess.call(cmd, cwd=cwd, stdout=stdout,
-        stderr=stderr)
-    if ret_code != 0:
+    # Pass subprocess.PIPE as stdout or stderr to get something other than
+    # None in the communicate() result tuple
+    proc = subprocess.Popen(cmd, cwd=cwd, stdout=stdout,
+                            stderr=stderr)
+    out_data, err_data = proc.communicate()
+    if proc.returncode != 0:
         raise DependenciesError(err_msg)
+    return out_data, err_data
 
 
 def _is_pyleus_installed(tmp_dir, err_stream):
-    freeze_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "freeze"]
-    freeze_out = tempfile.TemporaryFile()
-    _call_dep_cmd(freeze_cmd,
-        cwd=tmp_dir, stdout=freeze_out, stderr=err_stream,
-        err_msg="Failed to run pip freeze.")
-
-    pyleus_re = re.compile("pyleus==*")
-    freeze_out.seek(0)
-    for line in freeze_out:
-        if re.match(pyleus_re, line) is not None:
-            return True
-    return False
-
+    show_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "show", "pyleus"]
+    out_data, _ = _call_dep_cmd(
+        show_cmd, cwd=tmp_dir,
+        stdout=subprocess.PIPE, stderr=err_stream,
+        err_msg="Failed to run pip show.")
+    # pip show prints only if the package is already installed
+    return out_data != ""
 
 def _virtualenv_pip_install(tmp_dir, req, **kwargs):
     """Create a virtualenv with the specified options and run `pip install -r

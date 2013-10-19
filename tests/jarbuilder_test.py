@@ -4,7 +4,6 @@ import os
 import mock
 import shutil
 import subprocess
-import tempfile
 import zipfile
 
 import testify as T
@@ -138,43 +137,38 @@ class JarbuilderTest(T.TestCase):
         mock_valid_venv.assert_called_once_with(topo_dir, venv)
         T.assert_equals(mock_options.use_virtualenv, True)
 
-    @mock.patch.object(subprocess, 'call', autospec=True)
-    def test__call_dep_cmd(self, mock_sub_call):
-        mock_sub_call.return_value = 1
-        T.assert_raises_and_contains(jarbuilder.DependenciesError, ["bar"],
-                jarbuilder._call_dep_cmd, "bash_ninja",
-                cwd="foo", stdout=42, stderr=666,
-                err_msg="bar")
-        mock_sub_call.assert_called_once_with("bash_ninja",
-                cwd="foo", stdout=42, stderr=666)
+    @mock.patch.object(subprocess, 'Popen', autospec=True)
+    def test__call_dep_cmd(self, mock_popen):
+        mock_proc = mock.Mock()
+        mock_popen.return_value = mock_proc
+        mock_proc.communicate.return_value = ["baz", "qux"]
+        mock_proc.returncode = 1
+        T.assert_raises_and_contains(
+            jarbuilder.DependenciesError, ["bar"],
+            jarbuilder._call_dep_cmd, "bash_ninja",
+            cwd="foo", stdout=42, stderr=666,
+            err_msg="bar")
+        mock_popen.assert_called_once_with(
+            "bash_ninja", cwd="foo", stdout=42, stderr=666)
+        mock_proc.communicate.assert_called_once_with()
 
-    @mock.patch.object(tempfile, 'TemporaryFile', autospec=True)
     @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
-    def test__is_pyleus_installed_installed(self, mock_dep_call, mock_temp_file):
-        mock_file = mock.MagicMock()
-        mock_file.__iter__.return_value = ["bar==1.2.3", "pyleus==1.0.0"]
-        mock_temp_file.return_value = mock_file
-        mock_dep_call.return_value = 0
+    def test__is_pyleus_installed_installed(self, mock_dep_call):
+        mock_dep_call.return_value = ["---\nName: pyleus\n", None]
         installed = jarbuilder._is_pyleus_installed("foo", err_stream=42)
-        mock_dep_call.assert_called_once_with(["pyleus_venv/bin/pip", "freeze"],
-                cwd="foo", stdout=mock_temp_file.return_value, stderr=42, err_msg=mock.ANY)
+        mock_dep_call.assert_called_once_with(
+            ["pyleus_venv/bin/pip", "show", "pyleus"],
+            cwd="foo", stdout=subprocess.PIPE, stderr=42, err_msg=mock.ANY)
         T.assert_equal(installed, True)
-        mock_temp_file.assert_called_once_with()
-        mock_file.seek.assert_called_once_with(0)
 
-    @mock.patch.object(tempfile, 'TemporaryFile', autospec=True)
     @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
-    def test__is_pyleus_installed_not_installed(self, mock_dep_call, mock_temp_file):
-        mock_file = mock.MagicMock()
-        mock_file.__iter__.return_value = ["bar==1.2.3"]
-        mock_temp_file.return_value = mock_file
-        mock_dep_call.return_value = 0
+    def test__is_pyleus_installed_not_installed(self, mock_dep_call):
+        mock_dep_call.return_value = ["", None]
         installed = jarbuilder._is_pyleus_installed("foo", err_stream=42)
-        mock_dep_call.assert_called_once_with(["pyleus_venv/bin/pip", "freeze"],
-                cwd="foo", stdout=mock_temp_file.return_value, stderr=42, err_msg=mock.ANY)
+        mock_dep_call.assert_called_once_with(
+            ["pyleus_venv/bin/pip", "show", "pyleus"],
+            cwd="foo", stdout=subprocess.PIPE, stderr=42, err_msg=mock.ANY)
         T.assert_equal(installed, False)
-        mock_temp_file.assert_called_once_with()
-        mock_file.seek.assert_called_once_with(0)
 
     @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
     @mock.patch.object(__builtin__, 'open', autospec=True)
