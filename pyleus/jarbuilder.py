@@ -124,24 +124,57 @@ def _validate_topology(topology_dir, yaml, req, venv,  opts):
 
 
 def _call_dep_cmd(cmd, cwd, stdout, stderr, err_msg):
+    """Interface to any bash command related to dependencies management."""
     # Pass subprocess.PIPE as stdout or stderr to get something other than
     # None in the communicate() result tuple
     proc = subprocess.Popen(cmd, cwd=cwd, stdout=stdout,
                             stderr=stderr)
-    out_data, err_data = proc.communicate()
+    out_data, _ = proc.communicate()
     if proc.returncode != 0:
         raise DependenciesError(err_msg)
-    return out_data, err_data
+    return out_data
 
 
 def _is_pyleus_installed(tmp_dir, err_stream):
+    """Check if pyleus is already installed in the virtualenv."""
     show_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "show", "pyleus"]
-    out_data, _ = _call_dep_cmd(
+    out_data = _call_dep_cmd(
         show_cmd, cwd=tmp_dir,
         stdout=subprocess.PIPE, stderr=err_stream,
         err_msg="Failed to run pip show.")
     # pip show prints only if the package is already installed
     return out_data != ""
+
+
+def _pip_install(tmp_dir, *args, **kwargs):
+    """Interface to pip install comand."""
+    pip_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "install"]
+
+    for arg in args:
+        pip_cmd.append(arg)
+
+    if kwargs.get("req") is not None:
+        pip_cmd += ["-r", kwargs["req"]]
+
+    if kwargs.get("index_url") is not None:
+        pip_cmd += ["-i", kwargs["index_url"]]
+
+    if kwargs.get("pip_log") is not None:
+        pip_cmd += ["--log", kwargs["pip_log"]]
+
+    out_stream = None
+    if kwargs.get("out_stream") is not None:
+        out_stream = kwargs["out_stream"]
+
+    err_msg = "Failed to install dependencies for this topology."
+    " Run with --verbose for detailed info."
+    if kwargs.get("err_msg") is not None:
+        err_msg = kwargs["err_msg"]
+
+    _call_dep_cmd(pip_cmd,
+                  cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
+                  err_msg=err_msg)
+
 
 def _virtualenv_pip_install(tmp_dir, req, **kwargs):
     """Create a virtualenv with the specified options and run `pip install -r
@@ -159,41 +192,34 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
     if kwargs.get("system") is True:
         virtualenv_cmd.append("--system-site-packages")
 
-    pip_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "install", "-r", req]
-
-    if kwargs.get("index_url") is not None:
-        pip_cmd += ["-i", kwargs["index_url"]]
-
-    if kwargs.get("pip_log") is not None:
-        pip_cmd += ["--log", kwargs["pip_log"]]
-
     out_stream = None
     if kwargs.get("verbose") is False:
         out_stream = open(os.devnull, "w")
 
     _call_dep_cmd(virtualenv_cmd,
                   cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
-                  err_msg="Failed to install dependencies for this "
-                  "topology. Failed to create virtualenv.")
+                  err_msg="Failed to install dependencies for this"
+                  " topology. Failed to create virtualenv.")
 
-    _call_dep_cmd(pip_cmd,
-                  cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
-                  err_msg="Failed to install dependencies for this "
-                  "topology. Run with --verbose for detailed info.")
+    _pip_install(
+        tmp_dir,
+        req=req,
+        index_url=kwargs.get("index_url"),
+        pip_log=kwargs.get("pip_log"),
+        out_stream=out_stream
+    )
 
     # err_stream=out_stream
     # if verbose then errors to output, else errors to /dev/null
     if not _is_pyleus_installed(tmp_dir, err_stream=out_stream):
-        pyleus_cmd = [os.path.join(VIRTUALENV, "bin", "pip"),
-                      "install", "pyleus"]
-
-        if kwargs.get("index_url") is not None:
-            pyleus_cmd += ["-i", kwargs["index_url"]]
-
-        _call_dep_cmd(pyleus_cmd,
-                      cwd=tmp_dir, stdout=out_stream, stderr=subprocess.STDOUT,
-                      err_msg="Failed to install pyleus package."
-                      "Run with --verbose for detailed info.")
+        _pip_install(
+            tmp_dir,
+            "pyleus",
+            index_url=kwargs.get("index_url"),
+            out_stream=out_stream,
+            err_msg="Failed to install pyleus package."
+            " Run with --verbose for detailed info."
+        )
 
 
 def _exclude_content(src, exclude_req):

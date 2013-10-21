@@ -157,7 +157,7 @@ class JarbuilderTest(T.TestCase):
 
     @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
     def test__is_pyleus_installed_installed(self, mock_dep_call):
-        mock_dep_call.return_value = ["---\nName: pyleus\n", None]
+        mock_dep_call.return_value = "---\nName: pyleus\n"
         installed = jarbuilder._is_pyleus_installed("foo", err_stream=42)
         mock_dep_call.assert_called_once_with(
             ["pyleus_venv/bin/pip", "show", "pyleus"],
@@ -166,7 +166,7 @@ class JarbuilderTest(T.TestCase):
 
     @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
     def test__is_pyleus_installed_not_installed(self, mock_dep_call):
-        mock_dep_call.return_value = ["", None]
+        mock_dep_call.return_value = ""
         installed = jarbuilder._is_pyleus_installed("foo", err_stream=42)
         mock_dep_call.assert_called_once_with(
             ["pyleus_venv/bin/pip", "show", "pyleus"],
