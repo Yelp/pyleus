@@ -125,10 +125,7 @@ def _validate_topology(topology_dir, yaml, req, venv,  opts):
 
 def _call_dep_cmd(cmd, cwd, stdout, stderr, err_msg):
     """Interface to any bash command related to dependencies management."""
-    # Pass subprocess.PIPE as stdout or stderr to get something other than
-    # None in the communicate() result tuple
-    proc = subprocess.Popen(cmd, cwd=cwd, stdout=stdout,
-                            stderr=stderr)
+    proc = subprocess.Popen(cmd, cwd=cwd, stdout=stdout, stderr=stderr)
     out_data, _ = proc.communicate()
     if proc.returncode != 0:
         raise DependenciesError(err_msg)
