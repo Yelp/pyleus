@@ -21,6 +21,8 @@ Note: The names used for the YAML file and for the virtualenv CANNOT be changed
 without modifying the Java code accordingly.
 """
 
+import ConfigParser
+import collections
 import optparse
 import glob
 import re
@@ -31,6 +33,9 @@ import subprocess
 import sys
 import zipfile
 
+CONFIG_SYSTEM_PATH = "/etc/pyleus.conf"
+CONFIG_USER_PATH = "$HOME/.congif/pyleus.conf"
+CONFIG_HOME_PATH = "$HOME/.pyleus.conf"
 
 BASE_JAR_PATH = "minimal.jar"
 RESOURCES_PATH = "resources/"
@@ -41,6 +46,22 @@ VIRTUALENV = "pyleus_venv"
 PROG = os.path.basename(sys.argv[0])
 PYLEUS_ERROR_FMT = "{0}: error: {1}"
 
+Configuration = collections.namedtuple(
+    "Configuration",
+    "config_file pypi_index_url base_jar output_jar "
+    "use_virtualenv system pip_log verbose"
+)
+
+DEFAULTS = Configuration(
+    config_file=None,
+    pypi_index_url=None,
+    base_jar=BASE_JAR_PATH,
+    output_jar=None,
+    use_virtualenv=None,
+    system=False,
+    pip_log=None,
+    verbose=False,
+)
 
 class PyleusError(Exception):
     """Base class for pyleus specific exceptions"""
@@ -49,6 +70,7 @@ class PyleusError(Exception):
                ", ".join(str(i) for i in self.args))
 
 
+class ConfigurationError(PyleusError): pass
 class JarError(PyleusError): pass
 class TopologyError(PyleusError): pass
 class InvalidTopologyError(TopologyError): pass
@@ -99,26 +121,19 @@ def _validate_venv(topology_dir, venv):
                                    "file named {0}".format(venv))
 
 
-def _validate_topology(topology_dir, yaml, req, venv,  opts):
+def _validate_topology(topology_dir, yaml, req, venv, use_virtualenv):
     """Validate topology_dir to ensure that:
 
         - it exists and is a directory
         - TOPOLOGY_YAML exists inside
         - requirements.txt exists if --use-virtualenv was explicitly stated
         - nothing will be overwritten
-
-    Side effect: opts.use_virtualenv is set to False or True
     """
     _validate_dir(topology_dir)
 
     _validate_yaml(yaml)
 
-    # if use_virtualenv is undefined (None), it will be assigned on the base of
-    # the requirements.txt file
-    if opts.use_virtualenv is None:
-        opts.use_virtualenv = False if not os.path.isfile(req) else True
-
-    if opts.use_virtualenv:
+    if use_virtualenv:
         _validate_req(req)
         _validate_venv(topology_dir, venv)
 
@@ -153,8 +168,8 @@ def _pip_install(tmp_dir, *args, **kwargs):
     if kwargs.get("req") is not None:
         pip_cmd += ["-r", kwargs["req"]]
 
-    if kwargs.get("index_url") is not None:
-        pip_cmd += ["-i", kwargs["index_url"]]
+    if kwargs.get("pypi_index_url") is not None:
+        pip_cmd += ["-i", kwargs["pypi_index_url"]]
 
     if kwargs.get("pip_log") is not None:
         pip_cmd += ["--log", kwargs["pip_log"]]
@@ -201,7 +216,7 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
     _pip_install(
         tmp_dir,
         req=req,
-        index_url=kwargs.get("index_url"),
+        pypi_index_url=kwargs.get("pypi_index_url"),
         pip_log=kwargs.get("pip_log"),
         out_stream=out_stream
     )
@@ -212,7 +227,7 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
         _pip_install(
             tmp_dir,
             "pyleus",
-            index_url=kwargs.get("index_url"),
+            pypi_index_url=kwargs.get("pypi_index_url"),
             out_stream=out_stream,
             err_msg="Failed to install pyleus package."
             " Run with --verbose for detailed info."
@@ -282,7 +297,16 @@ def _pack_jar(tmp_dir, output_jar):
         zf.close()
 
 
-def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
+def _is_virtualenv_required(configs, req):
+    """Figure out if a virtuelenv is required, even implicitely"""
+    # if use_virtualenv is undefined (None), it will be assigned on the base of
+    # the requirements.txt file
+    if configs.use_virtualenv is None:
+        return os.path.isfile(req)
+    return configs.use_virtualenv
+
+
+def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, configs):
     """Coordinate the creation of the the topology JAR:
 
         - Validate the topology
@@ -294,8 +318,10 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
     yaml = os.path.join(topology_dir, YAML_FILENAME)
     req = os.path.join(topology_dir, REQUIREMENTS_FILENAME)
     venv = os.path.join(topology_dir, VIRTUALENV)
-    # Validate topolgy and return requirements and yaml file path
-    _validate_topology(topology_dir, yaml, req, venv,  options)
+
+    use_virtualenv = _is_virtualenv_required(configs, req)
+
+    _validate_topology(topology_dir, yaml, req, venv, use_virtualenv)
 
     # Extract pyleus base jar content in a tmp dir
     zip_file.extractall(tmp_dir)
@@ -305,17 +331,17 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
 
     # Add the topology directory skipping yaml and requirements
     _copy_dir_content(topology_dir, os.path.join(tmp_dir, RESOURCES_PATH),
-                      exclude_req=options.use_virtualenv)
+                      exclude_req=use_virtualenv)
 
     # Virtualenv + pip install used to install dependencies listed in
     # requirements.txt
-    if options.use_virtualenv:
+    if use_virtualenv:
         _virtualenv_pip_install(tmp_dir=os.path.join(tmp_dir, RESOURCES_PATH),
                                 req=req,
-                                system=options.system,
-                                index_url=options.index_url,
-                                pip_log=options.pip_log,
-                                verbose=options.verbose)
+                                system=configs.system,
+                                pypi_index_url=configs.pypi_index_url,
+                                pip_log=_expand_path(configs.pip_log),
+                                verbose=configs.verbose)
 
     # Pack the tmp directory into a jar
     _pack_jar(tmp_dir, output_jar)
@@ -323,6 +349,8 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
 
 def _expand_path(path):
     """Return the corresponding absolute path after variables expansion."""
+    if path is None:
+        return None
     return os.path.abspath(os.path.expanduser(os.path.expandvars(path)))
 
 
@@ -338,15 +366,64 @@ def _build_output_path(output_arg, topology_dir):
         return _expand_path(os.path.basename(topology_dir) + ".jar")
 
 
+def _update_configuration(config, update_dict):
+    """Update configuration with new values passed as dictionary"""
+    tmp = config._asdict()
+    tmp.update(update_dict)
+    return Configuration(**tmp)
+
+
+def _validate_config_file(config_file):
+    """Ensure that config_file exists and is a file"""
+    if not os.path.exists(config_file):
+        raise ConfigurationError("Specified configuration file not"
+                                 "found: {0}".format(config_file))
+    if not os.path.isfile(config_file):
+        raise ConfigurationError("Specified configuration file is not"
+                                 " a file: {0}".format(config_file))
+
+
+def _load_configuration(cmd_line_file):
+    """Load configurations from the more generic to the
+    more specific configuration file. The latter configurations
+    override the previous one.
+    If a file is specified from command line, it  is considered
+    the most specific.
+
+    Returns:
+    Configuration named tuple
+    """
+    config_files_hierarchy = [
+        _expand_path(CONFIG_SYSTEM_PATH),
+        _expand_path(CONFIG_USER_PATH),
+        _expand_path(CONFIG_HOME_PATH)
+    ]
+
+    if cmd_line_file is not None:
+        _validate_config_file(cmd_line_file)
+        config_files_hierarchy.append(cmd_line_file)
+
+    config = ConfigParser.SafeConfigParser()
+    config.read(config_files_hierarchy)
+
+    configs = _update_configuration(
+        DEFAULTS,
+        dict(
+            (config_name, config_value)
+            for section in config.sections()
+            for config_name, config_value in config.items(section)
+        )
+    )
+    return configs
+
+
 def main():
     """Parse command-line arguments and invoke _inject()"""
     parser = optparse.OptionParser(
         usage="usage: %prog [options] TOPOLOGY_DIRECTORY",
         description="Build up a Storm jar from a topology source directory")
 
-    parser.add_option("-b", "--base", dest="base_jar", default=BASE_JAR_PATH,
-                      help="Pyleus base jar file path")
-    parser.add_option("-o", "--out", dest="output_jar",
+    parser.add_option("-o", "--out", dest="output_jar", default=None,
                       help="Path of the jar file that will contain"
                       " all the dependencies and the resources")
     parser.add_option("--use-virtualenv", dest="use_virtualenv",
@@ -357,28 +434,34 @@ def main():
     parser.add_option("--no-use-virtualenv",
                       dest="use_virtualenv", action="store_false",
                       help="Do not use virtualenv and pip for dependencies")
-    parser.add_option("-i", "--index-url", dest="index_url",
-                      help="Base URL of Python Package Index used by pip"
-                      " (default https://pypi.python.org/simple/)")
     parser.add_option("-s", "--system-site-packages", dest="system",
                       default=False, action="store_true",
                       help="Do not install packages already present"
                       "on your system")
-    parser.add_option("--log", dest="pip_log", help="Log location for pip")
+    parser.add_option("--log", dest="pip_log", default=None,
+                      help="Log location for pip")
     parser.add_option("-v", "--verbose", dest="verbose",
                       default=False, action="store_true",
                       help="Verbose")
+    parser.add_option("-c", "--config", dest="config_file", default=None,
+                      help="Pyleus configuration file")
     options, args = parser.parse_args()
 
     if len(args) != 1:
         parser.error("incorrect number of arguments")
 
-    # Transform each path in its absolute version
+    # Load configurations into a Configuration named tuple
+    try:
+        configs = _load_configuration(_expand_path(options.config_file))
+    except PyleusError as e:
+        sys.exit(PYLEUS_ERROR_FMT.format(PROG, str(e)))
+
+    # Update configuration with command line values
+    configs = _update_configuration(configs, vars(options))
+
     topology_dir = _expand_path(args[0])
-    base_jar = _expand_path(options.base_jar)
-    output_jar = _build_output_path(options.output_jar, topology_dir)
-    if options.pip_log is not None:
-        options.pip_log = _expand_path(options.pip_log)
+    base_jar = _expand_path(configs.base_jar)
+    output_jar = _build_output_path(configs.output_jar, topology_dir)
 
     # Check for output path existence for early failure
     if os.path.exists(output_jar):
@@ -396,7 +479,7 @@ def main():
         tmp_dir = tempfile.mkdtemp()
         try:
             _inject(topology_dir, base_jar, output_jar,
-                    zip_file, tmp_dir, options)
+                    zip_file, tmp_dir, configs)
         except PyleusError as e:
             sys.exit(PYLEUS_ERROR_FMT.format(PROG, str(e)))
         finally:

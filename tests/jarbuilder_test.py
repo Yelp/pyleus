@@ -70,13 +70,11 @@ class JarbuilderTest(T.TestCase):
     @mock.patch.object(jarbuilder, '_validate_yaml', autospec=True)
     def test__validate_topology_no_use_virtualenv(
             self, mock_valid_yaml, mock_valid_dir):
-        mock_options = mock.Mock()
-        mock_options.use_virtualenv = False
         topo_dir = "foo"
         yaml = "foo/bar.yaml"
         req = "foo/baz.txt"
         venv = "foo/qux"
-        jarbuilder._validate_topology(topo_dir, yaml, req, venv, mock_options)
+        jarbuilder._validate_topology(topo_dir, yaml, req, venv, False)
         mock_valid_dir.assert_called_once_with(topo_dir)
         mock_valid_yaml.assert_called_once_with(yaml)
 
@@ -87,58 +85,15 @@ class JarbuilderTest(T.TestCase):
     def test__validate_topology_use_virtualenv(
             self, mock_valid_venv, mock_valid_req,
             mock_valid_yaml, mock_valid_dir):
-        mock_options = mock.Mock()
-        mock_options.use_virtualenv = True
         topo_dir = "foo"
         yaml = "foo/bar.yaml"
         req = "foo/baz.txt"
         venv = "foo/qux"
-        jarbuilder._validate_topology(topo_dir, yaml, req, venv, mock_options)
+        jarbuilder._validate_topology(topo_dir, yaml, req, venv, True)
         mock_valid_dir.assert_called_once_with(topo_dir)
         mock_valid_yaml.assert_called_once_with(yaml)
         mock_valid_req.assert_called_once_with(req)
         mock_valid_venv.assert_called_once_with(topo_dir, venv)
-
-    @mock.patch.object(jarbuilder, '_validate_dir', autospec=True)
-    @mock.patch.object(jarbuilder, '_validate_yaml', autospec=True)
-    @mock.patch.object(os.path, 'isfile', autospec=True)
-    def test__validate_topology_unspec_virtualenv_no_req(
-            self, mock_isfile, mock_valid_yaml, mock_valid_dir):
-        mock_isfile.return_value = False
-        mock_options = mock.Mock()
-        mock_options.use_virtualenv = None
-        topo_dir = "foo"
-        yaml = "foo/bar.yaml"
-        req = "foo/baz.txt"
-        venv = "foo/qux"
-        jarbuilder._validate_topology(topo_dir, yaml, req, venv, mock_options)
-        mock_valid_dir.assert_called_once_with(topo_dir)
-        mock_valid_yaml.assert_called_once_with(yaml)
-        mock_isfile.assert_called_once_with(req)
-        T.assert_equals(mock_options.use_virtualenv, False)
-
-    @mock.patch.object(jarbuilder, '_validate_dir', autospec=True)
-    @mock.patch.object(jarbuilder, '_validate_yaml', autospec=True)
-    @mock.patch.object(os.path, 'isfile', autospec=True)
-    @mock.patch.object(jarbuilder, '_validate_req', autospec=True)
-    @mock.patch.object(jarbuilder, '_validate_venv', autospec=True)
-    def test__validate_topology_unspec_virtualenv_req(
-            self, mock_valid_venv, mock_valid_req, mock_isfile,
-            mock_valid_yaml, mock_valid_dir):
-        mock_isfile.return_value = True
-        mock_options = mock.Mock()
-        mock_options.use_virtualenv = None
-        topo_dir = "foo"
-        yaml = "foo/bar.yaml"
-        req = "foo/baz.txt"
-        venv = "foo/qux"
-        jarbuilder._validate_topology(topo_dir, yaml, req, venv, mock_options)
-        mock_valid_dir.assert_called_once_with(topo_dir)
-        mock_valid_yaml.assert_called_once_with(yaml)
-        mock_isfile.assert_called_once_with(req)
-        mock_valid_req.assert_called_once_with(req)
-        mock_valid_venv.assert_called_once_with(topo_dir, venv)
-        T.assert_equals(mock_options.use_virtualenv, True)
 
     @mock.patch.object(subprocess, 'Popen', autospec=True)
     def test__call_dep_cmd(self, mock_popen):
@@ -185,7 +140,7 @@ class JarbuilderTest(T.TestCase):
             tmp_dir="foo",
             req="bar",
             system=True,
-            index_url="http://pypi-ninja.ninjacorp.com/simple",
+            pypi_index_url="http://pypi-ninja.ninjacorp.com/simple",
             pip_log="baz",
             verbose=False)
         expected = [
@@ -262,6 +217,41 @@ class JarbuilderTest(T.TestCase):
         mock_zipfile.assert_called_once_with("bar", "w")
         mock_zip_dir.assert_called_once_with("foo", mock_zipfile.return_value)
 
+    @mock.patch.object(os.path, 'isfile', autospec=True)
+    def test__is_virtualenv_required(self, mock_isfile):
+        mock_configs = mock.Mock()
+        mock_configs.use_virtualenv = None
+        req = "foo/baz.txt"
+
+        mock_isfile.return_value = False
+        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
+        mock_isfile.assert_called_once_with(req)
+        T.assert_equals(flag, False)
+
+        mock_isfile.return_value = True
+        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
+        T.assert_equals(flag, True)
+
+        mock_configs.use_virtualenv = False
+        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
+        T.assert_equals(flag, False)
+
+        mock_configs.use_virtualenv = True
+        mock_isfile.return_value = False
+        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
+        T.assert_equals(flag, True)
+
+    @mock.patch.object(os, 'path', autospec=True)
+    def test__expand_path(self, mock_path):
+        expanded = jarbuilder._expand_path(None)
+        T.assert_equals(expanded, None)
+
+        mock_path.abspath.return_value = "bar"
+        expanded = jarbuilder._expand_path("foo")
+        mock_path.abspath.assert_has_calls([
+            mock.call(mock_path.expanduser(mock_path.expandvars("foo")))])
+        T.assert_equals(expanded, "bar")
+
     @mock.patch.object(jarbuilder, '_expand_path', autospec=True)
     def test__build_otuput_path(self, mock_ex_path):
         jarbuilder._build_output_path("foo", "bar")
@@ -269,6 +259,35 @@ class JarbuilderTest(T.TestCase):
 
         jarbuilder._build_output_path(None, "bar")
         mock_ex_path.assert_called_with("bar.jar")
+
+    @mock.patch.object(os.path, 'exists', autospec=True)
+    def test__validate_config_file_not_found(
+            self, mock_exists):
+        mock_exists.return_value = False
+        with T.assert_raises(jarbuilder.ConfigurationError):
+            jarbuilder._validate_config_file("foo")
+        mock_exists.assert_called_once_with("foo")
+
+    @mock.patch.object(os.path, 'exists', autospec=True)
+    @mock.patch.object(os.path, 'isfile', autospec=True)
+    def test__validate_config_file_not_a_file(
+            self, mock_isfile, mock_exists):
+        mock_exists.return_value = True
+        mock_isfile.return_value = False
+        with T.assert_raises(jarbuilder.ConfigurationError):
+            jarbuilder._validate_config_file("foo")
+        mock_exists.assert_called_once_with("foo")
+        mock_isfile.assert_called_once_with("foo")
+
+    def test__update_configuration(self):
+        default_config = jarbuilder.DEFAULTS
+        update_dict = {
+            "pypi_index_url": "http://pypi-ninja.ninjacorp.com/simple"}
+        updated_config = jarbuilder._update_configuration(
+            default_config, update_dict)
+        T.assert_equal(default_config.pypi_index_url, None)
+        T.assert_equal(updated_config.pypi_index_url,
+                       "http://pypi-ninja.ninjacorp.com/simple")
 
 
 if __name__ == '__main__':
