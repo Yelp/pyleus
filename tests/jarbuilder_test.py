@@ -111,18 +111,20 @@ class JarbuilderTest(T.TestCase):
         mock_proc.communicate.assert_called_once_with()
 
     @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
-    def test__is_pyleus_installed_installed(self, mock_dep_call):
+    def test__is_package_installed_installed(self, mock_dep_call):
         mock_dep_call.return_value = "---\nName: pyleus\n"
-        installed = jarbuilder._is_pyleus_installed("foo", err_stream=42)
+        installed = jarbuilder._is_package_installed(
+            "foo", "pyleus", err_stream=42)
         mock_dep_call.assert_called_once_with(
             ["pyleus_venv/bin/pip", "show", "pyleus"],
             cwd="foo", stdout=subprocess.PIPE, stderr=42, err_msg=mock.ANY)
         T.assert_equal(installed, True)
 
     @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
-    def test__is_pyleus_installed_not_installed(self, mock_dep_call):
+    def test__is_package_installed_not_installed(self, mock_dep_call):
         mock_dep_call.return_value = ""
-        installed = jarbuilder._is_pyleus_installed("foo", err_stream=42)
+        installed = jarbuilder._is_package_installed(
+            "foo", "pyleus", err_stream=42)
         mock_dep_call.assert_called_once_with(
             ["pyleus_venv/bin/pip", "show", "pyleus"],
             cwd="foo", stdout=subprocess.PIPE, stderr=42, err_msg=mock.ANY)
@@ -130,7 +132,7 @@ class JarbuilderTest(T.TestCase):
 
     @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
     @mock.patch.object(__builtin__, 'open', autospec=True)
-    @mock.patch.object(jarbuilder, '_is_pyleus_installed', autospec=True)
+    @mock.patch.object(jarbuilder, '_is_package_installed', autospec=True)
     def test__virtualenv_pip_install_all_options(
             self, mock_inst, mock_open, mock_dep_call):
         mock_dep_call.side_effect = iter([0, 0, 0])
@@ -159,7 +161,7 @@ class JarbuilderTest(T.TestCase):
         ]
         mock_dep_call.assert_has_calls(expected)
         mock_open.assert_called_once_with(os.devnull, "w")
-        mock_inst.assert_called_once_with("foo", err_stream=42)
+        mock_inst.assert_called_once_with("foo", "pyleus", err_stream=42)
 
     @mock.patch.object(glob, 'glob', autospec=True)
     def test__exclude_content(self, mock_glob):

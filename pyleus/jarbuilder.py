@@ -147,9 +147,9 @@ def _call_dep_cmd(cmd, cwd, stdout, stderr, err_msg):
     return out_data
 
 
-def _is_pyleus_installed(tmp_dir, err_stream):
+def _is_package_installed(tmp_dir, package, err_stream):
     """Check if pyleus is already installed in the virtualenv."""
-    show_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "show", "pyleus"]
+    show_cmd = [os.path.join(VIRTUALENV, "bin", "pip"), "show", package]
     out_data = _call_dep_cmd(
         show_cmd, cwd=tmp_dir,
         stdout=subprocess.PIPE, stderr=err_stream,
@@ -223,7 +223,7 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
 
     # err_stream=out_stream
     # if verbose then errors to output, else errors to /dev/null
-    if not _is_pyleus_installed(tmp_dir, err_stream=out_stream):
+    if not _is_package_installed(tmp_dir, "pyleus", err_stream=out_stream):
         _pip_install(
             tmp_dir,
             "pyleus",
