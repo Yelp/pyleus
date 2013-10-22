@@ -48,18 +48,18 @@ PYLEUS_ERROR_FMT = "{0}: error: {1}"
 
 Configuration = collections.namedtuple(
     "Configuration",
-    "config_file pypi_index_url base_jar output_jar "
-    "use_virtualenv system pip_log verbose"
+    "base_jar config_file output_jar pip_log "
+    "pypi_index_url system use_virtualenv verbose"
 )
 
 DEFAULTS = Configuration(
-    config_file=None,
-    pypi_index_url=None,
     base_jar=BASE_JAR_PATH,
+    config_file=None,
     output_jar=None,
-    use_virtualenv=None,
-    system=False,
     pip_log=None,
+    pypi_index_url=None,
+    system=False,
+    use_virtualenv=None,
     verbose=False,
 )
 
