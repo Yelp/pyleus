@@ -262,13 +262,13 @@ class JarbuilderTest(T.TestCase):
         mock_zipfile.assert_called_once_with("bar", "w")
         mock_zip_dir.assert_called_once_with("foo", mock_zipfile.return_value)
 
-    @mock.patch.object(os.path, 'abspath', autospec=True)
-    def test__build_otuput_path(self, mock_abspath):
+    @mock.patch.object(jarbuilder, '_expand_path', autospec=True)
+    def test__build_otuput_path(self, mock_ex_path):
         jarbuilder._build_output_path("foo", "bar")
-        mock_abspath.assert_called_with("foo")
+        mock_ex_path.assert_called_with("foo")
 
         jarbuilder._build_output_path(None, "bar")
-        mock_abspath.assert_called_with("bar.jar")
+        mock_ex_path.assert_called_with("bar.jar")
 
 
 if __name__ == '__main__':

@@ -321,6 +321,11 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, options):
     _pack_jar(tmp_dir, output_jar)
 
 
+def _expand_path(path):
+    """Return the corresponding absolute path after variables expansion."""
+    return os.path.abspath(os.path.expanduser(os.path.expandvars(path)))
+
+
 def _build_output_path(output_arg, topology_dir):
     """Return the absolute path of the output jar file.
 
@@ -328,9 +333,9 @@ def _build_output_path(output_arg, topology_dir):
         TOPOLOGY_DIRECTORY.jar
     """
     if output_arg is not None:
-        return os.path.abspath(output_arg)
+        return _expand_path(output_arg)
     else:
-        return os.path.abspath(os.path.basename(topology_dir) + ".jar")
+        return _expand_path(os.path.basename(topology_dir) + ".jar")
 
 
 def main():
@@ -369,11 +374,11 @@ def main():
         parser.error("incorrect number of arguments")
 
     # Transform each path in its absolute version
-    topology_dir = os.path.abspath(args[0])
-    base_jar = os.path.abspath(options.base_jar)
+    topology_dir = _expand_path(args[0])
+    base_jar = _expand_path(options.base_jar)
     output_jar = _build_output_path(options.output_jar, topology_dir)
     if options.pip_log is not None:
-        options.pip_log = os.path.abspath(options.pip_log)
+        options.pip_log = _expand_path(options.pip_log)
 
     # Check for output path existence for early failure
     if os.path.exists(output_jar):
