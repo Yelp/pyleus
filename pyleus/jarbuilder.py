@@ -21,8 +21,8 @@ Note: The names used for the YAML file and for the virtualenv CANNOT be changed
 without modifying the Java code accordingly.
 """
 
-import ConfigParser
 import collections
+import ConfigParser
 import optparse
 import glob
 import re
@@ -51,8 +51,8 @@ PYLEUS_ERROR_FMT = "{0}: error: {1}"
 
 Configuration = collections.namedtuple(
     "Configuration",
-    "base_jar config_file include_packages output_jar pip_log "
-    "pypi_index_url system use_virtualenv verbose"
+    "base_jar config_file include_packages output_jar pip_log \
+     pypi_index_url system use_virtualenv verbose"
 )
 
 DEFAULTS = Configuration(
