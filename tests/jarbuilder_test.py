@@ -245,13 +245,10 @@ class JarbuilderTest(T.TestCase):
 
     @mock.patch.object(os, 'path', autospec=True)
     def test__expand_path(self, mock_path):
-        expanded = jarbuilder._expand_path(None)
-        T.assert_equals(expanded, None)
-
         mock_path.abspath.return_value = "bar"
         expanded = jarbuilder._expand_path("foo")
         mock_path.abspath.assert_has_calls([
-            mock.call(mock_path.expanduser(mock_path.expandvars("foo")))])
+            mock.call(mock_path.expanduser("foo"))])
         T.assert_equals(expanded, "bar")
 
     @mock.patch.object(jarbuilder, '_expand_path', autospec=True)

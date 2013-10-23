@@ -34,8 +34,8 @@ import sys
 import zipfile
 
 CONFIG_SYSTEM_PATH = "/etc/pyleus.conf"
-CONFIG_USER_PATH = "$HOME/.congif/pyleus.conf"
-CONFIG_HOME_PATH = "$HOME/.pyleus.conf"
+CONFIG_USER_PATH = "~/.congif/pyleus.conf"
+CONFIG_HOME_PATH = "~/.pyleus.conf"
 
 BASE_JAR_PATH = "minimal.jar"
 RESOURCES_PATH = "resources/"
@@ -340,7 +340,7 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, configs):
                                 req=req,
                                 system=configs.system,
                                 pypi_index_url=configs.pypi_index_url,
-                                pip_log=_expand_path(configs.pip_log),
+                                pip_log=configs.pip_log,
                                 verbose=configs.verbose)
 
     # Pack the tmp directory into a jar
@@ -349,9 +349,7 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, configs):
 
 def _expand_path(path):
     """Return the corresponding absolute path after variables expansion."""
-    if path is None:
-        return None
-    return os.path.abspath(os.path.expanduser(os.path.expandvars(path)))
+    return os.path.abspath(os.path.expanduser(path))
 
 
 def _build_output_path(output_arg, topology_dir):
@@ -450,18 +448,23 @@ def main():
     if len(args) != 1:
         parser.error("incorrect number of arguments")
 
+    if options.config_file is not None:
+        options.config_file = _expand_path(options.config_file)
+    if options.pip_log is not None:
+        options.pip_log = _expand_path(options.pip_log)
+
     # Load configurations into a Configuration named tuple
     try:
-        configs = _load_configuration(_expand_path(options.config_file))
+        configs = _load_configuration(options.config_file)
     except PyleusError as e:
         sys.exit(PYLEUS_ERROR_FMT.format(PROG, str(e)))
-
-    # Update configuration with command line values
-    configs = _update_configuration(configs, vars(options))
 
     topology_dir = _expand_path(args[0])
     base_jar = _expand_path(configs.base_jar)
     output_jar = _build_output_path(configs.output_jar, topology_dir)
+
+    # Update configuration with command line values
+    configs = _update_configuration(configs, vars(options))
 
     # Check for output path existence for early failure
     if os.path.exists(output_jar):
