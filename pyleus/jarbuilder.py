@@ -33,9 +33,12 @@ import subprocess
 import sys
 import zipfile
 
-CONFIG_SYSTEM_PATH = "/etc/pyleus.conf"
-CONFIG_USER_PATH = "~/.congif/pyleus.conf"
-CONFIG_HOME_PATH = "~/.pyleus.conf"
+# Configuration files paths in order of increasing precedence
+CONFIG_FILES_PATH = [
+    "/etc/pyleus.conf",
+    "~/.config/pyleus.conf",
+    "~/.pyleus.conf"
+]
 
 BASE_JAR_PATH = "minimal.jar"
 RESOURCES_PATH = "resources/"
@@ -215,7 +218,7 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
                   " topology. Failed to create virtualenv.")
 
     # The default packages are installed before than the topology-specific ones
-    # in order to give priority to the version specified in the latter
+    # in order to give precedence to the latter
     packages = ["pyleus"]
     if kwargs.get("include_packages") is not None:
         packages += kwargs["include_packages"].split(" ")
@@ -401,11 +404,7 @@ def _load_configuration(cmd_line_file):
     Returns:
     Configuration named tuple
     """
-    config_files_hierarchy = [
-        _expand_path(CONFIG_SYSTEM_PATH),
-        _expand_path(CONFIG_USER_PATH),
-        _expand_path(CONFIG_HOME_PATH)
-    ]
+    config_files_hierarchy = [_expand_path(c) for c in CONFIG_FILES_PATH]
 
     if cmd_line_file is not None:
         _validate_config_file(cmd_line_file)
