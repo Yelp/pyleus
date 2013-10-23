@@ -149,15 +149,15 @@ class JarbuilderTest(T.TestCase):
             mock.call(["virtualenv", "pyleus_venv", "--system-site-packages"],
                       cwd="foo", stdout=42, stderr=subprocess.STDOUT,
                       err_msg=mock.ANY),
+            mock.call(["pyleus_venv/bin/pip", "install", "pyleus",
+                       "-i", "http://pypi-ninja.ninjacorp.com/simple"],
+                      cwd="foo", stdout=42, stderr=subprocess.STDOUT,
+                      err_msg=mock.ANY),
             mock.call(["pyleus_venv/bin/pip", "install", "-r", "bar",
                        "-i", "http://pypi-ninja.ninjacorp.com/simple",
                        "--log", "baz"],
                       cwd="foo", stdout=42, stderr=subprocess.STDOUT,
                       err_msg=mock.ANY),
-            mock.call(["pyleus_venv/bin/pip", "install", "pyleus",
-                       "-i", "http://pypi-ninja.ninjacorp.com/simple"],
-                      cwd="foo", stdout=42, stderr=subprocess.STDOUT,
-                      err_msg=mock.ANY)
         ]
         mock_dep_call.assert_has_calls(expected)
         mock_open.assert_called_once_with(os.devnull, "w")

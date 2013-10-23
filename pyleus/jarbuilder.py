@@ -48,13 +48,14 @@ PYLEUS_ERROR_FMT = "{0}: error: {1}"
 
 Configuration = collections.namedtuple(
     "Configuration",
-    "base_jar config_file output_jar pip_log "
+    "base_jar config_file include_packages output_jar pip_log "
     "pypi_index_url system use_virtualenv verbose"
 )
 
 DEFAULTS = Configuration(
     base_jar=BASE_JAR_PATH,
     config_file=None,
+    include_packages=None,
     output_jar=None,
     pip_log=None,
     pypi_index_url=None,
@@ -213,6 +214,26 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
                   err_msg="Failed to install dependencies for this"
                   " topology. Failed to create virtualenv.")
 
+    # The default packages are installed before than the topology-specific ones
+    # in order to give priority to the version specified in the latter
+    packages = ["pyleus"]
+    if kwargs.get("include_packages") is not None:
+        packages += kwargs["include_packages"].split(" ")
+
+    for p in packages:
+        # err_stream=out_stream
+        # if verbose then errors to output, else errors to /dev/null
+        if not _is_package_installed(tmp_dir, p, err_stream=out_stream):
+            _pip_install(
+                tmp_dir,
+                p,
+                pypi_index_url=kwargs.get("pypi_index_url"),
+                out_stream=out_stream,
+                err_msg="Failed to install {0} package."
+                " Run with --verbose for detailed info."
+                .format(p)
+            )
+
     _pip_install(
         tmp_dir,
         req=req,
@@ -220,18 +241,6 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
         pip_log=kwargs.get("pip_log"),
         out_stream=out_stream
     )
-
-    # err_stream=out_stream
-    # if verbose then errors to output, else errors to /dev/null
-    if not _is_package_installed(tmp_dir, "pyleus", err_stream=out_stream):
-        _pip_install(
-            tmp_dir,
-            "pyleus",
-            pypi_index_url=kwargs.get("pypi_index_url"),
-            out_stream=out_stream,
-            err_msg="Failed to install pyleus package."
-            " Run with --verbose for detailed info."
-        )
 
 
 def _exclude_content(src, exclude_req):
@@ -338,6 +347,7 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, configs):
     if use_virtualenv:
         _virtualenv_pip_install(tmp_dir=os.path.join(tmp_dir, RESOURCES_PATH),
                                 req=req,
+                                include_packages=configs.include_packages,
                                 system=configs.system,
                                 pypi_index_url=configs.pypi_index_url,
                                 pip_log=configs.pip_log,
