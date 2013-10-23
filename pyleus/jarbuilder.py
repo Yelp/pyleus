@@ -223,18 +223,18 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
     if kwargs.get("include_packages") is not None:
         packages += kwargs["include_packages"].split(" ")
 
-    for p in packages:
+    for package in packages:
         # err_stream=out_stream
         # if verbose then errors to output, else errors to /dev/null
-        if not _is_package_installed(tmp_dir, p, err_stream=out_stream):
+        if not _is_package_installed(tmp_dir, package, err_stream=out_stream):
             _pip_install(
                 tmp_dir,
-                p,
+                package,
                 pypi_index_url=kwargs.get("pypi_index_url"),
                 out_stream=out_stream,
                 err_msg="Failed to install {0} package."
                 " Run with --verbose for detailed info."
-                .format(p)
+                .format(package)
             )
 
     _pip_install(
