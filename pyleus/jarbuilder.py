@@ -33,6 +33,14 @@ import subprocess
 import sys
 import zipfile
 
+from exceptions import ConfigurationError
+from exceptions import DependenciesError
+from exceptions import InvalidTopologyError
+from exceptions import JarError
+from exceptions import PyleusError
+from exceptions import TopologyError
+
+
 # Configuration files paths in order of increasing precedence
 CONFIG_FILES_PATH = [
     "/etc/pyleus.conf",
@@ -67,20 +75,6 @@ DEFAULTS = Configuration(
     use_virtualenv=None,
     verbose=False,
 )
-
-class PyleusError(Exception):
-    """Base class for pyleus specific exceptions"""
-    def __str__(self):
-        return "[{0}] {1}".format(type(self).__name__,
-               ", ".join(str(i) for i in self.args))
-
-
-class ConfigurationError(PyleusError): pass
-class JarError(PyleusError): pass
-class TopologyError(PyleusError): pass
-class InvalidTopologyError(TopologyError): pass
-class DependenciesError(TopologyError): pass
-
 
 def _open_jar(base_jar):
     """Open the base jar file."""
@@ -389,7 +383,7 @@ def _validate_config_file(config_file):
     """Ensure that config_file exists and is a file"""
     if not os.path.exists(config_file):
         raise ConfigurationError("Specified configuration file not"
-                                 "found: {0}".format(config_file))
+                                 " found: {0}".format(config_file))
     if not os.path.isfile(config_file):
         raise ConfigurationError("Specified configuration file is not"
                                  " a file: {0}".format(config_file))
