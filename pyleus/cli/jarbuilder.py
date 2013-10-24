@@ -20,8 +20,6 @@ Note: The names used for the YAML file and for the virtualenv CANNOT be changed
 without modifying the Java code accordingly.
 """
 
-import collections
-import ConfigParser
 import glob
 import re
 import tempfile
@@ -31,6 +29,9 @@ import subprocess
 import sys
 import zipfile
 
+from pyleus.configuration import load_configuration
+from pyleus.configuration import update_configuration
+from pyleus.utils import expand_path
 from pyleus.exception import DependenciesError
 from pyleus.exception import InvalidTopologyError
 from pyleus.exception import JarError
@@ -38,14 +39,6 @@ from pyleus.exception import PyleusError
 from pyleus.exception import TopologyError
 
 
-# Configuration files paths in order of increasing precedence
-CONFIG_FILES_PATH = [
-    "/etc/pyleus.conf",
-    "~/.config/pyleus.conf",
-    "~/.pyleus.conf"
-]
-
-BASE_JAR_PATH = "minimal.jar"
 RESOURCES_PATH = "resources/"
 YAML_FILENAME = "pyleus_topology.yaml"
 REQUIREMENTS_FILENAME = "requirements.txt"
@@ -54,25 +47,6 @@ VIRTUALENV = "pyleus_venv"
 PROG = os.path.basename("jar")
 PYLEUS_ERROR_FMT = "pyleus {0}: error: {1}"
 
-Configuration = collections.namedtuple(
-    "Configuration",
-    "base_jar config_file func include_packages output_jar pip_log \
-     pypi_index_url system topology_dir use_virtualenv verbose"
-)
-
-DEFAULTS = Configuration(
-    base_jar=BASE_JAR_PATH,
-    config_file=None,
-    func=None,
-    include_packages=None,
-    output_jar=None,
-    pip_log=None,
-    pypi_index_url=None,
-    system=False,
-    topology_dir=None,
-    use_virtualenv=None,
-    verbose=False,
-)
 
 def _open_jar(base_jar):
     """Open the base jar file."""
@@ -353,11 +327,6 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, configs):
     _pack_jar(tmp_dir, output_jar)
 
 
-def _expand_path(path):
-    """Return the corresponding absolute path after variables expansion."""
-    return os.path.abspath(os.path.expanduser(path))
-
-
 def _build_output_path(output_arg, topology_dir):
     """Return the absolute path of the output jar file.
 
@@ -365,76 +334,29 @@ def _build_output_path(output_arg, topology_dir):
         TOPOLOGY_DIRECTORY.jar
     """
     if output_arg is not None:
-        return _expand_path(output_arg)
+        return expand_path(output_arg)
     else:
-        return _expand_path(os.path.basename(topology_dir) + ".jar")
-
-
-def _update_configuration(config, update_dict):
-    """Update configuration with new values passed as dictionary"""
-    tmp = config._asdict()
-    tmp.update(update_dict)
-    return Configuration(**tmp)
-
-
-def _validate_config_file(config_file):
-    """Ensure that config_file exists and is a file"""
-    if not os.path.exists(config_file):
-        raise ConfigurationError("Specified configuration file not"
-                                 " found: {0}".format(config_file))
-    if not os.path.isfile(config_file):
-        raise ConfigurationError("Specified configuration file is not"
-                                 " a file: {0}".format(config_file))
-
-
-def _load_configuration(cmd_line_file):
-    """Load configurations from the more generic to the
-    more specific configuration file. The latter configurations
-    override the previous one.
-    If a file is specified from command line, it  is considered
-    the most specific.
-
-    Returns:
-    Configuration named tuple
-    """
-    config_files_hierarchy = [_expand_path(c) for c in CONFIG_FILES_PATH]
-
-    if cmd_line_file is not None:
-        _validate_config_file(cmd_line_file)
-        config_files_hierarchy.append(cmd_line_file)
-
-    config = ConfigParser.SafeConfigParser()
-    config.read(config_files_hierarchy)
-
-    configs = _update_configuration(
-        DEFAULTS,
-        dict(
-            (config_name, config_value)
-            for section in config.sections()
-            for config_name, config_value in config.items(section)
-        )
-    )
-    return configs
+        return expand_path(os.path.basename(topology_dir) + ".jar")
 
 
 def execute(args):
     """Parse command-line arguments and invoke _inject()"""
     if args.config_file is not None:
-        args.config_file = _expand_path(args.config_file)
+        args.config_file = expand_path(args.config_file)
     if args.pip_log is not None:
-        args.pip_log = _expand_path(args.pip_log)
+        args.pip_log = expand_path(args.pip_log)
 
     # Load configurations into a Configuration named tuple
     try:
-        configs = _load_configuration(args.config_file)
+        configs = load_configuration(args.config_file)
     except PyleusError as e:
         sys.exit(PYLEUS_ERROR_FMT.format(PROG, str(e)))
 
     # Update configuration with command line values
-    configs = _update_configuration(configs, vars(args))
+    configs = update_configuration(configs, vars(args))
 
-    topology_dir = _expand_path(configs.topology_dir)
-    base_jar = _expand_path(configs.base_jar)
+    topology_dir = expand_path(configs.topology_dir)
+    base_jar = expand_path(configs.base_jar)
     output_jar = _build_output_path(configs.output_jar, topology_dir)
 
     # Check for output path existence for early failure

@@ -244,50 +244,13 @@ class JarbuilderTest(T.TestCase):
         flag = jarbuilder._is_virtualenv_required(mock_configs, req)
         T.assert_equals(flag, True)
 
-    @mock.patch.object(os, 'path', autospec=True)
-    def test__expand_path(self, mock_path):
-        mock_path.abspath.return_value = "bar"
-        expanded = jarbuilder._expand_path("foo")
-        mock_path.abspath.assert_has_calls([
-            mock.call(mock_path.expanduser("foo"))])
-        T.assert_equals(expanded, "bar")
-
-    @mock.patch.object(jarbuilder, '_expand_path', autospec=True)
+    @mock.patch.object(jarbuilder, 'expand_path', autospec=True)
     def test__build_otuput_path(self, mock_ex_path):
         jarbuilder._build_output_path("foo", "bar")
         mock_ex_path.assert_called_with("foo")
 
         jarbuilder._build_output_path(None, "bar")
         mock_ex_path.assert_called_with("bar.jar")
-
-    @mock.patch.object(os.path, 'exists', autospec=True)
-    def test__validate_config_file_not_found(
-            self, mock_exists):
-        mock_exists.return_value = False
-        with T.assert_raises(exception.ConfigurationError):
-            jarbuilder._validate_config_file("foo")
-        mock_exists.assert_called_once_with("foo")
-
-    @mock.patch.object(os.path, 'exists', autospec=True)
-    @mock.patch.object(os.path, 'isfile', autospec=True)
-    def test__validate_config_file_not_a_file(
-            self, mock_isfile, mock_exists):
-        mock_exists.return_value = True
-        mock_isfile.return_value = False
-        with T.assert_raises(exception.ConfigurationError):
-            jarbuilder._validate_config_file("foo")
-        mock_exists.assert_called_once_with("foo")
-        mock_isfile.assert_called_once_with("foo")
-
-    def test__update_configuration(self):
-        default_config = jarbuilder.DEFAULTS
-        update_dict = {
-            "pypi_index_url": "http://pypi-ninja.ninjacorp.com/simple"}
-        updated_config = jarbuilder._update_configuration(
-            default_config, update_dict)
-        T.assert_equal(default_config.pypi_index_url, None)
-        T.assert_equal(updated_config.pypi_index_url,
-                       "http://pypi-ninja.ninjacorp.com/simple")
 
 
 if __name__ == '__main__':
