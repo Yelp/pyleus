@@ -8,7 +8,7 @@ import zipfile
 
 import testify as T
 
-from pyleus import exceptions
+from pyleus import exception
 import pyleus.cli.jarbuilder as jarbuilder
 
 
@@ -17,7 +17,7 @@ class JarbuilderTest(T.TestCase):
     @mock.patch.object(os.path, 'exists', autospec=True)
     def test__open_jar_jarfile_not_found(self, mock_exists):
         mock_exists.return_value = False
-        with T.assert_raises(exceptions.JarError):
+        with T.assert_raises(exception.JarError):
             jarbuilder._open_jar("foo")
         mock_exists.assert_called_once_with("foo")
 
@@ -26,14 +26,14 @@ class JarbuilderTest(T.TestCase):
     def test__open_jar_not_jarfile(self, mock_is_zipfile, mock_exists):
         mock_exists.return_value = True
         mock_is_zipfile.return_value = False
-        with T.assert_raises(exceptions.JarError):
+        with T.assert_raises(exception.JarError):
             jarbuilder._open_jar("foo")
         mock_is_zipfile.assert_called_once_with("foo")
 
     @mock.patch.object(os.path, 'exists', autospec=True)
     def test__validate_dir_not_found(self, mock_exists):
         mock_exists.return_value = False
-        with T.assert_raises(exceptions.TopologyError):
+        with T.assert_raises(exception.TopologyError):
             jarbuilder._validate_dir("foo")
         mock_exists.assert_called_once_with("foo")
 
@@ -42,28 +42,28 @@ class JarbuilderTest(T.TestCase):
     def test__validate_dir_not_a_directory(self, mock_isdir, mock_exists):
         mock_exists.return_value = True
         mock_isdir.return_value = False
-        with T.assert_raises(exceptions.TopologyError):
+        with T.assert_raises(exception.TopologyError):
                 jarbuilder._validate_dir("foo")
         mock_isdir.assert_called_once_with("foo")
 
     @mock.patch.object(os.path, 'isfile', autospec=True)
     def test__validate_yaml_not_found(self, mock_isfile):
         mock_isfile.return_value = False
-        with T.assert_raises(exceptions.InvalidTopologyError):
+        with T.assert_raises(exception.InvalidTopologyError):
             jarbuilder._validate_yaml("foo")
         mock_isfile.assert_called_once_with("foo")
 
     @mock.patch.object(os.path, 'isfile', autospec=True)
     def test__validate_req_not_found(self, mock_isfile):
         mock_isfile.return_value = False
-        with T.assert_raises(exceptions.InvalidTopologyError):
+        with T.assert_raises(exception.InvalidTopologyError):
             jarbuilder._validate_req("foo")
         mock_isfile.assert_called_once_with("foo")
 
     @mock.patch.object(os.path, 'exists', autospec=True)
     def test__validate_venv_dir_contains_venv(self, mock_exists):
         mock_exists.return_value = True
-        with T.assert_raises(exceptions.InvalidTopologyError):
+        with T.assert_raises(exception.InvalidTopologyError):
                 jarbuilder._validate_venv("foo", "foo/bar_venv")
         mock_exists.assert_called_once_with("foo/bar_venv")
 
@@ -103,7 +103,7 @@ class JarbuilderTest(T.TestCase):
         mock_proc.communicate.return_value = ["baz", "qux"]
         mock_proc.returncode = 1
         T.assert_raises_and_contains(
-            exceptions.DependenciesError, ["bar"],
+            exception.DependenciesError, ["bar"],
             jarbuilder._call_dep_cmd, "bash_ninja",
             cwd="foo", stdout=42, stderr=666,
             err_msg="bar")
@@ -207,7 +207,7 @@ class JarbuilderTest(T.TestCase):
     @mock.patch.object(os.path, 'exists', autospec=True)
     def test__pack_jar_output_jar_already_exists(self, mock_exists):
         mock_exists.return_value = True
-        with T.assert_raises(exceptions.JarError):
+        with T.assert_raises(exception.JarError):
             jarbuilder._pack_jar("foo", "bar")
         mock_exists.assert_called_once_with("bar")
 
@@ -264,7 +264,7 @@ class JarbuilderTest(T.TestCase):
     def test__validate_config_file_not_found(
             self, mock_exists):
         mock_exists.return_value = False
-        with T.assert_raises(exceptions.ConfigurationError):
+        with T.assert_raises(exception.ConfigurationError):
             jarbuilder._validate_config_file("foo")
         mock_exists.assert_called_once_with("foo")
 
@@ -274,7 +274,7 @@ class JarbuilderTest(T.TestCase):
             self, mock_isfile, mock_exists):
         mock_exists.return_value = True
         mock_isfile.return_value = False
-        with T.assert_raises(exceptions.ConfigurationError):
+        with T.assert_raises(exception.ConfigurationError):
             jarbuilder._validate_config_file("foo")
         mock_exists.assert_called_once_with("foo")
         mock_isfile.assert_called_once_with("foo")

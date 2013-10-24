@@ -31,12 +31,11 @@ import subprocess
 import sys
 import zipfile
 
-from pyleus.exceptions import ConfigurationError
-from pyleus.exceptions import DependenciesError
-from pyleus.exceptions import InvalidTopologyError
-from pyleus.exceptions import JarError
-from pyleus.exceptions import PyleusError
-from pyleus.exceptions import TopologyError
+from pyleus.exception import DependenciesError
+from pyleus.exception import InvalidTopologyError
+from pyleus.exception import JarError
+from pyleus.exception import PyleusError
+from pyleus.exception import TopologyError
 
 
 # Configuration files paths in order of increasing precedence
