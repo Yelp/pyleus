@@ -3,7 +3,7 @@ based on arguments provided.
 """
 import argparse
 
-from pyleus.__init__ import __version__
+from pyleus import __version__
 import jarbuilder
 
 

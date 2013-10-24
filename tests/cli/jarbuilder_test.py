@@ -30,6 +30,37 @@ class JarbuilderTest(T.TestCase):
             jarbuilder._open_jar("foo")
         mock_is_zipfile.assert_called_once_with("foo")
 
+    @mock.patch.object(os, 'walk', autospec=True)
+    def test__zip_dir(self, mock_walk):
+        mock_arc = mock.Mock(autospec=True)
+        mock_walk.return_value = [
+            ("foo", ["bar"], ["baz"]),
+            ("foo/bar", [], ["qux"])
+        ]
+        jarbuilder._zip_dir("foo", mock_arc)
+        mock_walk.assert_any_call("foo")
+        expected = [
+            mock.call("foo/baz", "baz", zipfile.ZIP_DEFLATED),
+            mock.call("foo/bar/qux", "bar/qux", zipfile.ZIP_DEFLATED),
+        ]
+        mock_arc.write.assert_has_calls(expected)
+
+    @mock.patch.object(os.path, 'exists', autospec=True)
+    def test__pack_jar_output_jar_already_exists(self, mock_exists):
+        mock_exists.return_value = True
+        with T.assert_raises(exception.JarError):
+            jarbuilder._pack_jar("foo", "bar")
+        mock_exists.assert_called_once_with("bar")
+
+    @mock.patch.object(os.path, 'exists', autospec=True)
+    @mock.patch.object(zipfile, 'ZipFile', autospec=True)
+    @mock.patch.object(jarbuilder, '_zip_dir', autospec=True)
+    def test__pack_jar(self, mock_zip_dir, mock_zipfile, mock_exists):
+        mock_exists.return_value = False
+        jarbuilder._pack_jar("foo", "bar")
+        mock_zipfile.assert_called_once_with("bar", "w")
+        mock_zip_dir.assert_called_once_with("foo", mock_zipfile.return_value)
+
     @mock.patch.object(os.path, 'exists', autospec=True)
     def test__validate_dir_not_found(self, mock_exists):
         mock_exists.return_value = False
@@ -164,6 +195,30 @@ class JarbuilderTest(T.TestCase):
         mock_open.assert_called_once_with(os.devnull, "w")
         mock_inst.assert_called_once_with("foo", "pyleus", err_stream=42)
 
+    @mock.patch.object(os.path, 'isfile', autospec=True)
+    def test__is_virtualenv_required(self, mock_isfile):
+        mock_configs = mock.Mock()
+        mock_configs.use_virtualenv = None
+        req = "foo/baz.txt"
+
+        mock_isfile.return_value = False
+        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
+        mock_isfile.assert_called_once_with(req)
+        T.assert_equals(flag, False)
+
+        mock_isfile.return_value = True
+        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
+        T.assert_equals(flag, True)
+
+        mock_configs.use_virtualenv = False
+        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
+        T.assert_equals(flag, False)
+
+        mock_configs.use_virtualenv = True
+        mock_isfile.return_value = False
+        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
+        T.assert_equals(flag, True)
+
     @mock.patch.object(glob, 'glob', autospec=True)
     def test__exclude_content(self, mock_glob):
         mock_glob.return_value = ["foo/spam", "foo/ham",
@@ -188,61 +243,6 @@ class JarbuilderTest(T.TestCase):
         mock_copytree.assert_called_once_with(
             "foo/ham", "bar/ham", symlinks=True)
         mock_copy2.assert_called_once_with("foo/honey", "bar")
-
-    @mock.patch.object(os, 'walk', autospec=True)
-    def test__zip_dir(self, mock_walk):
-        mock_arc = mock.Mock(autospec=True)
-        mock_walk.return_value = [
-            ("foo", ["bar"], ["baz"]),
-            ("foo/bar", [], ["qux"])
-        ]
-        jarbuilder._zip_dir("foo", mock_arc)
-        mock_walk.assert_any_call("foo")
-        expected = [
-            mock.call("foo/baz", "baz", zipfile.ZIP_DEFLATED),
-            mock.call("foo/bar/qux", "bar/qux", zipfile.ZIP_DEFLATED),
-        ]
-        mock_arc.write.assert_has_calls(expected)
-
-    @mock.patch.object(os.path, 'exists', autospec=True)
-    def test__pack_jar_output_jar_already_exists(self, mock_exists):
-        mock_exists.return_value = True
-        with T.assert_raises(exception.JarError):
-            jarbuilder._pack_jar("foo", "bar")
-        mock_exists.assert_called_once_with("bar")
-
-    @mock.patch.object(os.path, 'exists', autospec=True)
-    @mock.patch.object(zipfile, 'ZipFile', autospec=True)
-    @mock.patch.object(jarbuilder, '_zip_dir', autospec=True)
-    def test__pack_jar(self, mock_zip_dir, mock_zipfile, mock_exists):
-        mock_exists.return_value = False
-        jarbuilder._pack_jar("foo", "bar")
-        mock_zipfile.assert_called_once_with("bar", "w")
-        mock_zip_dir.assert_called_once_with("foo", mock_zipfile.return_value)
-
-    @mock.patch.object(os.path, 'isfile', autospec=True)
-    def test__is_virtualenv_required(self, mock_isfile):
-        mock_configs = mock.Mock()
-        mock_configs.use_virtualenv = None
-        req = "foo/baz.txt"
-
-        mock_isfile.return_value = False
-        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
-        mock_isfile.assert_called_once_with(req)
-        T.assert_equals(flag, False)
-
-        mock_isfile.return_value = True
-        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
-        T.assert_equals(flag, True)
-
-        mock_configs.use_virtualenv = False
-        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
-        T.assert_equals(flag, False)
-
-        mock_configs.use_virtualenv = True
-        mock_isfile.return_value = False
-        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
-        T.assert_equals(flag, True)
 
     @mock.patch.object(jarbuilder, 'expand_path', autospec=True)
     def test__build_otuput_path(self, mock_ex_path):

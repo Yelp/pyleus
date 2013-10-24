@@ -1,3 +1,6 @@
+"""Pyleus configuration module
+"""
+
 import collections
 import ConfigParser
 import os

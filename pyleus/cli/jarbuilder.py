@@ -1,4 +1,4 @@
-"""Command-line tool for building a standalone, self-contained Pyleus topology
+"""Sub-command for building a standalone, self-contained Pyleus topology
 JAR ready to be submitted to a Storm cluster. If an optional requirements.txt
 is provided, Pyleus will use virtualenv to collect and provide Python
 dependencies to the running topology.
@@ -32,6 +32,7 @@ import zipfile
 from pyleus.configuration import load_configuration
 from pyleus.configuration import update_configuration
 from pyleus.utils import expand_path
+from pyleus.exception import command_error_fmt
 from pyleus.exception import DependenciesError
 from pyleus.exception import InvalidTopologyError
 from pyleus.exception import JarError
@@ -44,8 +45,7 @@ YAML_FILENAME = "pyleus_topology.yaml"
 REQUIREMENTS_FILENAME = "requirements.txt"
 VIRTUALENV = "pyleus_venv"
 
-PROG = os.path.basename("jar")
-PYLEUS_ERROR_FMT = "pyleus {0}: error: {1}"
+CMD = "jar"
 
 
 def _open_jar(base_jar):
@@ -59,6 +59,37 @@ def _open_jar(base_jar):
     zip_file = zipfile.ZipFile(base_jar, "r")
 
     return zip_file
+
+
+def _zip_dir(src, arc):
+    """Build a zip archive from the specified src.
+
+    Note: If the archive already exists, files will be simply
+    added to it, but the original archive will not be replaced.
+    At the current state, this script enforce the creation of
+    a brand new zip archive each time is run, otehrwise it will
+    raise an exception.
+    """
+    src_re = re.compile(src + "/*")
+    for root, dirs, files in os.walk(src):
+        # hack for copying everithing but the top directory
+        prefix = re.sub(src_re, "", root)
+        for f in files:
+            # zipfile creates directories if missing
+            arc.write(os.path.join(root, f), os.path.join(prefix, f),
+                      zipfile.ZIP_DEFLATED)
+
+
+def _pack_jar(tmp_dir, output_jar):
+    """Build a jar from the temporary directory."""
+    if os.path.exists(output_jar):
+        raise JarError("Output jar already exists: {0}".format(output_jar))
+
+    zf = zipfile.ZipFile(output_jar, "w")
+    try:
+        _zip_dir(tmp_dir, zf)
+    finally:
+        zf.close()
 
 
 def _validate_dir(topology_dir):
@@ -213,6 +244,15 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
     )
 
 
+def _is_virtualenv_required(configs, req):
+    """Figure out if a virtuelenv is required, even implicitely"""
+    # if use_virtualenv is undefined (None), it will be assigned on the base of
+    # the requirements.txt file
+    if configs.use_virtualenv is None:
+        return os.path.isfile(req)
+    return configs.use_virtualenv
+
+
 def _exclude_content(src, exclude_req):
     """Remove from the content list all paths matching the patterns
     in the exclude list.
@@ -228,8 +268,8 @@ def _exclude_content(src, exclude_req):
 
 
 def _copy_dir_content(src, dst, exclude_req):
-    """Copy the content of a directory excluding the paths
-    matching the patterns in the exclude list.
+    """Copy the content of a directory excluding the yaml file
+    and requirements.txt exclude_req is True.
 
     This functions is used instead of shutil.copytree() because
     the latter always creates a top level directory, while only
@@ -243,46 +283,6 @@ def _copy_dir_content(src, dst, exclude_req):
                             symlinks=True)
         else:
             shutil.copy2(t, dst)
-
-
-def _zip_dir(src, arc):
-    """Build a zip archive from the specified src.
-
-    Note: If the archive already exists, files will be simply
-    added to it, but the original archive will not be replaced.
-    At the current state, this script enforce the creation of
-    a brand new zip archive each time is run, otehrwise it will
-    raise an exception.
-    """
-    src_re = re.compile(src + "/*")
-    for root, dirs, files in os.walk(src):
-        # hack for copying everithing but the top directory
-        prefix = re.sub(src_re, "", root)
-        for f in files:
-            # zipfile creates directories if missing
-            arc.write(os.path.join(root, f), os.path.join(prefix, f),
-                      zipfile.ZIP_DEFLATED)
-
-
-def _pack_jar(tmp_dir, output_jar):
-    """Build a jar from the temporary directory."""
-    if os.path.exists(output_jar):
-        raise JarError("Output jar already exists: {0}".format(output_jar))
-
-    zf = zipfile.ZipFile(output_jar, "w")
-    try:
-        _zip_dir(tmp_dir, zf)
-    finally:
-        zf.close()
-
-
-def _is_virtualenv_required(configs, req):
-    """Figure out if a virtuelenv is required, even implicitely"""
-    # if use_virtualenv is undefined (None), it will be assigned on the base of
-    # the requirements.txt file
-    if configs.use_virtualenv is None:
-        return os.path.isfile(req)
-    return configs.use_virtualenv
 
 
 def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, configs):
@@ -350,7 +350,7 @@ def execute(args):
     try:
         configs = load_configuration(args.config_file)
     except PyleusError as e:
-        sys.exit(PYLEUS_ERROR_FMT.format(PROG, str(e)))
+        sys.exit(command_error_fmt(CMD, e))
 
     # Update configuration with command line values
     configs = update_configuration(configs, vars(args))
@@ -362,13 +362,13 @@ def execute(args):
     # Check for output path existence for early failure
     if os.path.exists(output_jar):
         e = JarError("Output jar already exist: {0}".format(output_jar))
-        sys.exit(PYLEUS_ERROR_FMT.format(PROG, str(e)))
+        sys.exit(command_error_fmt(CMD, e))
 
     try:
         # Open the base jar as a zip
         zip_file = _open_jar(base_jar)
     except PyleusError as e:
-        sys.exit(PYLEUS_ERROR_FMT.format(PROG, str(e)))
+        sys.exit(command_error_fmt(CMD, e))
 
     try:
         # Everything will be copied in a tmp directory
@@ -377,7 +377,7 @@ def execute(args):
             _inject(topology_dir, base_jar, output_jar,
                     zip_file, tmp_dir, configs)
         except PyleusError as e:
-            sys.exit(PYLEUS_ERROR_FMT.format(PROG, str(e)))
+            sys.exit(command_error_fmt(CMD, e))
         finally:
             shutil.rmtree(tmp_dir)
     finally:
@@ -386,7 +386,7 @@ def execute(args):
 
 def add_parser(subparsers):
     parser = subparsers.add_parser(
-        PROG,
+        CMD,
         usage="%(prog)s [options] TOPOLOGY_DIRECTORY",
         description="Build up a Storm jar from a topology source directory",
         help="Build up a Storm jar from a topology source directory",
