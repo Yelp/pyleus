@@ -9,7 +9,7 @@ import zipfile
 import testify as T
 
 from pyleus import exceptions
-from pyleus import jarbuilder
+import pyleus.cli.jarbuilder as jarbuilder
 
 
 class JarbuilderTest(T.TestCase):

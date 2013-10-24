@@ -21,7 +21,6 @@ Note: The names used for the YAML file and for the virtualenv CANNOT be changed
 without modifying the Java code accordingly.
 """
 
-import argparse
 import collections
 import ConfigParser
 import glob
@@ -33,12 +32,12 @@ import subprocess
 import sys
 import zipfile
 
-from exceptions import ConfigurationError
-from exceptions import DependenciesError
-from exceptions import InvalidTopologyError
-from exceptions import JarError
-from exceptions import PyleusError
-from exceptions import TopologyError
+from pyleus.exceptions import ConfigurationError
+from pyleus.exceptions import DependenciesError
+from pyleus.exceptions import InvalidTopologyError
+from pyleus.exceptions import JarError
+from pyleus.exceptions import PyleusError
+from pyleus.exceptions import TopologyError
 
 
 # Configuration files paths in order of increasing precedence
@@ -54,18 +53,19 @@ YAML_FILENAME = "pyleus_topology.yaml"
 REQUIREMENTS_FILENAME = "requirements.txt"
 VIRTUALENV = "pyleus_venv"
 
-PROG = os.path.basename(sys.argv[0])
-PYLEUS_ERROR_FMT = "{0}: error: {1}"
+PROG = os.path.basename("jar")
+PYLEUS_ERROR_FMT = "pyleus {0}: error: {1}"
 
 Configuration = collections.namedtuple(
     "Configuration",
-    "base_jar config_file include_packages output_jar pip_log \
+    "base_jar config_file func include_packages output_jar pip_log \
      pypi_index_url system topology_dir use_virtualenv verbose"
 )
 
 DEFAULTS = Configuration(
     base_jar=BASE_JAR_PATH,
     config_file=None,
+    func=None,
     include_packages=None,
     output_jar=None,
     pip_log=None,
@@ -419,45 +419,8 @@ def _load_configuration(cmd_line_file):
     return configs
 
 
-def main():
+def execute(args):
     """Parse command-line arguments and invoke _inject()"""
-    parser = argparse.ArgumentParser(
-        usage="usage: %(prog)s [options] TOPOLOGY_DIRECTORY",
-        description="Build up a Storm jar from a topology source directory")
-    parser.add_argument(
-        "topology_dir",
-        help="directory containing topology source code")
-    parser.add_argument(
-        "-o", "--out", dest="output_jar", default=None,
-        help="Path of the jar file that will contain"
-        " all the dependencies and the resources")
-    parser.add_argument(
-        "--use-virtualenv", dest="use_virtualenv",
-        default=None, action="store_true",
-        help="Use virtualenv and pip install for dependencies."
-        " Your TOPOLOGY_DIRECTORY must contain a file named {0}"
-        .format(REQUIREMENTS_FILENAME))
-    parser.add_argument(
-        "--no-use-virtualenv",
-        dest="use_virtualenv", action="store_false",
-        help="Do not use virtualenv and pip for dependencies")
-    parser.add_argument(
-        "-s", "--system-site-packages", dest="system",
-        default=False, action="store_true",
-        help="Do not install packages already present"
-        "on your system")
-    parser.add_argument(
-        "--log", dest="pip_log", default=None,
-        help="Log location for pip")
-    parser.add_argument(
-        "-v", "--verbose", dest="verbose",
-        default=False, action="store_true",
-        help="Verbose")
-    parser.add_argument(
-        "-c", "--config", dest="config_file", default=None,
-        help="Pyleus configuration file")
-    args = parser.parse_args()
-
     if args.config_file is not None:
         args.config_file = _expand_path(args.config_file)
     if args.pip_log is not None:
@@ -501,5 +464,44 @@ def main():
         zip_file.close()
 
 
+def add_parser(subparsers):
+    parser = subparsers.add_parser(
+        PROG,
+        usage="%(prog)s [options] TOPOLOGY_DIRECTORY",
+        description="Build up a Storm jar from a topology source directory",
+        help="Build up a Storm jar from a topology source directory",
+        add_help=False)
+    parser.add_argument(
+        "-h", "--help", action="help",
+        help="Show this message and exit")
+    parser.add_argument(
+        "topology_dir", metavar="TOPOLOGY_DIRECTORY",
+        help="directory containing topology source code")
+    parser.add_argument(
+        "-o", "--out", dest="output_jar", default=None,
+        help="Path of the jar file that will contain"
+        " all the dependencies and the resources")
+    parser.add_argument(
+        "--use-virtualenv", dest="use_virtualenv",
+        default=None, action="store_true",
+        help="Use virtualenv and pip install for dependencies."
+        " Your TOPOLOGY_DIRECTORY must contain a file named {0}"
+        .format(REQUIREMENTS_FILENAME))
+    parser.add_argument(
+        "--no-use-virtualenv",
+        dest="use_virtualenv", action="store_false",
+        help="Do not use virtualenv and pip for dependencies")
+    parser.add_argument(
+        "-s", "--system-site-packages", dest="system",
+        default=False, action="store_true",
+        help="Do not install packages already present"
+        "on your system")
+    parser.add_argument(
+        "--log", dest="pip_log", default=None,
+        help="Log location for pip")
+    parser.set_defaults(func=execute)
+
+
 if __name__ == "__main__":
-    main()
+    sys.exit("You should run pyleus {0} in order to execute this command"
+             .format(PROG))
