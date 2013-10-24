@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """Command-line interface to Pyleus. Routes to differents sub-commands modules
 based on arguments provided.
 """
@@ -36,7 +35,3 @@ def main():
     args = parser.parse_args()
 
     args.func(args)
-
-
-if __name__ == "__main__":
-    main()

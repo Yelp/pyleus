@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """Command-line tool for building a standalone, self-contained Pyleus topology
 JAR ready to be submitted to a Storm cluster. If an optional requirements.txt
 is provided, Pyleus will use virtualenv to collect and provide Python
@@ -500,8 +499,3 @@ def add_parser(subparsers):
         "--log", dest="pip_log", default=None,
         help="Log location for pip")
     parser.set_defaults(func=execute)
-
-
-if __name__ == "__main__":
-    sys.exit("You should run pyleus {0} in order to execute this command"
-             .format(PROG))
