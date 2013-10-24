@@ -4,9 +4,9 @@ import sys
 from pyleus import __version__
 
 
-extra_install_requires = []
+install_requires = []
 if sys.version_info < (2, 7):
-    extra_install_requires.append('argparse==1.2.1')
+    install_requires.append('argparse==1.2.1')
 
 
 setup(
@@ -17,5 +17,5 @@ setup(
     description='Standard library and deployment tools for using Python with Storm',
     packages=['pyleus'],
     scripts=['scripts/pyleus'],
-    install_requires=extra_install_requires,
+    install_requires=install_requires,
 )
