@@ -1,11 +1,11 @@
 import __builtin__
 import glob
 import os
-import mock
 import shutil
 import subprocess
 import zipfile
 
+import mock
 import testify as T
 
 from pyleus import exception

@@ -1,10 +1,11 @@
 import os
-import mock
 
+import mock
 import testify as T
 
 from pyleus import configuration
 from pyleus import exception
+
 
 class ConfigurationTest(T.TestCase):
 

@@ -1,9 +1,10 @@
 import os
-import mock
 
+import mock
 import testify as T
 
 import pyleus.utils as utils
+
 
 class UtilsTest(T.TestCase):
 
