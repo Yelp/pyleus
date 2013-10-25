@@ -19,6 +19,7 @@ by default, and will be named <TOPOLOGY_DIRECTORY>.jar.
 Note: The names used for the YAML file and for the virtualenv CANNOT be changed
 without modifying the Java code accordingly.
 """
+from __future__ import absolute_import
 
 import glob
 import re

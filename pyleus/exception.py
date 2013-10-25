@@ -1,5 +1,7 @@
 """Pyleus specific exceptions
 """
+from __future__ import absolute_import
+
 
 class PyleusError(Exception):
     """Base class for pyleus specific exceptions"""
@@ -13,6 +15,7 @@ class JarError(PyleusError): pass
 class TopologyError(PyleusError): pass
 class InvalidTopologyError(TopologyError): pass
 class DependenciesError(TopologyError): pass
+
 
 def command_error_fmt(cmd_name, exception):
     """Error message for commands based on exception"""

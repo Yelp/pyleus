@@ -1,5 +1,6 @@
 """Pyleus configuration module
 """
+from __future__ import absolute_import
 
 import collections
 import ConfigParser
@@ -7,6 +8,7 @@ import os
 
 from pyleus.utils import expand_path
 from pyleus.exception import ConfigurationError
+
 
 # Configuration files paths in order of increasing precedence
 CONFIG_FILES_PATH = [

@@ -1,9 +1,12 @@
+from __future__ import absolute_import
+
 from collections import deque, namedtuple
 import logging
 import os
 import sys
 import threading
 import traceback
+
 
 try:
     import simplejson as json

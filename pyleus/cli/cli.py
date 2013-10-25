@@ -1,10 +1,12 @@
 """Command-line interface to Pyleus. Routes to differents sub-commands modules
 based on arguments provided.
 """
+from __future__ import absolute_import
+
 import argparse
 
 from pyleus import __version__
-import jarbuilder
+from . import jarbuilder
 
 
 def main():
