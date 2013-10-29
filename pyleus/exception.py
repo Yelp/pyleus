@@ -11,10 +11,14 @@ class PyleusError(Exception):
 
 
 class ConfigurationError(PyleusError): pass
+
 class JarError(PyleusError): pass
+
 class TopologyError(PyleusError): pass
 class InvalidTopologyError(TopologyError): pass
 class DependenciesError(TopologyError): pass
+
+class VirtualenvError(PyleusError): pass
 
 
 def command_error_fmt(cmd_name, exception):

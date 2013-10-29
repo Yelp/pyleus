@@ -1,16 +1,13 @@
-import __builtin__
 import glob
 import os
 import shutil
-import subprocess
 import zipfile
 
 import mock
 import testify as T
 
 from pyleus import exception
-import pyleus.cli.jarbuilder as jarbuilder
-
+from pyleus.cli import jarbuilder
 
 class JarbuilderTest(T.TestCase):
 
@@ -127,96 +124,43 @@ class JarbuilderTest(T.TestCase):
         mock_valid_req.assert_called_once_with(req)
         mock_valid_venv.assert_called_once_with(topo_dir, venv)
 
-    @mock.patch.object(subprocess, 'Popen', autospec=True)
-    def test__call_dep_cmd(self, mock_popen):
-        mock_proc = mock.Mock()
-        mock_popen.return_value = mock_proc
-        mock_proc.communicate.return_value = ["baz", "qux"]
-        mock_proc.returncode = 1
-        T.assert_raises_and_contains(
-            exception.DependenciesError, ["bar"],
-            jarbuilder._call_dep_cmd, "bash_ninja",
-            cwd="foo", stdout=42, stderr=666,
-            err_msg="bar")
-        mock_popen.assert_called_once_with(
-            "bash_ninja", cwd="foo", stdout=42, stderr=666)
-        mock_proc.communicate.assert_called_once_with()
-
-    @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
-    def test__is_package_installed_installed(self, mock_dep_call):
-        mock_dep_call.return_value = "---\nName: pyleus\n"
-        installed = jarbuilder._is_package_installed(
-            "foo", "pyleus", err_stream=42)
-        mock_dep_call.assert_called_once_with(
-            ["pyleus_venv/bin/pip", "show", "pyleus"],
-            cwd="foo", stdout=subprocess.PIPE, stderr=42, err_msg=mock.ANY)
-        T.assert_equal(installed, True)
-
-    @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
-    def test__is_package_installed_not_installed(self, mock_dep_call):
-        mock_dep_call.return_value = ""
-        installed = jarbuilder._is_package_installed(
-            "foo", "pyleus", err_stream=42)
-        mock_dep_call.assert_called_once_with(
-            ["pyleus_venv/bin/pip", "show", "pyleus"],
-            cwd="foo", stdout=subprocess.PIPE, stderr=42, err_msg=mock.ANY)
-        T.assert_equal(installed, False)
-
-    @mock.patch.object(jarbuilder, '_call_dep_cmd', autospec=True)
-    @mock.patch.object(__builtin__, 'open', autospec=True)
-    @mock.patch.object(jarbuilder, '_is_package_installed', autospec=True)
-    def test__virtualenv_pip_install_all_options(
-            self, mock_inst, mock_open, mock_dep_call):
-        mock_dep_call.side_effect = iter([0, 0, 0])
-        mock_open.return_value = 42
-        mock_inst.return_value = False
-        jarbuilder._virtualenv_pip_install(
-            tmp_dir="foo",
-            req="bar",
+    @mock.patch.object(jarbuilder, 'VirtualenvProxy', autospec=True)
+    def test__set_up_virtualenv(self, MockVenv):
+        venv = MockVenv.return_value
+        venv.is_package_installed.side_effect = iter([False, True, False])
+        jarbuilder._set_up_virtualenv(
+            venv_name="foo",
+            tmp_dir="bar",
+            req="baz.txt",
+            include_packages=["fruit", "ninja==7.7.7"],
             system=True,
             pypi_index_url="http://pypi-ninja.ninjacorp.com/simple",
-            pip_log="baz",
+            pip_log="qux.log",
             verbose=False)
-        expected = [
-            mock.call(["virtualenv", "pyleus_venv", "--system-site-packages"],
-                      cwd="foo", stdout=42, stderr=subprocess.STDOUT,
-                      err_msg=mock.ANY),
-            mock.call(["pyleus_venv/bin/pip", "install", "pyleus",
-                       "-i", "http://pypi-ninja.ninjacorp.com/simple"],
-                      cwd="foo", stdout=42, stderr=subprocess.STDOUT,
-                      err_msg=mock.ANY),
-            mock.call(["pyleus_venv/bin/pip", "install", "-r", "bar",
-                       "-i", "http://pypi-ninja.ninjacorp.com/simple",
-                       "--log", "baz"],
-                      cwd="foo", stdout=42, stderr=subprocess.STDOUT,
-                      err_msg=mock.ANY),
+        expected_is_installed = [
+            mock.call("pyleus"),
+            mock.call("fruit"),
+            mock.call("ninja==7.7.7")
         ]
-        mock_dep_call.assert_has_calls(expected)
-        mock_open.assert_called_once_with(os.devnull, "w")
-        mock_inst.assert_called_once_with("foo", "pyleus", err_stream=42)
+        expected_install = [
+            mock.call("pyleus"),
+            mock.call("ninja==7.7.7")
+        ]
+        venv.is_package_installed.assert_has_calls(expected_is_installed)
+        venv.install_package.assert_has_calls(expected_install)
+        venv.install_from_requirements.assert_called_once_with("baz.txt")
 
     @mock.patch.object(os.path, 'isfile', autospec=True)
     def test__is_virtualenv_required(self, mock_isfile):
-        mock_configs = mock.Mock()
-        mock_configs.use_virtualenv = None
         req = "foo/baz.txt"
 
         mock_isfile.return_value = False
-        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
+        flag = jarbuilder._is_virtualenv_required(req)
         mock_isfile.assert_called_once_with(req)
         T.assert_equals(flag, False)
 
         mock_isfile.return_value = True
-        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
-        T.assert_equals(flag, True)
-
-        mock_configs.use_virtualenv = False
-        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
-        T.assert_equals(flag, False)
-
-        mock_configs.use_virtualenv = True
-        mock_isfile.return_value = False
-        flag = jarbuilder._is_virtualenv_required(mock_configs, req)
+        flag = jarbuilder._is_virtualenv_required(req)
         T.assert_equals(flag, True)
 
     @mock.patch.object(glob, 'glob', autospec=True)
