@@ -6,7 +6,7 @@ from __future__ import absolute_import
 import argparse
 
 from pyleus import __version__
-from . import jarbuilder
+from pyleus.cli import jarbuilder
 
 
 def main():

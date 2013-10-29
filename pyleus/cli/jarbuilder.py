@@ -44,7 +44,7 @@ from pyleus.exception import TopologyError
 RESOURCES_PATH = "resources/"
 YAML_FILENAME = "pyleus_topology.yaml"
 REQUIREMENTS_FILENAME = "requirements.txt"
-VIRTUALENV = "pyleus_venv"
+VIRTUALENV_NAME = "pyleus_venv"
 
 CMD = "jar"
 
@@ -245,13 +245,9 @@ def _virtualenv_pip_install(tmp_dir, req, **kwargs):
     )
 
 
-def _is_virtualenv_required(configs, req):
-    """Figure out if a virtuelenv is required, even implicitely"""
-    # if use_virtualenv is undefined (None), it will be assigned on the base of
-    # the requirements.txt file
-    if configs.use_virtualenv is None:
-        return os.path.isfile(req)
-    return configs.use_virtualenv
+def _is_virtualenv_required(req):
+    """Figure out if a virtuelenv is implicitely required"""
+    return os.path.isfile(req)
 
 
 def _exclude_content(src, exclude_req):
@@ -286,7 +282,21 @@ def _copy_dir_content(src, dst, exclude_req):
             shutil.copy2(t, dst)
 
 
-def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, configs):
+def _build_output_path(output_arg, topology_dir):
+    """Return the absolute path of the output jar file.
+
+    Default basename:
+        TOPOLOGY_DIRECTORY.jar
+    """
+    if output_arg is not None:
+        return expand_path(output_arg)
+    else:
+        return expand_path(os.path.basename(topology_dir) + ".jar")
+
+
+def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
+                       use_virtualenv, include_packages, system,
+                       pypi_index_url, pip_log, verbose):
     """Coordinate the creation of the the topology JAR:
 
         - Validate the topology
@@ -297,9 +307,10 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, configs):
     """
     yaml = os.path.join(topology_dir, YAML_FILENAME)
     req = os.path.join(topology_dir, REQUIREMENTS_FILENAME)
-    venv = os.path.join(topology_dir, VIRTUALENV)
+    venv = os.path.join(topology_dir, VIRTUALENV_NAME)
 
-    use_virtualenv = _is_virtualenv_required(configs, req)
+    if use_virtualenv is None:
+        use_virtualenv = _is_virtualenv_required(req)
 
     _validate_topology(topology_dir, yaml, req, venv, use_virtualenv)
 
@@ -328,20 +339,8 @@ def _inject(topology_dir, base_jar, output_jar, zip_file, tmp_dir, configs):
     _pack_jar(tmp_dir, output_jar)
 
 
-def _build_output_path(output_arg, topology_dir):
-    """Return the absolute path of the output jar file.
-
-    Default basename:
-        TOPOLOGY_DIRECTORY.jar
-    """
-    if output_arg is not None:
-        return expand_path(output_arg)
-    else:
-        return expand_path(os.path.basename(topology_dir) + ".jar")
-
-
 def execute(args):
-    """Parse command-line arguments and invoke _inject()"""
+    """Parse command-line arguments and invoke _create_pyleus_jar()"""
     if args.config_file is not None:
         args.config_file = expand_path(args.config_file)
     if args.pip_log is not None:
@@ -375,8 +374,19 @@ def execute(args):
         # Everything will be copied in a tmp directory
         tmp_dir = tempfile.mkdtemp()
         try:
-            _inject(topology_dir, base_jar, output_jar,
-                    zip_file, tmp_dir, configs)
+            _create_pyleus_jar(
+                topology_dir=topology_dir,
+                base_jar=base_jar,
+                output_jar=output_jar,
+                zip_file=zip_file,
+                tmp_dir=tmp_dir,
+                use_virtualenv=configs.use_virtualenv,
+                include_packages=include_packages,
+                system=configs.system,
+                pypi_index_url=configs.pypi_index_url,
+                pip_log=configs.pip_log,
+                verbose=configs.verbose,
+            )
         except PyleusError as e:
             sys.exit(command_error_fmt(CMD, e))
         finally:
