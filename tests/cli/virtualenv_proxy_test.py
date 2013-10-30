@@ -57,12 +57,28 @@ class VirtualenvProxyCreationTest(T.TestCase):
 
     @mock.patch.object(__builtin__, 'open', autospec=True)
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
-    def test__create_virtualenv(self, mock_cmd, mock_open):
+    def test__create_virtualenv_system_site_packages(
+            self, mock_cmd, mock_open):
         venv = VirtualenvProxy(
             VENV_NAME, VENV_PATH,
             system_site_packages=True, verbose=True)
         mock_cmd.assert_called_once_with(
             ["virtualenv", VENV_NAME, "--system-site-packages"],
+            cwd=VENV_PATH,
+            stdout=venv._out_stream,
+            stderr=venv._err_stream,
+            err_msg=mock.ANY
+        )
+
+    @mock.patch.object(__builtin__, 'open', autospec=True)
+    @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
+    def test__create_virtualenv_no_system_site_packages(
+            self, mock_cmd, mock_open):
+        venv = VirtualenvProxy(
+            VENV_NAME, VENV_PATH,
+            system_site_packages=False, verbose=True)
+        mock_cmd.assert_called_once_with(
+            ["virtualenv", VENV_NAME],
             cwd=VENV_PATH,
             stdout=venv._out_stream,
             stderr=venv._err_stream,
