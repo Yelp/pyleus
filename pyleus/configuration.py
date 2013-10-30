@@ -21,7 +21,7 @@ BASE_JAR_PATH = "minimal.jar"
 
 Configuration = collections.namedtuple(
     "Configuration",
-    "base_jar config_file func include_packages output_jar pip_log \
+    "base_jar config_file func include_packages output_jar \
      pypi_index_url system topology_dir use_virtualenv verbose"
 )
 
@@ -32,7 +32,6 @@ DEFAULTS = Configuration(
     func=None,
     include_packages=None,
     output_jar=None,
-    pip_log=None,
     pypi_index_url=None,
     system=False,
     topology_dir=None,

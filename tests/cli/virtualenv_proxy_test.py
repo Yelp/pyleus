@@ -13,7 +13,6 @@ from pyleus.cli.virtualenv_proxy import VirtualenvProxy
 VENV_NAME = "venv"
 VENV_PATH = "/tmp/my/beloved"
 PYPI_URL = "http://pypi-ninja.ninjacorp.com/simple"
-PIP_LOG = "log.txt"
 
 
 class VirtualenvProxyTopLevelFunctionsTest(T.TestCase):
@@ -96,7 +95,6 @@ class VirtualenvProxyMethodsTest(T.TestCase):
             VENV_NAME,
             VENV_PATH,
             pypi_index_url=PYPI_URL,
-            pip_log=PIP_LOG,
             verbose=False)
 
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
@@ -130,7 +128,6 @@ class VirtualenvProxyMethodsTest(T.TestCase):
             [
                 "{0}/bin/pip".format(VENV_NAME), "install", "Ninja",
                 "-i", PYPI_URL,
-                "--log", PIP_LOG,
             ],
             cwd=VENV_PATH,
             stdout=self.venv._out_stream,
@@ -146,7 +143,6 @@ class VirtualenvProxyMethodsTest(T.TestCase):
                 "{0}/bin/pip".format(VENV_NAME), "install",
                 "-r", "foo.txt",
                 "-i", PYPI_URL,
-                "--log", PIP_LOG,
             ],
             cwd=VENV_PATH,
             stdout=self.venv._out_stream,

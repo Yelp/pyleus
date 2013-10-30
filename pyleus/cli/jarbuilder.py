@@ -142,7 +142,7 @@ def _validate_topology(topology_dir, yaml, req, venv, use_virtualenv):
 
 def _set_up_virtualenv(venv_name, tmp_dir, req,
                        include_packages, system,
-                       pypi_index_url, pip_log, verbose):
+                       pypi_index_url, verbose):
     """Create a virtualenv with the specified options and the default packages
     specified in configuration. Then run `pip install -r requirements.txt`.
     """
@@ -150,7 +150,6 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
         venv_name, tmp_dir,
         system,
         pypi_index_url,
-        pip_log,
         verbose
     )
 
@@ -215,7 +214,7 @@ def _build_output_path(output_arg, topology_dir):
 
 def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
                        use_virtualenv, include_packages, system,
-                       pypi_index_url, pip_log, verbose):
+                       pypi_index_url, verbose):
     """Coordinate the creation of the the topology JAR:
 
         - Validate the topology
@@ -252,7 +251,6 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
                            include_packages=include_packages,
                            system=system,
                            pypi_index_url=pypi_index_url,
-                           pip_log=pip_log,
                            verbose=verbose)
 
     # Pack the tmp directory into a jar
@@ -263,8 +261,6 @@ def execute(args):
     """Parse command-line arguments and invoke _create_pyleus_jar()"""
     if args.config_file is not None:
         args.config_file = expand_path(args.config_file)
-    if args.pip_log is not None:
-        args.pip_log = expand_path(args.pip_log)
 
     # Load configurations into a Configuration named tuple
     try:
@@ -311,7 +307,6 @@ def execute(args):
                 include_packages=include_packages,
                 system=configs.system,
                 pypi_index_url=configs.pypi_index_url,
-                pip_log=configs.pip_log,
                 verbose=configs.verbose,
             )
         except PyleusError as e:
@@ -354,7 +349,4 @@ def add_parser(subparsers):
         default=False, action="store_true",
         help="Do not install packages already present"
         "on your system")
-    parser.add_argument(
-        "--log", dest="pip_log", default=None,
-        help="Log location for pip")
     parser.set_defaults(func=execute)

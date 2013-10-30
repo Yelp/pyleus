@@ -135,7 +135,6 @@ class JarbuilderTest(T.TestCase):
             include_packages=["fruit", "ninja==7.7.7"],
             system=True,
             pypi_index_url="http://pypi-ninja.ninjacorp.com/simple",
-            pip_log="qux.log",
             verbose=False)
         expected_is_installed = [
             mock.call("pyleus"),
