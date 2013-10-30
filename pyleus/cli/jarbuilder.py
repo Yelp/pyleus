@@ -29,9 +29,9 @@ import shutil
 import sys
 import zipfile
 
+from pyleus.cli.subcommand import SubCommand
+from pyleus.cli.subcommand import SubCommandInfo
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
-from pyleus.configuration import load_configuration
-from pyleus.configuration import update_configuration
 from pyleus.utils import expand_path
 from pyleus.exception import command_error_fmt
 from pyleus.exception import InvalidTopologyError
@@ -257,96 +257,89 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
     _pack_jar(tmp_dir, output_jar)
 
 
-def execute(args):
-    """Parse command-line arguments and invoke _create_pyleus_jar()"""
-    if args.config_file is not None:
-        args.config_file = expand_path(args.config_file)
+class JarbuilderSubCommand(SubCommand):
+    """Jarbuilder subcommand class"""
 
-    # Load configurations into a Configuration named tuple
-    try:
-        configs = load_configuration(args.config_file)
-    except PyleusError as e:
-        sys.exit(command_error_fmt(CMD, e))
+    @staticmethod
+    def get_sub_command_info():
+        return SubCommandInfo(
+            command_name=CMD,
+            usage="%(prog)s [options] TOPOLOGY_DIRECTORY",
+            description="Build up a Storm jar from a topology source"
+                        " directory",
+            help_msg="Build up a Storm jar from a topology source directory")
 
-    # Update configuration with command line values
-    configs = update_configuration(configs, vars(args))
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument(
+            "topology_dir", metavar="TOPOLOGY_DIRECTORY",
+            help="directory containing topology source code")
+        parser.add_argument(
+            "-o", "--out", dest="output_jar", default=None,
+            help="Path of the jar file that will contain"
+            " all the dependencies and the resources")
+        parser.add_argument(
+            "--use-virtualenv", dest="use_virtualenv",
+            default=None, action="store_true",
+            help="Use virtualenv and pip install for dependencies."
+            " Your TOPOLOGY_DIRECTORY must contain a file named {0}"
+            .format(REQUIREMENTS_FILENAME))
+        parser.add_argument(
+            "--no-use-virtualenv",
+            dest="use_virtualenv", action="store_false",
+            help="Do not use virtualenv and pip for dependencies")
+        parser.add_argument(
+            "-s", "--system-site-packages", dest="system",
+            default=False, action="store_true",
+            help="Do not install packages already present"
+            "on your system")
 
-    topology_dir = expand_path(configs.topology_dir)
-    base_jar = expand_path(configs.base_jar)
-    output_jar = _build_output_path(configs.output_jar, topology_dir)
+    @staticmethod
+    def run(configs):
+        """Parse command-line arguments and invoke _create_pyleus_jar()"""
+        # Expand paths if necessary
+        topology_dir = expand_path(configs.topology_dir)
+        base_jar = expand_path(configs.base_jar)
+        output_jar = _build_output_path(configs.output_jar, topology_dir)
 
-    # Extract list of packages to always include from configuration
-    # NOTE: right now if package==version is specified in configuration, the
-    # package will be installed normally, but will fail the is_installed check
-    include_packages = None
-    if configs.include_packages is not None:
-        include_packages = configs.include_packages.split(" ")
+        # Extract list of packages to always include from configuration
+        # NOTE: right now if package==version is specified in configuration,
+        # the package will be installed normally, but will fail the
+        # is_installed check
+        include_packages = None
+        if configs.include_packages is not None:
+            include_packages = configs.include_packages.split(" ")
 
-    # Check for output path existence for early failure
-    if os.path.exists(output_jar):
-        e = JarError("Output jar already exist: {0}".format(output_jar))
-        sys.exit(command_error_fmt(CMD, e))
+        # Check for output path existence for early failure
+        if os.path.exists(output_jar):
+            e = JarError("Output jar already exist: {0}".format(output_jar))
+            sys.exit(command_error_fmt(CMD, e))
 
-    try:
-        # Open the base jar as a zip
-        zip_file = _open_jar(base_jar)
-    except PyleusError as e:
-        sys.exit(command_error_fmt(CMD, e))
-
-    try:
-        # Everything will be copied in a tmp directory
-        tmp_dir = tempfile.mkdtemp()
         try:
-            _create_pyleus_jar(
-                topology_dir=topology_dir,
-                base_jar=base_jar,
-                output_jar=output_jar,
-                zip_file=zip_file,
-                tmp_dir=tmp_dir,
-                use_virtualenv=configs.use_virtualenv,
-                include_packages=include_packages,
-                system=configs.system,
-                pypi_index_url=configs.pypi_index_url,
-                verbose=configs.verbose,
-            )
+            # Open the base jar as a zip
+            zip_file = _open_jar(base_jar)
         except PyleusError as e:
             sys.exit(command_error_fmt(CMD, e))
+
+        try:
+            # Everything will be copied in a tmp directory
+            tmp_dir = tempfile.mkdtemp()
+            try:
+                _create_pyleus_jar(
+                    topology_dir=topology_dir,
+                    base_jar=base_jar,
+                    output_jar=output_jar,
+                    zip_file=zip_file,
+                    tmp_dir=tmp_dir,
+                    use_virtualenv=configs.use_virtualenv,
+                    include_packages=include_packages,
+                    system=configs.system,
+                    pypi_index_url=configs.pypi_index_url,
+                    verbose=configs.verbose,
+                )
+            except PyleusError as e:
+                sys.exit(command_error_fmt(CMD, e))
+            finally:
+                shutil.rmtree(tmp_dir)
         finally:
-            shutil.rmtree(tmp_dir)
-    finally:
-        zip_file.close()
-
-
-def add_parser(subparsers):
-    parser = subparsers.add_parser(
-        CMD,
-        usage="%(prog)s [options] TOPOLOGY_DIRECTORY",
-        description="Build up a Storm jar from a topology source directory",
-        help="Build up a Storm jar from a topology source directory",
-        add_help=False)
-    parser.add_argument(
-        "-h", "--help", action="help",
-        help="Show this message and exit")
-    parser.add_argument(
-        "topology_dir", metavar="TOPOLOGY_DIRECTORY",
-        help="directory containing topology source code")
-    parser.add_argument(
-        "-o", "--out", dest="output_jar", default=None,
-        help="Path of the jar file that will contain"
-        " all the dependencies and the resources")
-    parser.add_argument(
-        "--use-virtualenv", dest="use_virtualenv",
-        default=None, action="store_true",
-        help="Use virtualenv and pip install for dependencies."
-        " Your TOPOLOGY_DIRECTORY must contain a file named {0}"
-        .format(REQUIREMENTS_FILENAME))
-    parser.add_argument(
-        "--no-use-virtualenv",
-        dest="use_virtualenv", action="store_false",
-        help="Do not use virtualenv and pip for dependencies")
-    parser.add_argument(
-        "-s", "--system-site-packages", dest="system",
-        default=False, action="store_true",
-        help="Do not install packages already present"
-        "on your system")
-    parser.set_defaults(func=execute)
+            zip_file.close()
