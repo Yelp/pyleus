@@ -25,8 +25,8 @@ SubCommandInfo = collections.namedtuple(
 class SubCommand(object):
     """Sub-command base class"""
 
-    @staticmethod
-    def get_sub_command_info():
+    @classmethod
+    def get_sub_command_info(cls):
         """Return a SubCommandInfo named tuple containing
         the info that should be visualized on the command-line
         for the sub-command.
@@ -39,15 +39,15 @@ class SubCommand(object):
         """
         raise NotImplementedError
 
-    @staticmethod
-    def add_arguments(parser):
+    @classmethod
+    def add_arguments(cls, parser):
         """Define arguments and options of the sub-command
         in an argparse-fashion way.
         """
         raise NotImplementedError
 
-    @staticmethod
-    def run(configs):
+    @classmethod
+    def run(cls, configs):
         """Callback associated to the sub-command.
         Implement the sub-command logic here
         """

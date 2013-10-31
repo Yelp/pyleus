@@ -260,8 +260,8 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
 class JarbuilderSubCommand(SubCommand):
     """Jarbuilder subcommand class"""
 
-    @staticmethod
-    def get_sub_command_info():
+    @classmethod
+    def get_sub_command_info(cls):
         return SubCommandInfo(
             command_name=CMD,
             usage="%(prog)s [options] TOPOLOGY_DIRECTORY",
@@ -269,8 +269,8 @@ class JarbuilderSubCommand(SubCommand):
                         " directory",
             help_msg="Build up a Storm jar from a topology source directory")
 
-    @staticmethod
-    def add_arguments(parser):
+    @classmethod
+    def add_arguments(cls, parser):
         parser.add_argument(
             "topology_dir", metavar="TOPOLOGY_DIRECTORY",
             help="directory containing topology source code")
@@ -294,8 +294,8 @@ class JarbuilderSubCommand(SubCommand):
             help="Do not install packages already present"
             "on your system")
 
-    @staticmethod
-    def run(configs):
+    @classmethod
+    def run(cls, configs):
         """Parse command-line arguments and invoke _create_pyleus_jar()"""
         # Expand paths if necessary
         topology_dir = expand_path(configs.topology_dir)
