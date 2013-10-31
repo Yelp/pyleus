@@ -40,7 +40,7 @@ from pyleus.exception import PyleusError
 from pyleus.exception import TopologyError
 
 
-RESOURCES_PATH = "resources/"
+RESOURCES_PATH = "resources"
 YAML_FILENAME = "pyleus_topology.yaml"
 REQUIREMENTS_FILENAME = "requirements.txt"
 VIRTUALENV_NAME = "pyleus_venv"
@@ -236,7 +236,9 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
     zip_file.extractall(tmp_dir)
 
     # Copy yaml into its directory
-    shutil.copy2(yaml, os.path.join(tmp_dir, RESOURCES_PATH))
+    resources_dir = os.path.join(tmp_dir, RESOURCES_PATH)
+    os.mkdir(resources_dir)
+    shutil.copy2(yaml, resources_dir)
 
     # Add the topology directory skipping yaml and requirements
     _copy_dir_content(topology_dir, os.path.join(tmp_dir, RESOURCES_PATH),
