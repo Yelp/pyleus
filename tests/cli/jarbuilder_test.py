@@ -97,8 +97,11 @@ class JarbuilderTest(T.TestCase):
 
     @mock.patch.object(jarbuilder, '_validate_dir', autospec=True)
     @mock.patch.object(jarbuilder, '_validate_yaml', autospec=True)
+    @mock.patch.object(jarbuilder, '_validate_venv', autospec=True)
+    @mock.patch.object(jarbuilder, '_validate_req', autospec=True)
     def test__validate_topology_no_use_virtualenv(
-            self, mock_valid_yaml, mock_valid_dir):
+            self, mock_valid_req, mock_valid_venv,
+            mock_valid_yaml, mock_valid_dir):
         topo_dir = "foo"
         yaml = "foo/bar.yaml"
         req = "foo/baz.txt"
@@ -106,13 +109,15 @@ class JarbuilderTest(T.TestCase):
         jarbuilder._validate_topology(topo_dir, yaml, req, venv, False)
         mock_valid_dir.assert_called_once_with(topo_dir)
         mock_valid_yaml.assert_called_once_with(yaml)
+        mock_valid_venv.assert_called_once_with(topo_dir, venv)
+        T.assert_equal(mock_valid_req.call_count, 0)
 
     @mock.patch.object(jarbuilder, '_validate_dir', autospec=True)
     @mock.patch.object(jarbuilder, '_validate_yaml', autospec=True)
-    @mock.patch.object(jarbuilder, '_validate_req', autospec=True)
     @mock.patch.object(jarbuilder, '_validate_venv', autospec=True)
+    @mock.patch.object(jarbuilder, '_validate_req', autospec=True)
     def test__validate_topology_use_virtualenv(
-            self, mock_valid_venv, mock_valid_req,
+            self, mock_valid_req, mock_valid_venv,
             mock_valid_yaml, mock_valid_dir):
         topo_dir = "foo"
         yaml = "foo/bar.yaml"
@@ -121,8 +126,8 @@ class JarbuilderTest(T.TestCase):
         jarbuilder._validate_topology(topo_dir, yaml, req, venv, True)
         mock_valid_dir.assert_called_once_with(topo_dir)
         mock_valid_yaml.assert_called_once_with(yaml)
-        mock_valid_req.assert_called_once_with(req)
         mock_valid_venv.assert_called_once_with(topo_dir, venv)
+        mock_valid_req.assert_called_once_with(req)
 
     @mock.patch.object(jarbuilder, 'VirtualenvProxy', autospec=True)
     def test__set_up_virtualenv(self, MockVenv):

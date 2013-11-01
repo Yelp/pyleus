@@ -135,9 +135,11 @@ def _validate_topology(topology_dir, yaml, req, venv, use_virtualenv):
 
     _validate_yaml(yaml)
 
+    # topology_dir should not include a file named as pyleus default virtualenv
+    _validate_venv(topology_dir, venv)
+
     if use_virtualenv:
         _validate_req(req)
-        _validate_venv(topology_dir, venv)
 
 
 def _set_up_virtualenv(venv_name, tmp_dir, req,
