@@ -34,5 +34,5 @@ class FileSpout(Spout):
 
 
 if __name__ == '__main__':
-    filename = sys.argv[1]
+    filename = sys.argv[2]
     FileSpout(filename).run()
