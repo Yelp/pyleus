@@ -6,6 +6,7 @@ import collections
 import ConfigParser
 import os
 
+from pyleus import BASE_JAR_PATH
 from pyleus.utils import expand_path
 from pyleus.exception import ConfigurationError
 
@@ -16,8 +17,6 @@ CONFIG_FILES_PATH = [
     "~/.config/pyleus.conf",
     "~/.pyleus.conf"
 ]
-
-BASE_JAR_PATH = "minimal.jar"
 
 Configuration = collections.namedtuple(
     "Configuration",
