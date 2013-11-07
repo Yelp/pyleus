@@ -1,3 +1,2 @@
 pyflakes==0.7.3
 testify==0.4.2
-simplejson==3.3.1

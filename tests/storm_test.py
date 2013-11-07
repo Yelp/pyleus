@@ -2,8 +2,13 @@ import contextlib
 from cStringIO import StringIO
 
 import mock
-import simplejson as json
 import testify as T
+
+try:
+    import simplejson as json
+    _ = json # pyflakes
+except ImportError:
+    import json
 
 from pyleus.storm import StormTuple, Bolt, Spout, is_tick
 from pyleus.testing import StormComponentTestCase
