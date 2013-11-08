@@ -7,6 +7,9 @@ import argparse
 
 from pyleus import __version__
 from pyleus.cli.commands.build_subcommand import BuildSubCommand
+from pyleus.cli.commands.run_subcommand import RunSubCommand
+from pyleus.cli.commands.run_subcommand import CMD_LOCAL
+from pyleus.cli.commands.run_subcommand import CMD_SUBMIT
 
 
 def main():
@@ -33,6 +36,8 @@ def main():
         title="Commands",
         metavar="COMMAND")
     BuildSubCommand().add_parser(subparsers)
+    RunSubCommand(CMD_LOCAL).add_parser(subparsers)
+    RunSubCommand(CMD_SUBMIT).add_parser(subparsers)
 
     args = parser.parse_args()
 

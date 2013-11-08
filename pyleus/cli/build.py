@@ -179,18 +179,6 @@ def _copy_dir_content(src, dst, exclude_req):
             shutil.copy2(t, dst)
 
 
-def _build_output_path(output_arg, topology_dir):
-    """Return the absolute path of the output jar file.
-
-    Default basename:
-        TOPOLOGY_DIRECTORY.jar
-    """
-    if output_arg is not None:
-        return expand_path(output_arg)
-    else:
-        return expand_path(os.path.basename(topology_dir) + ".jar")
-
-
 def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
                        use_virtualenv, include_packages, system,
                        pypi_index_url, verbose):
@@ -238,6 +226,18 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
     _pack_jar(tmp_dir, output_jar)
 
 
+def _build_output_path(output_arg, topology_dir):
+    """Return the absolute path of the output jar file.
+
+    Default basename:
+        TOPOLOGY_DIRECTORY.jar
+    """
+    if output_arg is not None:
+        return expand_path(output_arg)
+    else:
+        return expand_path(os.path.basename(topology_dir) + ".jar")
+
+
 def build_topology_jar(configs):
     """Parse command-line arguments and invoke _create_pyleus_jar()"""
     # Expand paths if necessary
@@ -280,3 +280,5 @@ def build_topology_jar(configs):
             shutil.rmtree(tmp_dir)
     finally:
         zip_file.close()
+
+    return output_jar
