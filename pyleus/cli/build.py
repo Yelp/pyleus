@@ -1,23 +1,7 @@
-"""Sub-command for building a standalone, self-contained Pyleus topology
-JAR ready to be submitted to a Storm cluster. If an optional requirements.txt
-is provided, Pyleus will use virtualenv to collect and provide Python
-dependencies to the running topology.
+"""Logic for building a jar from a pyleus topology directory.
 
-Args:
-    TOPOLOGY_DIRECTORY - the directory where all the topology source files,
-        the YAML file describing the topology (pyleus_topology.yaml) and the
-        optional requirements.txt are found.
-
-The script will attempt to ensure the contents of TOPOLOGY_DIRECTORY are in
-order, that nothing will be improperly overwritten and that mandatory files are
-present: pyleus_topology.yaml is always required and requirements.txt must
-exist if --use-virtualenv is explicitly stated.
-
-The output JAR is built from a common base JAR included in the pyleus package
-by default, and will be named <TOPOLOGY_DIRECTORY>.jar.
-
-Note: The names used for the YAML file and for the virtualenv CANNOT be changed
-without modifying the Java code accordingly.
+Other modules should only call build_topology_jar passing it the configurations
+object. The caller function should handle PyleusError excptions.
 """
 from __future__ import absolute_import
 
