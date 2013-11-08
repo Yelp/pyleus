@@ -6,7 +6,7 @@ from __future__ import absolute_import
 import argparse
 
 from pyleus import __version__
-from pyleus.cli.jarbuilder import JarbuilderSubCommand
+from pyleus.cli.build_subcommand import BuildSubCommand
 
 
 def main():
@@ -32,7 +32,7 @@ def main():
     subparsers = parser.add_subparsers(
         title="Commands",
         metavar="COMMAND")
-    JarbuilderSubCommand.add_parser(subparsers)
+    BuildSubCommand.add_parser(subparsers)
 
     args = parser.parse_args()
 
