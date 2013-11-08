@@ -15,7 +15,9 @@ from __future__ import absolute_import
 
 import sys
 
-from pyleus.cli.run import run_topology
+from pyleus.cli.run import get_runnable_jar_path
+from pyleus.cli.run import run_topology_locally
+from pyleus.cli.run import submit_topology
 from pyleus.cli.commands.subcommand import SubCommand
 from pyleus.cli.commands.subcommand import SubCommandInfo
 from pyleus.exception import command_error_fmt
@@ -74,6 +76,10 @@ class RunSubCommand(SubCommand):
 
     def run(self, configs):
         try:
-            run_topology(self.action, configs)
+            jar_path = get_runnable_jar_path(configs)
+            if self.action == CMD_SUBMIT:
+                submit_topology(jar_path, configs)
+            elif self.action == CMD_LOCAL:
+                run_topology_locally(jar_path, configs)
         except PyleusError as e:
             sys.exit(command_error_fmt(self.action, e))

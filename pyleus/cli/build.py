@@ -1,7 +1,7 @@
 """Logic for building a jar from a pyleus topology directory.
 
 Other modules should only call build_topology_jar passing it the configurations
-object. The caller function should handle PyleusError excptions.
+object. The caller function should handle PyleusError exceptions.
 """
 from __future__ import absolute_import
 
