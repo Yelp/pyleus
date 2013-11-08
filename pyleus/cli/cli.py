@@ -6,7 +6,7 @@ from __future__ import absolute_import
 import argparse
 
 from pyleus import __version__
-from pyleus.cli.build_subcommand import BuildSubCommand
+from pyleus.cli.commands.build_subcommand import BuildSubCommand
 
 
 def main():

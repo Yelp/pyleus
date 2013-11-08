@@ -82,7 +82,7 @@ setup(
     author_email="plucas@yelp.com",
     description="Standard library and deployment tools for using Python "
         "with Storm",
-    packages=["pyleus", "pyleus.cli"],
+    packages=["pyleus", "pyleus.cli", "pyleus.cli.commands"],
     scripts=["scripts/pyleus"],
     install_requires=install_requires,
     data_files=[(BASE_JAR_INSTALL_DIR, [BASE_JAR_DST])],

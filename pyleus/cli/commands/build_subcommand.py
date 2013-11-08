@@ -23,10 +23,10 @@ from __future__ import absolute_import
 
 import sys
 
-from pyleus.cli.subcommand import SubCommand
-from pyleus.cli.subcommand import SubCommandInfo
-from pyleus.cli.jarbuilder import build_topology_jar
-from pyleus.cli.jarbuilder import REQUIREMENTS_FILENAME
+from pyleus.cli.commands.subcommand import SubCommand
+from pyleus.cli.commands.subcommand import SubCommandInfo
+from pyleus.cli.build import build_topology_jar
+from pyleus.cli.build import REQUIREMENTS_FILENAME
 from pyleus.exception import command_error_fmt
 from pyleus.exception import PyleusError
 

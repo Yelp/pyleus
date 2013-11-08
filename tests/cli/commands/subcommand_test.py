@@ -3,9 +3,9 @@ import __builtin__
 import mock
 import testify as T
 
-from pyleus.cli import subcommand
-from pyleus.cli.subcommand import SubCommand
-from pyleus.cli.subcommand import SubCommandInfo
+from pyleus.cli.commands import subcommand
+from pyleus.cli.commands.subcommand import SubCommand
+from pyleus.cli.commands.subcommand import SubCommandInfo
 
 
 class TestSubCommand(T.TestCase):
