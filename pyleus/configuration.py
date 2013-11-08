@@ -21,7 +21,7 @@ CONFIG_FILES_PATH = [
 Configuration = collections.namedtuple(
     "Configuration",
     "base_jar config_file func include_packages output_jar \
-     pypi_index_url system topology_dir use_virtualenv verbose"
+     pypi_index_url system_site_packages topology_dir use_virtualenv verbose"
 )
 
 
@@ -32,7 +32,7 @@ DEFAULTS = Configuration(
     include_packages=None,
     output_jar=None,
     pypi_index_url=None,
-    system=False,
+    system_site_packages=False,
     topology_dir=None,
     use_virtualenv=None,
     verbose=False,

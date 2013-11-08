@@ -41,6 +41,10 @@ class SubCommand(object):
     def add_arguments(self, parser):
         """Define arguments and options of the sub-command
         in an argparse-fashion way.
+
+        Please alos add options in the Configuration named tuple
+        in configuration.py. Specify default values ONLY in the
+        default Configuration tuple in configuration.py.
         """
         raise NotImplementedError
 

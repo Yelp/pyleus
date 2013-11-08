@@ -50,12 +50,12 @@ class BuildSubCommand(SubCommand):
             "topology_dir", metavar="TOPOLOGY_DIRECTORY",
             help="directory containing topology source code")
         parser.add_argument(
-            "-o", "--out", dest="output_jar", default=None,
+            "-o", "--out", dest="output_jar",
             help="Path of the jar file that will contain"
             " all the dependencies and the resources")
         parser.add_argument(
-            "--use-virtualenv", dest="use_virtualenv",
-            default=None, action="store_true",
+            "--use-virtualenv",
+            dest="use_virtualenv", action="store_true",
             help="Use virtualenv and pip install for dependencies."
             " Your TOPOLOGY_DIRECTORY must contain a file named {0}"
             .format(REQUIREMENTS_FILENAME))
@@ -64,8 +64,8 @@ class BuildSubCommand(SubCommand):
             dest="use_virtualenv", action="store_false",
             help="Do not use virtualenv and pip for dependencies")
         parser.add_argument(
-            "-s", "--system-site-packages", dest="system",
-            default=False, action="store_true",
+            "-s", "--system-site-packages",
+            dest="system_site_packages", action="store_true",
             help="Do not install packages already present"
             "on your system")
 

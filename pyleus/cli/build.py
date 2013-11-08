@@ -272,7 +272,7 @@ def build_topology_jar(configs):
                 tmp_dir=tmp_dir,
                 use_virtualenv=configs.use_virtualenv,
                 include_packages=include_packages,
-                system=configs.system,
+                system=configs.system_site_packages,
                 pypi_index_url=configs.pypi_index_url,
                 verbose=configs.verbose,
             )
