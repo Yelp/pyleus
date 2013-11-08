@@ -32,7 +32,7 @@ def main():
     subparsers = parser.add_subparsers(
         title="Commands",
         metavar="COMMAND")
-    BuildSubCommand.add_parser(subparsers)
+    BuildSubCommand().add_parser(subparsers)
 
     args = parser.parse_args()
 

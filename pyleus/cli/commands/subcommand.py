@@ -25,8 +25,7 @@ SubCommandInfo = collections.namedtuple(
 class SubCommand(object):
     """Sub-command base class"""
 
-    @classmethod
-    def get_sub_command_info(cls):
+    def get_sub_command_info(self):
         """Return a SubCommandInfo named tuple containing
         the info that should be visualized on the command-line
         for the sub-command.
@@ -39,22 +38,19 @@ class SubCommand(object):
         """
         raise NotImplementedError
 
-    @classmethod
-    def add_arguments(cls, parser):
+    def add_arguments(self, parser):
         """Define arguments and options of the sub-command
         in an argparse-fashion way.
         """
         raise NotImplementedError
 
-    @classmethod
-    def run(cls, configs):
+    def run(self, configs):
         """Callback associated to the sub-command.
         Implement the sub-command logic here
         """
         raise NotImplementedError
 
-    @classmethod
-    def add_parser(cls, subparsers):
+    def add_parser(self, subparsers):
         """During the top-level command definition, it needs to be called
         in order to register the sub-command.
 
@@ -62,7 +58,7 @@ class SubCommand(object):
             subparsers: the result value of the
                 top_level_parser.add_subparsers() method
         """
-        info = cls.get_sub_command_info()
+        info = self.get_sub_command_info()
         parser = subparsers.add_parser(
             info.command_name,
             usage=info.usage,
@@ -75,13 +71,12 @@ class SubCommand(object):
         parser.add_argument(
             "-h", "--help", action="help",
             help="Show this message and exit")
-        cls.add_arguments(parser)
+        self.add_arguments(parser)
 
         # Set the callback associated to the sub-command
-        parser.set_defaults(func=cls.run_subcommand)
+        parser.set_defaults(func=self.run_subcommand)
 
-    @classmethod
-    def run_subcommand(cls, arguments):
+    def run_subcommand(self, arguments):
         """Load the configuration, update it with the arguments and options
         specified on the command-line and then call the run method implemented
         by each sub-command.
@@ -99,4 +94,4 @@ class SubCommand(object):
         # Update configuration with command line values
         configs = update_configuration(configs, vars(arguments))
 
-        cls.run(configs)
+        self.run(configs)

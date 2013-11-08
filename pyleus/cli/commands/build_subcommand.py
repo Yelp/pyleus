@@ -37,8 +37,7 @@ CMD = "build"
 class BuildSubCommand(SubCommand):
     """Build subcommand class"""
 
-    @classmethod
-    def get_sub_command_info(cls):
+    def get_sub_command_info(self):
         return SubCommandInfo(
             command_name=CMD,
             usage="%(prog)s [options] TOPOLOGY_DIRECTORY",
@@ -46,8 +45,7 @@ class BuildSubCommand(SubCommand):
                         " directory",
             help_msg="Build up a Storm jar from a topology source directory")
 
-    @classmethod
-    def add_arguments(cls, parser):
+    def add_arguments(self, parser):
         parser.add_argument(
             "topology_dir", metavar="TOPOLOGY_DIRECTORY",
             help="directory containing topology source code")
@@ -71,8 +69,7 @@ class BuildSubCommand(SubCommand):
             help="Do not install packages already present"
             "on your system")
 
-    @classmethod
-    def run(cls, configs):
+    def run(self, configs):
         try:
             build_topology_jar(configs)
         except PyleusError as e:

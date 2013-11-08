@@ -10,19 +10,23 @@ from pyleus.cli.commands.subcommand import SubCommandInfo
 
 class TestSubCommand(T.TestCase):
 
+    @T.setup
+    def setup_virtualenv(self):
+        self.subcmd = SubCommand()
+
     def test_get_sub_command_info(self):
         with T.assert_raises(NotImplementedError):
-            SubCommand.get_sub_command_info()
+            self.subcmd.get_sub_command_info()
 
     def test_add_arguments(self):
         mock_parser = mock.Mock()
         with T.assert_raises(NotImplementedError):
-            SubCommand.add_arguments(mock_parser)
+            self.subcmd.add_arguments(mock_parser)
 
     def test_run(self):
         mock_configs = mock.Mock()
         with T.assert_raises(NotImplementedError):
-            SubCommand.run(mock_configs)
+            self.subcmd.run(mock_configs)
 
     @mock.patch.object(SubCommand, "get_sub_command_info")
     @mock.patch.object(SubCommand, "add_arguments")
@@ -35,7 +39,7 @@ class TestSubCommand(T.TestCase):
             usage="bar",
             description="baz",
             help_msg="qux")
-        SubCommand.add_parser(mock_subparsers)
+        self.subcmd.add_parser(mock_subparsers)
         mock_get_info.assert_called_once_with()
         mock_subparsers.add_parser.assert_called_once_with(
             "foo", usage="bar", description="baz", help="qux", add_help=False)
@@ -45,7 +49,7 @@ class TestSubCommand(T.TestCase):
         )
         mock_add_arguments.assert_called_once_with(mock_parser)
         mock_parser.set_defaults.called_once_with(
-            func=SubCommand.run_subcommand)
+            func=self.subcmd.run_subcommand)
 
     @mock.patch.object(subcommand, "expand_path", autospec=True)
     @mock.patch.object(subcommand, "load_configuration", autospec=True)
@@ -56,7 +60,7 @@ class TestSubCommand(T.TestCase):
                             mock_update, mock_load, mock_expand):
         mock_args = mock.Mock(config_file="foo")
         mock_expand.return_value = "bar"
-        SubCommand.run_subcommand(mock_args)
+        self.subcmd.run_subcommand(mock_args)
         mock_expand.assert_called_once_with("foo")
         mock_load.assert_called_once_with("bar")
         mock_update.assert_called_once_with(mock_load.return_value,
