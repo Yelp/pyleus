@@ -25,12 +25,6 @@ SubCommandInfo = collections.namedtuple(
 class SubCommand(object):
     """Sub-command base class"""
 
-    def __init__(self, action=None):
-        """Attribute used by subcommands instances implementing more
-        than one functionality in order to distinguish between them.
-        """
-        self.action = action
-
     def get_sub_command_info(self):
         """Return a SubCommandInfo named tuple containing
         the info that should be visualized on the command-line
@@ -48,7 +42,7 @@ class SubCommand(object):
         """Define arguments and options of the sub-command
         in an argparse-fashion way.
 
-        Please alos add options in the Configuration named tuple
+        Please also add options in the Configuration named tuple
         in configuration.py. Specify default values ONLY in the
         default Configuration tuple in configuration.py.
         """

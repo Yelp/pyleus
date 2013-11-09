@@ -16,49 +16,19 @@ from __future__ import absolute_import
 import sys
 
 from pyleus.cli.run import get_runnable_jar_path
-from pyleus.cli.run import run_topology_locally
-from pyleus.cli.run import submit_topology
 from pyleus.cli.commands.subcommand import SubCommand
-from pyleus.cli.commands.subcommand import SubCommandInfo
 from pyleus.exception import command_error_fmt
 from pyleus.exception import PyleusError
-
-
-CMD_LOCAL = "local"
-CMD_SUBMIT = "submit"
 
 
 class RunSubCommand(SubCommand):
     """Run subcommand class"""
 
-    def get_sub_command_info(self):
-        # If no action keyword is specified
-        if self.action is None:
-            e = PyleusError("Unspecified RunSubCommand action keyword")
-            sys.exit(command_error_fmt(self.__class__.__name__, e))
-
-        if (self.action == CMD_SUBMIT):
-            return SubCommandInfo(
-                command_name=CMD_SUBMIT,
-                usage="%(prog)s [options] TOPOLOGY_PATH",
-                description="Submit a Pyleus topology to a Storm cluster for"
-                            " execution",
-                help_msg="Submit a Pyleus topology to a Storm cluster for"
-                         " execution")
-        if (self.action == CMD_LOCAL):
-            return SubCommandInfo(
-                command_name=CMD_LOCAL,
-                usage="%(prog)s [options] TOPOLOGY_PATH",
-                description="Run a Pyleus topology locally."
-                            " WARNING: DO NOT USE THIS COMMAND YET."
-                            " YOUR LOCAL MACHINE WILL ATROCIOUSLY DIE.",
-                help_msg="Run a Pyleus topology locally."
-                         " WARNING: DO NOT USE THIS COMMAND YET."
-                         " YOUR LOCAL MACHINE WILL ATROCIOUSLY DIE.")
-
-        # If another action keyword is specified
-        e = PyleusError("Invalid RunSubCommand action keyword")
-        sys.exit(command_error_fmt(self.__class__.__name__, e))
+    def add_specific_arguments(self, parser):
+        """Override this method in order to add subcommand specific
+        arguments.
+        """
+        pass
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -68,18 +38,16 @@ class RunSubCommand(SubCommand):
                  " before execution."
                  " If the path to a Pyleus jar is specified, the jar will be"
                  "processed for execution immediately.")
-        if(self.action == CMD_SUBMIT):
-            parser.add_argument(
-                "-s", "--storm-cluster", dest="storm_cluster_ip",
-                help="The Nimbus IP address of the Strom cluster the job will"
-                     " be submitted to.")
+        self.add_specific_arguments(parser)
+
+    def run_topology(jar_path, configs):
+        """Subcommand specific run logic."""
+        raise NotImplementedError
 
     def run(self, configs):
         try:
             jar_path = get_runnable_jar_path(configs)
-            if self.action == CMD_SUBMIT:
-                submit_topology(jar_path, configs)
-            elif self.action == CMD_LOCAL:
-                run_topology_locally(jar_path, configs)
+            self.run_topology(jar_path, configs)
         except PyleusError as e:
-            sys.exit(command_error_fmt(self.action, e))
+            sys.exit(
+                command_error_fmt(self.get_sub_command_info().command_name, e))
