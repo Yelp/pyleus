@@ -138,7 +138,7 @@ class BuildTest(T.TestCase):
             tmp_dir="bar",
             req="baz.txt",
             include_packages=["fruit", "ninja==7.7.7"],
-            system=True,
+            system_site_packages=True,
             pypi_index_url="http://pypi-ninja.ninjacorp.com/simple",
             verbose=False)
         expected_is_installed = [

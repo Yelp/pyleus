@@ -120,14 +120,14 @@ def _validate_topology(topology_dir, yaml, req, venv, use_virtualenv):
 
 
 def _set_up_virtualenv(venv_name, tmp_dir, req,
-                       include_packages, system,
+                       include_packages, system_site_packages,
                        pypi_index_url, verbose):
     """Create a virtualenv with the specified options and the default packages
     specified in configuration. Then run `pip install -r requirements.txt`.
     """
     venv = VirtualenvProxy(
         venv_name, tmp_dir,
-        system,
+        system_site_packages,
         pypi_index_url,
         verbose
     )
@@ -180,7 +180,7 @@ def _copy_dir_content(src, dst, exclude_req):
 
 
 def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
-                       use_virtualenv, include_packages, system,
+                       use_virtualenv, include_packages, system_site_packages,
                        pypi_index_url, verbose):
     """Coordinate the creation of the the topology JAR:
 
@@ -218,7 +218,7 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
                            tmp_dir=os.path.join(tmp_dir, RESOURCES_PATH),
                            req=req,
                            include_packages=include_packages,
-                           system=system,
+                           system_site_packages=system_site_packages,
                            pypi_index_url=pypi_index_url,
                            verbose=verbose)
 
@@ -272,7 +272,7 @@ def build_topology_jar(configs):
                 tmp_dir=tmp_dir,
                 use_virtualenv=configs.use_virtualenv,
                 include_packages=include_packages,
-                system=configs.system_site_packages,
+                system_site_packages=configs.system_site_packages,
                 pypi_index_url=configs.pypi_index_url,
                 verbose=configs.verbose,
             )

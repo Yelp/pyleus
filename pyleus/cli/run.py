@@ -15,8 +15,10 @@ from pyleus.utils import expand_path
 def run_topology_locally(jar_path, configs):
     pass
 
+
 def submit_topology(jar_path, configs):
     pass
+
 
 def get_runnable_jar_path(configs):
     """Parse command-line arguments, build a Pyleus jar from the topology
