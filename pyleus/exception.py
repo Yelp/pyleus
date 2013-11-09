@@ -19,6 +19,7 @@ class InvalidTopologyError(TopologyError): pass
 class DependenciesError(TopologyError): pass
 
 class VirtualenvError(PyleusError): pass
+class StormError(PyleusError): pass
 
 
 def command_error_fmt(cmd_name, exception):
