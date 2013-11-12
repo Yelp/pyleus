@@ -22,7 +22,7 @@ Configuration = collections.namedtuple(
     "Configuration",
     "base_jar config_file func include_packages output_jar \
      pypi_index_url storm_cluster_ip system_site_packages topology_dir \
-     use_virtualenv verbose"
+     topology_name use_virtualenv verbose wait_time"
 )
 
 
@@ -36,8 +36,10 @@ DEFAULTS = Configuration(
     storm_cluster_ip=None,
     system_site_packages=False,
     topology_dir=None,
+    topology_name=None,
     use_virtualenv=None,
     verbose=False,
+    wait_time=None,
 )
 
 

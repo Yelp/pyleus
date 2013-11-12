@@ -7,8 +7,10 @@ import argparse
 
 from pyleus import __version__
 from pyleus.cli.commands.build_subcommand import BuildSubCommand
+from pyleus.cli.commands.list_subcommand import ListSubCommand
 from pyleus.cli.commands.local_subcommand import LocalSubCommand
 from pyleus.cli.commands.submit_subcommand import SubmitSubCommand
+from pyleus.cli.commands.kill_subcommand import KillSubCommand
 
 
 def main():
@@ -35,8 +37,10 @@ def main():
         title="Commands",
         metavar="COMMAND")
     BuildSubCommand().add_parser(subparsers)
+    ListSubCommand().add_parser(subparsers)
     LocalSubCommand().add_parser(subparsers)
     SubmitSubCommand().add_parser(subparsers)
+    KillSubCommand().add_parser(subparsers)
 
     args = parser.parse_args()
 

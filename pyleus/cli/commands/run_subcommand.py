@@ -1,21 +1,17 @@
-"""Sub-command for running a Pyleus topology both either in local mode
-or on a Storm cluster. In order to descriminate between the two modes,
-the <action> attribute is used.
+"""Subcommand base class for commands able to run a topology, as local or
+submit, starting either from a jar or from a pyleus topology source directory.
 
 Args:
     TOPOLOGY_PATH - If the path to a directory containing the topology source
         code is specified, a Pyleus jar will be created on the fly before
         execution. If the path to a Pyleus jar is specified, the jar will be
         processed for execution immediately.
-
-Note: In order to trigger the local mode for the selcted topology,
-PyleusTopologyBuilder needs to be called with the option <--local>.
 """
 from __future__ import absolute_import
 
 import sys
 
-from pyleus.cli.run import get_runnable_jar_path
+from pyleus.cli.topologies import get_runnable_jar_path
 from pyleus.cli.commands.subcommand import SubCommand
 from pyleus.exception import command_error_fmt
 from pyleus.exception import PyleusError
