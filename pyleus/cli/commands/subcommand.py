@@ -3,6 +3,7 @@ implement the add_parser and run functions.
 """
 from __future__ import absolute_import
 
+import argparse
 import collections
 import sys
 
@@ -65,6 +66,7 @@ class SubCommand(object):
         info = self.get_sub_command_info()
         parser = subparsers.add_parser(
             info.command_name,
+            argument_default=argparse.SUPPRESS,
             usage=info.usage,
             description=info.description,
             help=info.help_msg,
