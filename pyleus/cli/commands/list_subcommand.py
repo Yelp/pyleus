@@ -21,7 +21,7 @@ class ListSubCommand(SubCommand):
     def get_sub_command_info(self):
         return SubCommandInfo(
             command_name=CMD,
-            usage="%(prog)s [--storm-cluster STORM_CLUTSER_IP]",
+            usage="%(prog)s [--storm-cluster STORM_CLUSTER_IP]",
             description="List all the topology running on a Storm cluster.",
             help_msg="List all the topology running on a Storm cluster.")
 

@@ -1,4 +1,5 @@
 import __builtin__
+import argparse
 
 import mock
 import testify as T
@@ -42,7 +43,8 @@ class TestSubCommand(T.TestCase):
         self.subcmd.add_parser(mock_subparsers)
         mock_get_info.assert_called_once_with()
         mock_subparsers.add_parser.assert_called_once_with(
-            "foo", usage="bar", description="baz", help="qux", add_help=False)
+            "foo", argument_default=argparse.SUPPRESS,
+            usage="bar", description="baz", help="qux", add_help=False)
         mock_parser.add_argument.assert_has_calls(
             mock.call("-h", "--help", action="help",
                       help="Show this message and exit""")
