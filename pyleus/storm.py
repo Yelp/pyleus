@@ -4,7 +4,6 @@ from collections import deque, namedtuple
 import logging
 import os
 import sys
-import threading
 import traceback
 
 
@@ -26,11 +25,6 @@ class StormComponent(object):
         self._input_stream = input_stream
         self._output_stream = output_stream
 
-        # These locks do not protect against multiple StormComponents in the
-        # same process, but you shouldn't be doing that anyway.
-        self._input_stream_lock = threading.Lock()
-        self._output_stream_lock = threading.Lock()
-
         self._pending_commands = deque()
         self._pending_taskids = deque()
 
@@ -44,10 +38,6 @@ class StormComponent(object):
 
         It is unclear whether there is any case in which the message preceding
         "end" will span multiple lines.
-
-        Note that invocations of this method must be protected by the input
-        stream lock so that multiple threads do not received interleaved input
-        lines.
         """
         lines = []
 
@@ -79,33 +69,31 @@ class StormComponent(object):
         In that case, queue any taskids which are received until the next
         command comes in.
         """
-        with self._input_stream_lock:
-            if self._pending_commands:
-                return self._pending_commands.popleft()
+        if self._pending_commands:
+            return self._pending_commands.popleft()
 
+        msg = self._read_msg()
+
+        while self._msg_is_taskid(msg):
+            self._pending_taskids.append(msg)
             msg = self._read_msg()
 
-            while self._msg_is_taskid(msg):
-                self._pending_taskids.append(msg)
-                msg = self._read_msg()
-
-            return msg
+        return msg
 
     def read_taskid(self):
         """Like read_command(), but returns the next taskid and queues any
         commands received while reading the input stream to do so.
         """
-        with self._input_stream_lock:
-            if self._pending_taskids:
-                return self._pending_taskids.popleft()
+        if self._pending_taskids:
+            return self._pending_taskids.popleft()
 
+        msg = self._read_msg()
+
+        while self._msg_is_command(msg):
+            self._pending_commands.append(msg)
             msg = self._read_msg()
 
-            while self._msg_is_command(msg):
-                self._pending_commands.append(msg)
-                msg = self._read_msg()
-
-            return msg
+        return msg
 
     def read_tuple(self):
         """Read and parse a command into a StormTuple object"""
@@ -116,14 +104,10 @@ class StormComponent(object):
     def _send_msg(self, msg_dict):
         """Serialize to JSON a message dictionary and write it to the output
         stream, followed by a newline and "end\n".
-
-        Invocations of this method must be protected by the output stream lock
-        so that multiple threads do not transmit interleaved output lines.
         """
-        with self._output_stream_lock:
-            self._output_stream.write(json.dumps(msg_dict) + '\n')
-            self._output_stream.write("end\n")
-            self._output_stream.flush()
+        self._output_stream.write(json.dumps(msg_dict) + '\n')
+        self._output_stream.write("end\n")
+        self._output_stream.flush()
 
     def _create_pidfile(self, pid_dir, pid):
         open(os.path.join(pid_dir, str(pid)), 'a').close()
@@ -132,8 +116,7 @@ class StormComponent(object):
         """Receive the setup_info dict from the Storm task and report back with
         our pid; also touch a pidfile in the pidDir specified in setup_info.
         """
-        with self._input_stream_lock:
-            setup_info = self._read_msg()
+        setup_info = self._read_msg()
 
         pid = os.getpid()
         self._send_msg({'pid': pid})
