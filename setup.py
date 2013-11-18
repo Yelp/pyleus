@@ -85,7 +85,6 @@ setup(
     packages=["pyleus", "pyleus.cli", "pyleus.cli.commands"],
     scripts=["scripts/pyleus"],
     install_requires=install_requires,
-    extras_require={'JSON': ['simplejson==3.3.1']},
     data_files=[(BASE_JAR_INSTALL_DIR, [BASE_JAR_DST])],
     cmdclass={
         'build_java': build_java,
