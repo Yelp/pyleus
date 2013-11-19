@@ -42,18 +42,9 @@ class BuildTest(T.TestCase):
         ]
         mock_arc.write.assert_has_calls(expected)
 
-    @mock.patch.object(os.path, 'exists', autospec=True)
-    def test__pack_jar_output_jar_already_exists(self, mock_exists):
-        mock_exists.return_value = True
-        with T.assert_raises(exception.JarError):
-            build._pack_jar("foo", "bar")
-        mock_exists.assert_called_once_with("bar")
-
-    @mock.patch.object(os.path, 'exists', autospec=True)
     @mock.patch.object(zipfile, 'ZipFile', autospec=True)
     @mock.patch.object(build, '_zip_dir', autospec=True)
-    def test__pack_jar(self, mock_zip_dir, mock_zipfile, mock_exists):
-        mock_exists.return_value = False
+    def test__pack_jar(self, mock_zip_dir, mock_zipfile):
         build._pack_jar("foo", "bar")
         mock_zipfile.assert_called_once_with("bar", "w")
         mock_zip_dir.assert_called_once_with("foo", mock_zipfile.return_value)

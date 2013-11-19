@@ -59,9 +59,6 @@ def _zip_dir(src, arc):
 
 def _pack_jar(tmp_dir, output_jar):
     """Build a jar from the temporary directory."""
-    if os.path.exists(output_jar):
-        raise JarError("Output jar already exists: {0}".format(output_jar))
-
     zf = zipfile.ZipFile(output_jar, "w")
     try:
         _zip_dir(tmp_dir, zf)
@@ -252,10 +249,6 @@ def build_topology_jar(configs):
     include_packages = None
     if configs.include_packages is not None:
         include_packages = configs.include_packages.split(" ")
-
-    # Check for output path existence for early failure
-    if os.path.exists(output_jar):
-        raise JarError("Output jar already exist: {0}".format(output_jar))
 
     # Open the base jar as a zip
     zip_file = _open_jar(base_jar)
