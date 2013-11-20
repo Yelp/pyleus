@@ -12,6 +12,7 @@ import os
 import shutil
 import zipfile
 
+from pyleus import __version__
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
 from pyleus.utils import expand_path
 from pyleus.exception import InvalidTopologyError
@@ -129,7 +130,7 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
         verbose
     )
 
-    packages = ["pyleus"]
+    packages = ["pyleus=={0}".format(__version__)]
     if include_packages is not None:
         packages += include_packages
     for package in packages:

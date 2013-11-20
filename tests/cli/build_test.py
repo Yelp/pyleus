@@ -6,6 +6,7 @@ import zipfile
 import mock
 import testify as T
 
+from pyleus import __version__
 from pyleus import exception
 from pyleus.cli import build
 
@@ -133,12 +134,12 @@ class BuildTest(T.TestCase):
             pypi_index_url="http://pypi-ninja.ninjacorp.com/simple",
             verbose=False)
         expected_is_installed = [
-            mock.call("pyleus"),
+            mock.call("pyleus=={0}".format(__version__)),
             mock.call("fruit"),
             mock.call("ninja==7.7.7")
         ]
         expected_install = [
-            mock.call("pyleus"),
+            mock.call("pyleus=={0}".format(__version__)),
             mock.call("ninja==7.7.7")
         ]
         venv.is_package_installed.assert_has_calls(expected_is_installed)
