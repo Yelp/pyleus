@@ -16,10 +16,12 @@ STORM_PATH = "/usr/share/storm/bin/storm"
 TOPOLOGY_BUILDER_CLASS = "com.yelp.pyleus.PyleusTopologyBuilder"
 LOCAL_OPTION = "--local"
 
+storm_pid = None
 
 def _kill_storm_handler(signum, frame):
-    # It is the way a local run is normally terminated
-    raise KeyboardInterrupt
+    # Killing the storm process is enough for killing all python subprocesses
+    if storm_pid is not None:
+        os.kill(storm_pid, signal.SIGTERM)
 
 
 def _validate_ip_address(address):
@@ -48,7 +50,14 @@ def _exec_storm_cmd(cmd, nimbus_ip, verbose):
     proc = subprocess.Popen(storm_cmd,
                             stdout=out_stream,
                             stderr=subprocess.STDOUT)
+
+    global storm_pid
+    storm_pid = proc.pid
+
     out_data, _ = proc.communicate()
+
+    storm_pid = None
+
     if proc.returncode != 0:
         raise StormError(
             "Storm command failed. Run with --verbose for more info.")
@@ -113,6 +122,7 @@ class LocalStormCluster(object):
         # Ensure that if the pyleus process is killed, also the storm process
         # will terminate
         signal.signal(signal.SIGTERM, _kill_storm_handler)
+        signal.signal(signal.SIGINT, _kill_storm_handler)
 
         # Having no feedback from Storm misses the point of running a topology
         # locally, so verbosity should always be activated
