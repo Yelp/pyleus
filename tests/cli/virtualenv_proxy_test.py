@@ -32,6 +32,14 @@ class VirtualenvProxyTopLevelFunctionsTest(T.TestCase):
             "bash_ninja", cwd="foo", stdout=42, stderr=666)
         mock_proc.communicate.assert_called_once_with()
 
+    def test__strip_version(self):
+        stripped_package = virtualenv_proxy._strip_version("Ninja==7.7.7")
+        T.assert_equal(stripped_package, "Ninja")
+        stripped_package = virtualenv_proxy._strip_version("Ninja>=7.7.7")
+        T.assert_equal(stripped_package, "Ninja")
+        stripped_package = virtualenv_proxy._strip_version("Ninja")
+        T.assert_equal(stripped_package, "Ninja")
+
 
 class VirtualenvProxyCreationTest(T.TestCase):
 
@@ -97,24 +105,28 @@ class VirtualenvProxyMethodsTest(T.TestCase):
             pypi_index_url=PYPI_URL,
             verbose=False)
 
+    @mock.patch.object(virtualenv_proxy, '_strip_version', autospec=True)
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
-    def test_is_package_installed_installed(self, mock_cmd):
-        mock_cmd.return_value = "---\nName: pyleus\n"
-        installed = self.venv.is_package_installed("Ninja")
+    def test_is_package_installed_installed(self, mock_cmd, mock_strip):
+        mock_cmd.return_value = "---\nName: ninja\n"
+        installed = self.venv.is_package_installed("Ninja==7.7.7")
+        mock_strip.assert_called_once_with("Ninja==7.7.7")
         mock_cmd.assert_called_once_with(
-            ["{0}/bin/pip".format(VENV_NAME), "show", "Ninja"],
+            ["{0}/bin/pip".format(VENV_NAME), "show", mock_strip.return_value],
             cwd=VENV_PATH,
             stdout=subprocess.PIPE,
             stderr=self.venv._out_stream,
             err_msg=mock.ANY)
         T.assert_equal(installed, True)
 
+    @mock.patch.object(virtualenv_proxy, '_strip_version', autospec=True)
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
-    def test_is_package_installed_not_installed(self, mock_cmd):
+    def test_is_package_installed_not_installed(self, mock_cmd, mock_strip):
         mock_cmd.return_value = ""
-        installed = self.venv.is_package_installed("Ninja")
+        installed = self.venv.is_package_installed("Ninja==7.7.7")
+        mock_strip.assert_called_once_with("Ninja==7.7.7")
         mock_cmd.assert_called_once_with(
-            ["{0}/bin/pip".format(VENV_NAME), "show", "Ninja"],
+            ["{0}/bin/pip".format(VENV_NAME), "show", mock_strip.return_value],
             cwd=VENV_PATH,
             stdout=subprocess.PIPE,
             stderr=self.venv._out_stream,
@@ -123,10 +135,10 @@ class VirtualenvProxyMethodsTest(T.TestCase):
 
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
     def test_install_package(self, mock_cmd):
-        self.venv.install_package("Ninja")
+        self.venv.install_package("Ninja==7.7.7")
         mock_cmd.assert_called_once_with(
             [
-                "{0}/bin/pip".format(VENV_NAME), "install", "Ninja",
+                "{0}/bin/pip".format(VENV_NAME), "install", "Ninja==7.7.7",
                 "-i", PYPI_URL,
             ],
             cwd=VENV_PATH,
