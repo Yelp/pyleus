@@ -4,6 +4,7 @@ cluster-topologies interactions, but not cluster management.
 from __future__ import absolute_import
 
 import os
+import signal
 import socket
 import subprocess
 
@@ -14,6 +15,11 @@ from pyleus.exception import StormError
 STORM_PATH = "/usr/share/storm/bin/storm"
 TOPOLOGY_BUILDER_CLASS = "com.yelp.pyleus.PyleusTopologyBuilder"
 LOCAL_OPTION = "--local"
+
+
+def _kill_storm_handler(signum, frame):
+    # It is the way a local run is normally terminated
+    raise KeyboardInterrupt
 
 
 def _validate_ip_address(address):
@@ -103,6 +109,10 @@ class LocalStormCluster(object):
         """
 
         cmd = ["jar", jar_path, TOPOLOGY_BUILDER_CLASS, LOCAL_OPTION]
+
+        # Ensure that if the pyleus process is killed, also the storm process
+        # will terminate
+        signal.signal(signal.SIGTERM, _kill_storm_handler)
 
         # Having no feedback from Storm misses the point of running a topology
         # locally, so verbosity should always be activated
