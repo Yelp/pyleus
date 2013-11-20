@@ -18,6 +18,13 @@ log = logging.getLogger(__name__)
 StormTuple = namedtuple('StormTuple', "id comp stream task values")
 
 
+class StormWentAwayError(Exception):
+
+    def __init__(self):
+        message = "Got EOF while reading from Storm"
+        super(StormWentAwayError, self).__init__(message)
+
+
 class StormComponent(object):
 
     def __init__(self, input_stream=sys.stdin, output_stream=sys.stdout):
@@ -27,6 +34,8 @@ class StormComponent(object):
 
         self._pending_commands = deque()
         self._pending_taskids = deque()
+
+        self.conf, self.context = self.init_component()
 
     def initialize(self, conf, context):
         """Implement in subclass"""
@@ -42,7 +51,12 @@ class StormComponent(object):
         lines = []
 
         while True:
-            line = self._input_stream.readline().strip()
+            line = self._input_stream.readline()
+            if not line:
+                # Handle EOF, which usually means Storm went away
+                raise StormWentAwayError()
+
+            line = line.strip()
 
             if line == "end":
                 break
@@ -160,10 +174,8 @@ class Bolt(StormComponent):
         return self.process_tuple(tup)
 
     def run(self):
-        conf, context = self.init_component()
-
         try:
-            self.initialize(conf, context)
+            self.initialize(self.conf, self.context)
 
             while True:
                 tup = self.read_tuple()
@@ -247,10 +259,8 @@ class Spout(StormComponent):
         self.send_command('sync')
 
     def run(self):
-        conf, context = self.init_component()
-
         try:
-            self.initialize(conf, context)
+            self.initialize(self.conf, self.context)
 
             while True:
                 msg = self.read_command()
