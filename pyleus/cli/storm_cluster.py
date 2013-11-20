@@ -106,11 +106,4 @@ class LocalStormCluster(object):
 
         # Having no feedback from Storm misses the point of running a topology
         # locally, so verbosity should always be activated
-        try:
-            _exec_storm_cmd(cmd, None, True)
-        except StormError as e:
-            # It is just a temporary solution
-            subprocess.call(
-                'kill -9 `ps eu | grep "python -m" | grep pyleus '
-                '| tr -s " " | cut -f 2 -d" "`', shell=True)
-            raise e
+        _exec_storm_cmd(cmd, None, True)
