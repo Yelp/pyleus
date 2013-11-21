@@ -10,7 +10,6 @@ Options:
 """
 from __future__ import absolute_import
 
-import pkg_resources
 import os
 import subprocess
 
@@ -25,13 +24,6 @@ def _exec_shell_cmd(cmd, cwd, stdout, stderr, err_msg):
         raise VirtualenvError(err_msg)
     return out_data
 
-def _strip_version(package):
-    """Strip the version number off of the package name. If not specified,
-    return the orignal package name.
-
-    Note: pip-specific notations are not supported and will throw a ValueError
-    """
-    return pkg_resources.parse_requirements(package).next().project_name
 
 class VirtualenvProxy(object):
     """Object representing a ready-to-use virtualenv"""
@@ -64,20 +56,6 @@ class VirtualenvProxy(object):
                         stdout=self._out_stream, stderr=self._err_stream,
                         err_msg="Failed to create virtualenv: {0}".
                         format(os.path.join(self._path, self._name)))
-
-    def is_package_installed(self, package):
-        """Check if a package is already installed in the virtualenv.
-        """
-        cmd = [os.path.join(self._name, "bin", "pip"), "show",
-               _strip_version(package)]
-
-        out_data = _exec_shell_cmd(
-            cmd, cwd=self._path,
-            stdout=subprocess.PIPE, stderr=self._out_stream,
-            err_msg="Failed to run pip show.")
-
-        # pip show prints only if the package is already installed
-        return out_data != ""
 
     def install_package(self, package):
         """Interface to `pip install SINGLE_PACKAGE`"""

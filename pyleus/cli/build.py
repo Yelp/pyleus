@@ -131,8 +131,7 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
     if include_packages is not None:
         packages += include_packages
     for package in packages:
-        if not venv.is_package_installed(package):
-            venv.install_package(package)
+        venv.install_package(package)
 
     venv.install_from_requirements(req)
 
@@ -241,10 +240,6 @@ def build_topology_jar(configs):
     output_jar = _build_output_path(configs.output_jar, topology_dir)
 
     # Extract list of packages to always include from configuration
-    # Note: only "normal" packages can be specified in configuration.
-    # all packages that use a pip-specific notation (e.g. 'file://') will
-    # throw an exception. List them in the requirements.txt file, instead.
-
     include_packages = None
     if configs.include_packages is not None:
         include_packages = configs.include_packages.split(" ")
