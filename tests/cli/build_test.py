@@ -6,6 +6,7 @@ import zipfile
 import mock
 import testify as T
 
+from pyleus import __version__
 from pyleus import exception
 from pyleus.cli import build
 
@@ -123,7 +124,6 @@ class BuildTest(T.TestCase):
     @mock.patch.object(build, 'VirtualenvProxy', autospec=True)
     def test__set_up_virtualenv(self, MockVenv):
         venv = MockVenv.return_value
-        venv.is_package_installed.side_effect = iter([False, True, False])
         build._set_up_virtualenv(
             venv_name="foo",
             tmp_dir="bar",
@@ -132,16 +132,11 @@ class BuildTest(T.TestCase):
             system_site_packages=True,
             pypi_index_url="http://pypi-ninja.ninjacorp.com/simple",
             verbose=False)
-        expected_is_installed = [
-            mock.call("pyleus"),
+        expected_install = [
+            mock.call("pyleus=={0}".format(__version__)),
             mock.call("fruit"),
             mock.call("ninja==7.7.7")
         ]
-        expected_install = [
-            mock.call("pyleus"),
-            mock.call("ninja==7.7.7")
-        ]
-        venv.is_package_installed.assert_has_calls(expected_is_installed)
         venv.install_package.assert_has_calls(expected_install)
         venv.install_from_requirements.assert_called_once_with("baz.txt")
 

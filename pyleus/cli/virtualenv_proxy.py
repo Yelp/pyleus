@@ -57,22 +57,6 @@ class VirtualenvProxy(object):
                         err_msg="Failed to create virtualenv: {0}".
                         format(os.path.join(self._path, self._name)))
 
-    def is_package_installed(self, package):
-        """Check if a package is already installed in the virtualenv.
-
-        NOTE: right now if package==version is specified, the package will be
-        installed normally, but will fail this is_installed check.
-        """
-        cmd = [os.path.join(self._name, "bin", "pip"), "show", package]
-
-        out_data = _exec_shell_cmd(
-            cmd, cwd=self._path,
-            stdout=subprocess.PIPE, stderr=self._out_stream,
-            err_msg="Failed to run pip show.")
-
-        # pip show prints only if the package is already installed
-        return out_data != ""
-
     def install_package(self, package):
         """Interface to `pip install SINGLE_PACKAGE`"""
         cmd = [os.path.join(self._name, "bin", "pip"), "install", package]

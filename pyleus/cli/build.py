@@ -12,6 +12,7 @@ import os
 import shutil
 import zipfile
 
+from pyleus import __version__
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
 from pyleus.utils import expand_path
 from pyleus.exception import InvalidTopologyError
@@ -43,9 +44,6 @@ def _zip_dir(src, arc):
 
     Note: If the archive already exists, files will be simply
     added to it, but the original archive will not be replaced.
-    At the current state, this script enforce the creation of
-    a brand new zip archive each time is run, otehrwise it will
-    raise an exception.
     """
     src_re = re.compile(src + "/*")
     for root, dirs, files in os.walk(src):
@@ -129,12 +127,11 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
         verbose
     )
 
-    packages = ["pyleus"]
+    packages = ["pyleus=={0}".format(__version__)]
     if include_packages is not None:
         packages += include_packages
     for package in packages:
-        if not venv.is_package_installed(package):
-            venv.install_package(package)
+        venv.install_package(package)
 
     venv.install_from_requirements(req)
 
@@ -243,9 +240,6 @@ def build_topology_jar(configs):
     output_jar = _build_output_path(configs.output_jar, topology_dir)
 
     # Extract list of packages to always include from configuration
-    # NOTE: right now if package==version is specified in configuration,
-    # the package will be installed normally, but will fail the
-    # is_installed check
     include_packages = None
     if configs.include_packages is not None:
         include_packages = configs.include_packages.split(" ")
