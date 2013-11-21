@@ -241,10 +241,9 @@ def build_topology_jar(configs):
     output_jar = _build_output_path(configs.output_jar, topology_dir)
 
     # Extract list of packages to always include from configuration
-    # Note: if a package is specified in configurations with other
-    # notations than 'package', 'package(==|<=|>=)version_number',
-    # the package will be installed normally, but will fail the
-    # is_installed check
+    # Note: only "normal" packages can be specified in configuration.
+    # all packages that use a pip-specific notation (e.g. 'file://') will
+    # throw an exception. List them in the requirements.txt file, instead.
 
     include_packages = None
     if configs.include_packages is not None:

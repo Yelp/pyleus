@@ -10,7 +10,7 @@ Options:
 """
 from __future__ import absolute_import
 
-import re
+import pkg_resources
 import os
 import subprocess
 
@@ -28,8 +28,10 @@ def _exec_shell_cmd(cmd, cwd, stdout, stderr, err_msg):
 def _strip_version(package):
     """Strip the version number off of the package name. If not specified,
     return the orignal package name.
+
+    Note: pip-specific notations are not supported and will throw a ValueError
     """
-    return re.split(r"(==|>=|<=)", package)[0]
+    return pkg_resources.parse_requirements(package).next().project_name
 
 class VirtualenvProxy(object):
     """Object representing a ready-to-use virtualenv"""
@@ -65,9 +67,6 @@ class VirtualenvProxy(object):
 
     def is_package_installed(self, package):
         """Check if a package is already installed in the virtualenv.
-
-        Note: for all packages specified with other notations than 'package',
-        or 'package(==|<=|>=)version_number', the function will return false.
         """
         cmd = [os.path.join(self._name, "bin", "pip"), "show",
                _strip_version(package)]
