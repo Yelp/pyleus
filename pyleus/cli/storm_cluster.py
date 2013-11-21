@@ -24,8 +24,7 @@ def _watch_over_storm(storm_pid):
     def _kill_storm_handler(signum, frame):
         # Killing the storm process is enough for killing all python
         # subprocesses
-        if storm_pid is not None:
-            os.kill(storm_pid, signal.SIGTERM)
+        os.kill(storm_pid, signal.SIGTERM)
 
     signal.signal(signal.SIGTERM, _kill_storm_handler)
     signal.signal(signal.SIGINT, _kill_storm_handler)
