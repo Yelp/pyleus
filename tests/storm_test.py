@@ -298,16 +298,6 @@ class SpoutTest(StormComponentTestCase):
 
     INSTANCE_CLS = Spout
 
-    @T.setup
-    def setup(self):
-        self.mock_input_stream = mock.Mock()
-        self.mock_output_stream = mock.Mock()
-
-        self.instance = Spout(
-            input_stream=self.mock_input_stream,
-            output_stream=self.mock_output_stream,
-        )
-
     def test__sync(self):
         with mock.patch.object(self.instance, 'send_command') \
                as mock_send_command:
