@@ -16,12 +16,19 @@ STORM_PATH = "/usr/share/storm/bin/storm"
 TOPOLOGY_BUILDER_CLASS = "com.yelp.pyleus.PyleusTopologyBuilder"
 LOCAL_OPTION = "--local"
 
-storm_pid = None
 
-def _kill_storm_handler(signum, frame):
-    # Killing the storm process is enough for killing all python subprocesses
-    if storm_pid is not None:
-        os.kill(storm_pid, signal.SIGTERM)
+def _watch_over_storm(storm_pid):
+    """ Ensure that if the pyleus process is killed, also the storm process
+    will terminate
+    """
+    def _kill_storm_handler(signum, frame):
+        # Killing the storm process is enough for killing all python
+        # subprocesses
+        if storm_pid is not None:
+            os.kill(storm_pid, signal.SIGTERM)
+
+    signal.signal(signal.SIGTERM, _kill_storm_handler)
+    signal.signal(signal.SIGINT, _kill_storm_handler)
 
 
 def _validate_ip_address(address):
@@ -34,34 +41,6 @@ def _validate_ip_address(address):
     except socket.error:
         raise ConfigurationError("The IP address specified is invalid: {0}"
                                  .format(address))
-
-
-def _exec_storm_cmd(cmd, nimbus_ip, verbose):
-    """Interface to any storm command"""
-    out_stream = None
-    if not verbose:
-        out_stream = open(os.devnull, "w")
-
-    storm_cmd = [STORM_PATH]
-    storm_cmd += cmd
-    if nimbus_ip is not None:
-        storm_cmd += ["-c", "nimbus.host={0}".format(nimbus_ip)]
-
-    proc = subprocess.Popen(storm_cmd,
-                            stdout=out_stream,
-                            stderr=subprocess.STDOUT)
-
-    global storm_pid
-    storm_pid = proc.pid
-
-    out_data, _ = proc.communicate()
-
-    storm_pid = None
-
-    if proc.returncode != 0:
-        raise StormError(
-            "Storm command failed. Run with --verbose for more info.")
-    return out_data
 
 
 class StormCluster(object):
@@ -81,18 +60,39 @@ class StormCluster(object):
         self.nimbus_ip = nimbus_ip
         self.verbose = verbose
 
+    def _exec_storm_cmd(self, cmd, verbose=None):
+        """Interface to any storm command"""
+        out_stream = None
+        if verbose is None:
+            verbose = self.verbose
+        if not verbose:
+            out_stream = open(os.devnull, "w")
+
+        storm_cmd = [STORM_PATH]
+        storm_cmd += cmd
+        storm_cmd += ["-c", "nimbus.host={0}".format(self.nimbus_ip)]
+
+        proc = subprocess.Popen(storm_cmd,
+                                stdout=out_stream,
+                                stderr=subprocess.STDOUT)
+        out_data, _ = proc.communicate()
+        if proc.returncode != 0:
+            raise StormError(
+                "Storm command failed. Run with --verbose for more info.")
+        return out_data
+
     def submit(self, jar_path):
         """Submit the pyleus topology jar to the Storm cluster"""
         cmd = ["jar", jar_path, TOPOLOGY_BUILDER_CLASS]
 
-        _exec_storm_cmd(cmd, self.nimbus_ip, self.verbose)
+        self._exec_storm_cmd(cmd)
 
     def list(self):
         """List the topologies running on the Storm cluster"""
         cmd = ["list"]
 
         # No point in calling it without output
-        _exec_storm_cmd(cmd, self.nimbus_ip, True)
+        self._exec_storm_cmd(cmd, True)
 
     def kill(self, topology_name, wait_time):
         """Kill a topology running on the Storm cluster"""
@@ -102,7 +102,7 @@ class StormCluster(object):
         if wait_time is not None:
             cmd += ["-w", wait_time]
 
-        _exec_storm_cmd(cmd, self.nimbus_ip, self.verbose)
+        self._exec_storm_cmd(cmd)
 
 
 class LocalStormCluster(object):
@@ -116,14 +116,16 @@ class LocalStormCluster(object):
         Note: In order to trigger the local mode for the selcted topology,
         PyleusTopologyBuilder needs to be called with the option <--local>.
         """
-
-        cmd = ["jar", jar_path, TOPOLOGY_BUILDER_CLASS, LOCAL_OPTION]
-
-        # Ensure that if the pyleus process is killed, also the storm process
-        # will terminate
-        signal.signal(signal.SIGTERM, _kill_storm_handler)
-        signal.signal(signal.SIGINT, _kill_storm_handler)
+        storm_cmd = [
+            STORM_PATH, "jar", jar_path, TOPOLOGY_BUILDER_CLASS, LOCAL_OPTION]
 
         # Having no feedback from Storm misses the point of running a topology
-        # locally, so verbosity should always be activated
-        _exec_storm_cmd(cmd, None, True)
+        # locally, so output is always redirected to stdout
+        proc = subprocess.Popen(storm_cmd, stderr=subprocess.STDOUT)
+
+        _watch_over_storm(proc.pid)
+
+        proc.communicate()
+        if proc.returncode != 0:
+            raise StormError(
+                "Storm command failed. Run with --verbose for more info.")
