@@ -37,6 +37,8 @@ class VirtualenvProxyTopLevelFunctionsTest(T.TestCase):
         T.assert_equal(stripped_package, "Ninja")
         stripped_package = virtualenv_proxy._strip_version("Ninja>=7.7.7")
         T.assert_equal(stripped_package, "Ninja")
+        stripped_package = virtualenv_proxy._strip_version("Ninja<=7.7.7")
+        T.assert_equal(stripped_package, "Ninja")
         stripped_package = virtualenv_proxy._strip_version("Ninja")
         T.assert_equal(stripped_package, "Ninja")
 

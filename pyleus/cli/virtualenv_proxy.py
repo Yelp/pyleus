@@ -29,7 +29,7 @@ def _strip_version(package):
     """Strip the version number off of the package name. If not specified,
     return the orignal package name.
     """
-    return re.split(r"(==|>=)", package)[0]
+    return re.split(r"(==|>=|<=)", package)[0]
 
 class VirtualenvProxy(object):
     """Object representing a ready-to-use virtualenv"""
@@ -67,8 +67,7 @@ class VirtualenvProxy(object):
         """Check if a package is already installed in the virtualenv.
 
         Note: for all packages specified with other notations than 'package',
-        'package==version_number', 'package>=version_number', the function
-        will return false.
+        or 'package(==|<=|>=)version_number', the function will return false.
         """
         cmd = [os.path.join(self._name, "bin", "pip"), "show",
                _strip_version(package)]

@@ -242,9 +242,9 @@ def build_topology_jar(configs):
 
     # Extract list of packages to always include from configuration
     # Note: if a package is specified in configurations with other
-    # notations than 'package', 'package==version_number',
-    # 'package>=version_number', the package will be installed normally,
-    # but will fail the is_installed check
+    # notations than 'package', 'package(==|<=|>=)version_number',
+    # the package will be installed normally, but will fail the
+    # is_installed check
 
     include_packages = None
     if configs.include_packages is not None:
