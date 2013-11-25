@@ -26,7 +26,6 @@ import sys
 from pyleus.cli.commands.subcommand import SubCommand
 from pyleus.cli.commands.subcommand import SubCommandInfo
 from pyleus.cli.build import build_topology_jar
-from pyleus.cli.build import REQUIREMENTS_FILENAME
 from pyleus.exception import command_error_fmt
 from pyleus.exception import PyleusError
 
@@ -53,16 +52,6 @@ class BuildSubCommand(SubCommand):
             "-o", "--out", dest="output_jar",
             help="Path of the jar file that will contain"
             " all the dependencies and the resources")
-        parser.add_argument(
-            "--use-virtualenv",
-            dest="use_virtualenv", action="store_true",
-            help="Use virtualenv and pip install for dependencies."
-            " Your TOPOLOGY_DIRECTORY must contain a file named {0}"
-            .format(REQUIREMENTS_FILENAME))
-        parser.add_argument(
-            "--no-use-virtualenv",
-            dest="use_virtualenv", action="store_false",
-            help="Do not use virtualenv and pip for dependencies")
         parser.add_argument(
             "-s", "--system-site-packages",
             dest="system_site_packages", action="store_true",
