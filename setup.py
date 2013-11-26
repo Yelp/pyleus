@@ -16,7 +16,7 @@ BASE_JAR_SRC = os.path.join(JAVA_SRC_DIR, "dist", BASE_JAR)
 BASE_JAR_DST = os.path.join("java", BASE_JAR)
 
 
-install_requires = []
+install_requires = ["PyYAML==3.10"]
 if sys.version_info < (2, 7):
     install_requires.append("argparse==1.2.1")
 
