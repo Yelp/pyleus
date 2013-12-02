@@ -1,21 +1,29 @@
 from __future__ import absolute_import
 
+import argparse
 from collections import deque, namedtuple
 import logging
 import os
 import sys
 import traceback
 
-
 try:
     import simplejson as json
-    _ = json # pyflakes
+    _ = json  # pyflakes
 except ImportError:
     import json
+
+DESCRIBE_OPT = "--describe"
+OPTIONS_OPT = "--options"
 
 log = logging.getLogger(__name__)
 
 StormTuple = namedtuple('StormTuple', "id comp stream task values")
+
+
+def _listify(obj):
+    listify = lambda x: [x] if isinstance(x, str) else list(x)
+    return None if obj is None else listify(obj)
 
 
 class StormWentAwayError(Exception):
@@ -27,19 +35,61 @@ class StormWentAwayError(Exception):
 
 class StormComponent(object):
 
+    OUTPUT_FIELDS = None
+    OPTIONS = None
+
     def __init__(self, input_stream=sys.stdin, output_stream=sys.stdout):
+        """The Storm component will parse the command line in order
+        to figure out if it has been queried for a description or for
+        actually running."""
         super(StormComponent, self).__init__()
+
         self._input_stream = input_stream
         self._output_stream = output_stream
 
         self._pending_commands = deque()
         self._pending_taskids = deque()
 
+    def describe(self):
+        """Print to stdout a JSON descrption of the component.
+
+        The java code will use the JSON descrption for topology
+        cofiguration and validation.
+        """
+        print json.dumps({
+            "output_fields": _listify(self.OUTPUT_FIELDS),
+            "options": _listify(self.OPTIONS)})
+
+    def setup_component(self, options=None):
+        """Storm component setup before execution. It will also
+        call the initialization method implemented in the subclass."""
         self.conf, self.context = self.init_component()
 
-    def initialize(self, conf, context):
+        self.initialize(self.conf, self.context, options)
+
+    def initialize(self, conf, context, options=None):
         """Implement in subclass"""
         pass
+
+    def run(self):
+        parser = argparse.ArgumentParser(
+            add_help=False)
+        parser.add_argument(
+            DESCRIBE_OPT, default=False, action="store_true")
+        parser.add_argument(
+            OPTIONS_OPT, default=None)
+        args = parser.parse_args()
+
+        if args.describe:
+            self.describe()
+        elif args.options is not None:
+            self.run_component(json.loads(args.options))
+        else:
+            self.run_component()
+
+    def run_component(self, options=None):
+        """Implement in subclass"""
+        raise NotImplementedError
 
     def _read_msg(self):
         """The Storm multilang protocol specifies that messages are some JSON
@@ -112,8 +162,8 @@ class StormComponent(object):
     def read_tuple(self):
         """Read and parse a command into a StormTuple object"""
         cmd = self.read_command()
-        return StormTuple(cmd['id'], cmd['comp'], cmd['stream'], cmd['task'],
-            cmd['tuple'])
+        return StormTuple(
+            cmd['id'], cmd['comp'], cmd['stream'], cmd['task'], cmd['tuple'])
 
     def _send_msg(self, msg_dict):
         """Serialize to JSON a message dictionary and write it to the output
@@ -173,9 +223,9 @@ class Bolt(StormComponent):
         """
         return self.process_tuple(tup)
 
-    def run(self):
+    def run_component(self, options=None):
         try:
-            self.initialize(self.conf, self.context)
+            self.setup_component(options)
 
             while True:
                 tup = self.read_tuple()
@@ -258,9 +308,9 @@ class Spout(StormComponent):
     def _sync(self):
         self.send_command('sync')
 
-    def run(self):
+    def run_component(self, options=None):
         try:
-            self.initialize(self.conf, self.context)
+            self.setup_component(options)
 
             while True:
                 msg = self.read_command()
