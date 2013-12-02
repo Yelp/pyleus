@@ -82,3 +82,15 @@ class VirtualenvProxy(object):
             stdout=self._out_stream, stderr=self._err_stream,
             err_msg="Failed to install dependencies for this topology."
             " Run with --verbose for detailed info.")
+
+    def execute_module(self, module, *args):
+        """Call "virtualenv/interpreter -m" to execute a python module."""
+        cmd = [os.path.join(self._name, "bin", "python"), "-m", module]
+        cmd += args
+        proc = subprocess.Popen(cmd, cwd=self._path, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        out_data, err_data = proc.communicate()
+        if proc.returncode != 0:
+            raise VirtualenvError("Failed to execute pyhton module: {0}."
+                                  " Error: {1}".format(module, err_data))
+        return out_data
