@@ -10,14 +10,17 @@ import re
 import tempfile
 import os
 import shutil
+import yaml as yaml_module
 import zipfile
 
 from pyleus import __version__
+from pyleus.cli.topology_spec import TopologySpec
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
-from pyleus.utils import expand_path
+from pyleus.storm import DESCRIBE_OPT
 from pyleus.exception import InvalidTopologyError
 from pyleus.exception import JarError
 from pyleus.exception import TopologyError
+from pyleus.utils import expand_path
 
 
 RESOURCES_PATH = "resources"
@@ -120,11 +123,35 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
     packages = ["pyleus=={0}".format(__version__)]
     if include_packages is not None:
         packages += include_packages
+
     for package in packages:
         venv.install_package(package)
 
     if req is not None:
         venv.install_from_requirements(req)
+
+    return venv
+
+
+def _assemble_full_topology_yaml(yaml, venv):
+    """Assemble a full version of the topology yaml file given by the user
+    adding to it the information coming from the python source files.
+    """
+    with open(yaml) as old_yaml_file:
+        specs_dict = yaml_module.load(old_yaml_file)
+
+        with tempfile.NamedTemporaryFile("w", delete=False) as new_yaml_file:
+            specs = TopologySpec(specs_dict)
+
+            for component in specs.topology:
+                module_specs = yaml_module.load(venv.execute_module(
+                    component.module, DESCRIBE_OPT))
+                component.update_from_module(module_specs)
+
+            specs.verify_groupings()
+
+            yaml_module.dump(specs.asdict(), new_yaml_file)
+            return new_yaml_file.name
 
 
 def _exclude_content(src):
@@ -176,21 +203,36 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
     # Extract pyleus base jar content in a tmp dir
     zip_file.extractall(tmp_dir)
 
-    # Copy yaml into its directory
+    # Create resources directory
     resources_dir = os.path.join(tmp_dir, RESOURCES_PATH)
     os.mkdir(resources_dir)
+
+    # Copy yaml into its directory
     shutil.copy2(yaml, resources_dir)
 
     # Add the topology directory skipping yaml and requirements
     _copy_dir_content(topology_dir, os.path.join(tmp_dir, RESOURCES_PATH))
 
-    _set_up_virtualenv(venv_name=VIRTUALENV_NAME,
-                       tmp_dir=os.path.join(tmp_dir, RESOURCES_PATH),
-                       req=req,
-                       include_packages=include_packages,
-                       system_site_packages=system_site_packages,
-                       pypi_index_url=pypi_index_url,
-                       verbose=verbose)
+    venv = _set_up_virtualenv(
+        venv_name=VIRTUALENV_NAME,
+        tmp_dir=os.path.join(tmp_dir, RESOURCES_PATH),
+        req=req,
+        include_packages=include_packages,
+        system_site_packages=system_site_packages,
+        pypi_index_url=pypi_index_url,
+        verbose=verbose)
+
+    # Assemble the full version of the topolgy yaml file from the user yaml and
+    # the python code
+    new_yaml = _assemble_full_topology_yaml(yaml, venv)
+
+    try:
+        # Copy the new yaml file into its directory, overwriting the old one
+        jar_yaml = os.path.join(resources_dir, YAML_FILENAME)
+        os.remove(jar_yaml)
+        shutil.copy2(new_yaml, jar_yaml)
+    finally:
+        os.remove(new_yaml)
 
     # Pack the tmp directory into a jar
     _pack_jar(tmp_dir, output_jar)
