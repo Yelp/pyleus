@@ -12,11 +12,7 @@ from pyleus.exception import InvalidTopologyError
 
 
 def _as_set(obj):
-    if isinstance(obj, list):
-        return set(obj)
-    if isinstance(obj, dict):
-        return set(obj.keys())
-    return None
+    return None if obj is None else set(obj)
 
 
 class TopologySpec(object):
@@ -67,7 +63,11 @@ class TopologySpec(object):
 class ComponentSpec(object):
     """Base class for Storm component specifications"""
 
-    component = "component"
+    COMPONENT = "component"
+
+    KEYS_LIST = [
+        "name", "module", "tick_freq_secs", "parallelism_hint", "options",
+        "output_fields", "groupings"]
 
     def __init__(self, specs):
         """Convert a component specs dictionary coming from the yaml file into
@@ -75,21 +75,18 @@ class ComponentSpec(object):
         if specs is None:
             raise InvalidTopologyError(
                 "[{0}] Empty components are not allowed. At least 'name'"
-                " and 'module' must be specified".format(self.component))
+                " and 'module' must be specified".format(self.COMPONENT))
 
         if not "name" in specs:
             raise InvalidTopologyError(
                 "[{0}] Tag not found in yaml file: {1}"
-                .format(self.component, "name"))
+                .format(self.COMPONENT, "name"))
         self.name = specs["name"]
 
-        keys_list = [
-            "name", "module", "tick_freq_secs", "parallelism_hint", "options",
-            "output_fields", "groupings"]
-        if not set(keys_list).issuperset(_as_set(specs)):
+        if not set(self.KEYS_LIST).issuperset(_as_set(specs)):
             raise InvalidTopologyError(
                 "[{0}] These tags are not allowed: {1}"
-                .format(self.name, list(_as_set(specs) - set(keys_list))))
+                .format(self.name, list(_as_set(specs) - set(self.KEYS_LIST))))
 
         if not "module" in specs:
             raise InvalidTopologyError(
@@ -123,13 +120,13 @@ class ComponentSpec(object):
 
     def asdict(self):
         """Return a copy of the object as a dictionary"""
-        return {self.component: copy.deepcopy(self.__dict__)}
+        return {self.COMPONENT: copy.deepcopy(self.__dict__)}
 
 
 class BoltSpec(ComponentSpec):
     """Bolt specifications class"""
 
-    component = "bolt"
+    COMPONENT = "bolt"
 
     def __init__(self, specs):
         """Bolt specific initialization. Bolts may have a grouping section"""
@@ -199,7 +196,7 @@ class BoltSpec(ComponentSpec):
 class SpoutSpec(ComponentSpec):
     """Spout specifications class"""
 
-    component = "spout"
+    COMPONENT = "spout"
 
     def update_from_module(self, specs):
         """Specific spout validation. Spouts must have output fields."""

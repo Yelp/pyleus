@@ -9,9 +9,10 @@ import traceback
 
 try:
     import simplejson as json
-    _ = json  # pyflakes
+    _ = json # pyflakes
 except ImportError:
     import json
+
 
 DESCRIBE_OPT = "--describe"
 OPTIONS_OPT = "--options"
@@ -22,8 +23,12 @@ StormTuple = namedtuple('StormTuple', "id comp stream task values")
 
 
 def _listify(obj):
-    listify = lambda x: [x] if isinstance(x, str) else list(x)
-    return None if obj is None else listify(obj)
+    if obj is None:
+        return None
+    elif isinstance(obj, basestring):
+        return [obj]
+    else:
+        return list(obj)
 
 
 class StormWentAwayError(Exception):
