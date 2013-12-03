@@ -50,7 +50,7 @@ class TopologySpec(object):
 
         for component in self.topology:
             if (isinstance(component, BoltSpec) and
-                    component.grouping is not None):
+                    component.groupings is not None):
                 component.verify_groupings(topology_out_fields)
 
     def asdict(self):
