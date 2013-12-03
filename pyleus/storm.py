@@ -23,12 +23,7 @@ StormTuple = namedtuple('StormTuple', "id comp stream task values")
 
 
 def _listify(obj):
-    if obj is None:
-        return None
-    elif isinstance(obj, basestring):
-        return [obj]
-    else:
-        return list(obj)
+    return None if obj is None else list(obj)
 
 
 class StormWentAwayError(Exception):
