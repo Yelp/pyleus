@@ -15,6 +15,10 @@ def _as_set(obj):
     return None if obj is None else set(obj)
 
 
+def _as_list(obj):
+    return None if obj is None else list(obj)
+
+
 class TopologySpec(object):
     """Topology level specification class"""
 
@@ -25,7 +29,7 @@ class TopologySpec(object):
         if _as_set(specs) != set(["name", "topology"]):
             raise InvalidTopologyError(
                 "Each topology must specify tags 'name' and 'topology'"
-                "only. Found: {1}".format(self.name, list(_as_set(specs))))
+                "only. Found: {1}".format(self.name, _as_list(specs)))
 
         self.name = specs["name"]
         self.topology = []
@@ -38,7 +42,7 @@ class TopologySpec(object):
             else:
                 raise InvalidTopologyError(
                     "Unknown tag. Allowed:'bolt' and 'spout'. Found: {0}"
-                    .format(list(_as_set(specs["topology"]))))
+                    .format(_as_list(specs["topology"])))
 
     def verify_groupings(self):
         """Verify that the groupings specified in the yaml file match
@@ -87,7 +91,7 @@ class ComponentSpec(object):
         if not set(self.KEYS_LIST).issuperset(_as_set(specs)):
             raise InvalidTopologyError(
                 "[{0}] These tags are not allowed: {1}"
-                .format(self.name, list(_as_set(specs) - set(self.KEYS_LIST))))
+                .format(self.name, _as_list(specs) - set(self.KEYS_LIST)))
 
         if not "module" in specs:
             raise InvalidTopologyError(
@@ -109,15 +113,15 @@ class ComponentSpec(object):
             raise InvalidTopologyError(
                 "[{0}] Python class should specify attributes 'output_fields'"
                 " and 'options'. Found: {1}. Are you inheriting from Bolt or"
-                " Spout?".format(self.name, list(_as_set(specs))))
+                " Spout?".format(self.name, specs))
 
         self.output_fields = specs["output_fields"]
         if _as_set(specs["options"]) != _as_set(self.options):
             raise InvalidTopologyError(
-                "[{0}] Options mismatch. Python class: {1}. Yaml file:{2}"
+                "[{0}] Options mismatch. Python class: {1}. Yaml file: {2}"
                 .format(self.name,
-                        list(_as_set(specs["options"])),
-                        list(_as_set(self.options))))
+                        _as_list(specs["options"]),
+                        _as_list(self.options)))
 
     def asdict(self):
         """Return a copy of the object as a dictionary"""
@@ -168,7 +172,7 @@ class BoltSpec(ComponentSpec):
                         "[{0}] [{1}] Must specify tags 'component' and"
                         " 'fields' only. Found: {2}".format(
                             self.name, group_type,
-                            list(_as_set(fields_dict))))
+                            _as_list(fields_dict)))
 
                 stream = fields_dict["component"]
                 self._stream_exists(stream, group_type, topo_out_fields)
