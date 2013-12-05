@@ -320,38 +320,38 @@ class SpoutTest(StormComponentTestCase):
 
     def test_emit_simple(self):
         expected_command_dict = {
-            'tuple': mock.sentinel.values,
+            'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit(mock.sentinel.values)
+            self.instance.emit((1, 2, 3))
 
     def test_emit_with_stream(self):
         expected_command_dict = {
             'stream': mock.sentinel.stream,
-            'tuple': mock.sentinel.values,
+            'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit(mock.sentinel.values, stream=mock.sentinel.stream)
+            self.instance.emit((1, 2, 3), stream=mock.sentinel.stream)
 
     def test_emit_with_tup_id(self):
         expected_command_dict = {
             'id': mock.sentinel.tup_id,
-            'tuple': mock.sentinel.values,
+            'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit(mock.sentinel.values, tup_id=mock.sentinel.tup_id)
+            self.instance.emit((1, 2, 3), tup_id=mock.sentinel.tup_id)
 
     def test_emit_with_direct_task(self):
         expected_command_dict = {
             'task': mock.sentinel.direct_task,
-            'tuple': mock.sentinel.values,
+            'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit(mock.sentinel.values, direct_task=mock.sentinel.direct_task)
+            self.instance.emit((1, 2, 3), direct_task=mock.sentinel.direct_task)
 
     def test__handle_command_next(self):
         msg = dict(command='next')

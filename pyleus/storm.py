@@ -248,7 +248,7 @@ class Bolt(StormComponent):
         """Build and send an output tuple command dict; return the tasks to
         which the tuple was sent by Storm.
         """
-        assert type(values) in (list, tuple)
+        assert isinstance(values, list) or isinstance(values, tuple)
 
         if anchors is None:
             anchors = []
@@ -324,6 +324,8 @@ class Spout(StormComponent):
         """Build and send an output tuple command dict; return the tasks to
         which the tuple was sent by Storm.
         """
+        assert isinstance(values, list) or isinstance(values, tuple)
+
         command_dict = {
             'tuple': values
         }
