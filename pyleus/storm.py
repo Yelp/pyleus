@@ -198,7 +198,7 @@ class StormComponent(object):
         self._send_msg({'pid': pid})
         self._create_pidfile(setup_info['pidDir'], pid)
 
-        return setup_info['conf'], setup_info['context']
+        return StormConfig(setup_info['conf']), setup_info['context']
 
     def send_command(self, command, opts_dict=None):
         if opts_dict is not None:
@@ -360,3 +360,19 @@ def is_tick(tup):
     from the __system component and __tick stream
     """
     return tup.comp == '__system' and tup.stream == '__tick'
+
+
+class StormConfig(dict):
+
+    def __init__(self, conf):
+        super(StormConfig, self).__init__()
+        self.update(conf)
+
+    @property
+    def tick_tuple_freq(self):
+        """Return the tick tuple frequency for the component.
+
+        Note: bolts that not specify a tick tuple frequency default to null,
+        while for spouts are not supposed to use tick tuples.
+        """
+        return self.get("topology.tick.tuple.freq.secs")
