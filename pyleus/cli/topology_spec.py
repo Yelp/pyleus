@@ -159,13 +159,13 @@ class BoltSpec(ComponentSpec):
                     .format(self.name, group.keys()))
             group_type = group.keys()[0]
 
-            if (group_type == "globalGrouping" or
-                    group_type == "shuffleGrouping"):
+            if (group_type == "global_grouping" or
+                    group_type == "shuffle_grouping"):
                 stream = group[group_type]
                 self._stream_exists(stream, group_type, topo_out_fields)
 
-            elif group_type == "fieldsGrouping":
-                fields_dict = group["fieldsGrouping"]
+            elif group_type == "fields_grouping":
+                fields_dict = group["fields_grouping"]
 
                 if _as_set(fields_dict) != set(["component", "fields"]):
                     raise InvalidTopologyError(
@@ -193,7 +193,7 @@ class BoltSpec(ComponentSpec):
             else:
                 raise InvalidTopologyError(
                     "[{0}] Unkonown grouping type. Allowed:"
-                    " 'globalGrouping', 'shuffleGrouping','fieldsGrouping'"
+                    " 'global_grouping', 'shuffle_grouping','fields_grouping'"
                     ". Found: {1}".format(self.name, group_type))
 
 
