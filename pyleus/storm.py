@@ -22,8 +22,20 @@ log = logging.getLogger(__name__)
 StormTuple = namedtuple('StormTuple', "id comp stream task values")
 
 
+def _is_namedtuple(obj):
+    return (type(obj) is type and
+            issubclass(obj, tuple) and
+            hasattr(obj, "_fields"))
+
+
 def _listify(obj):
-    return None if obj is None else list(obj)
+    if obj is None:
+        return None
+    # obj is a namedtuple "class"
+    elif _is_namedtuple(obj):
+        return list(obj._fields)
+    # obj is a list or a tuple
+    return list(obj)
 
 
 class StormWentAwayError(Exception):
