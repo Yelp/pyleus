@@ -155,7 +155,7 @@ class StormComponentTest(StormComponentTestCase):
 
     def test_init_component(self):
         handshake_msg = {
-            'conf': "conf",
+            'conf': {"foo": "bar"},
             'context': "context",
             'pidDir': "pidDir",
         }
@@ -176,7 +176,7 @@ class StormComponentTest(StormComponentTestCase):
         mock__send_msg.assert_called_once_with({'pid': 1234})
         mock__create_pidfile.assert_called_once_with("pidDir", 1234)
 
-        T.assert_equal(conf, "conf")
+        T.assert_equal(conf, {"foo": "bar"})
         T.assert_equal(context, "context")
 
     def test_send_command_with_opts(self):
