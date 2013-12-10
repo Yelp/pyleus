@@ -34,7 +34,7 @@ def main():
         help="Show version number and exit")
 
     subparsers = parser.add_subparsers(
-        title="Commands",
+        title="commands",
         metavar="COMMAND")
     BuildSubCommand().add_parser(subparsers)
     ListSubCommand().add_parser(subparsers)

@@ -26,12 +26,8 @@ class LocalSubCommand(RunSubCommand):
         return SubCommandInfo(
             command_name=CMD,
             usage="%(prog)s [options] TOPOLOGY_PATH",
-            description="Run a Pyleus topology locally."
-                        " WARNING: DO NOT USE THIS COMMAND YET."
-                        " YOUR LOCAL MACHINE WILL ATROCIOUSLY DIE.",
-            help_msg="Run a Pyleus topology locally."
-                     " WARNING: DO NOT USE THIS COMMAND YET."
-                     " YOUR LOCAL MACHINE WILL ATROCIOUSLY DIE.")
+            description="Run a Pyleus topology locally.",
+            help_msg="Run a Pyleus topology locally.")
 
     def run_topology(self, jar_path, configs):
         run_topology_locally(jar_path, configs)
