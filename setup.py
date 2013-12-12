@@ -11,7 +11,7 @@ from setuptools.command.sdist import sdist as _sdist
 from pyleus import __version__
 from pyleus import BASE_JAR, BASE_JAR_INSTALL_DIR
 
-JAVA_SRC_DIR = "../yaml_topo"
+JAVA_SRC_DIR = "topology_builder/"
 BASE_JAR_SRC = os.path.join(JAVA_SRC_DIR, "dist", BASE_JAR)
 BASE_JAR_DST = os.path.join("java", BASE_JAR)
 
