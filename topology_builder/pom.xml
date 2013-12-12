@@ -16,6 +16,13 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>clojars.org</id>
+      <url>http://clojars.org/repo</url>
+    </repository>
+  </repositories>
+
   <!-- Library dependencies -->
   <dependencies>
     <dependency>
