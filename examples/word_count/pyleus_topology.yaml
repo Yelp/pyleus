@@ -1,0 +1,32 @@
+# An ultra-simple topology which shows off Storm and the pyleus.storm library
+
+name: word_count
+
+topology:
+
+    - spout:
+        name: line-spout
+        module: word_count.line_spout
+
+    - bolt:
+        name: split-words
+        module: word_count.split_words
+        parallelism_hint: 3
+        groupings:
+            - shuffle_grouping: line-spout
+
+    - bolt:
+        name: count-words
+        module: word_count.count_words
+        parallelism_hint: 3
+        groupings:
+            - fields_grouping:
+                component: split-words
+                fields:
+                    - word
+
+    - bolt:
+        name: log-results
+        module: word_count.log_results
+        groupings:
+            - global_grouping: count-words

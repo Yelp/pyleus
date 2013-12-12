@@ -1,0 +1,46 @@
+# This topology will compute every 2 seconds the wind chill factor and the heat
+# index for the locations monitored by wheater stations sending their sensors
+# data through 3 different streams: one for the temperature, one for the wind
+# speed and one for the relative humidity. This topology serve the purpose to
+# demonstrate how to join between realtime streams. It is also worth to note
+# that this topology presents two different "final-stage" bolts.
+
+name: apparent_temperature
+
+topology:
+
+    - spout:
+        name: temperature-monitor
+        module: apparent_temperature.temperature_generator
+
+    - spout:
+        name: wind-speed-monitor
+        module: apparent_temperature.wind_speed_generator
+
+    - spout:
+        name: humidity-monitor
+        module: apparent_temperature.humidity_generator
+
+    - bolt:
+        name: wind-chill-calculator
+        module: apparent_temperature.wind_chill_calculator
+        tick_freq_secs: 2
+        groupings:
+            - fields_grouping:
+                component: temperature-monitor
+                fields: [id_sensor]
+            - fields_grouping:
+                component: wind-speed-monitor
+                fields: [id_sensor]
+
+    - bolt:
+        name: heat-index-calculator
+        module: apparent_temperature.heat_index_calculator
+        tick_freq_secs: 2
+        groupings:
+            - fields_grouping:
+                component: temperature-monitor
+                fields: [id_sensor]
+            - fields_grouping:
+                component: humidity-monitor
+                fields: [id_sensor]

@@ -1,0 +1,62 @@
+# Lucy Slow Queries
+#
+# This topology tails the federator_timing_checkpoints log, tracking the
+# slowest queries. For our purposes, a query is defined only as a search
+# string and location string (parsed from the request_uri field, unfortunately,
+# since the text itself is not included in the log)
+#
+# Currently, this topology simply tails the log and periodically writes the top
+# ten slowest queries to disk. The second phase will be to add a DRPC entry
+# point for querying the current top ten. Finally, queries can be sharded across
+# a layer of bolts which periodically emit a top ten tuple, which are merged in
+# a final bolt into the "true" top ten list.
+
+name: lucy_slow_queries
+
+topology:
+    - spout:
+        name: federator_timing_checkpoints-stagea
+        module: yelp_pyleus_util.scribe_spout
+        options:
+            environment: stagea
+            stream: federator_timing_checkpoints
+
+    - spout:
+        name: federator_timing_checkpoints-stageb
+        module: yelp_pyleus_util.scribe_spout
+        options:
+            environment: stageb
+            stream: federator_timing_checkpoints
+
+    - bolt:
+        name: extract-fields
+        module: lucy_slow_queries.fields
+        parallelism_hint: 3
+        groupings:
+            - shuffle_grouping: federator_timing_checkpoints-stagea
+            - shuffle_grouping: federator_timing_checkpoints-stageb
+
+    - bolt:
+        name: top-ten-intermediate
+        module: lucy_slow_queries.top_ten_intermediate
+        tick_freq_secs: 6
+        parallelism_hint: 3
+        groupings:
+            - fields_grouping:
+                component: extract-fields
+                fields:
+                    - query_desc
+                    - query_loc
+
+    - bolt:
+        name: top-ten-global
+        module: lucy_slow_queries.top_ten_global
+        tick_freq_secs: 10
+        groupings:
+            - global_grouping: top-ten-intermediate
+
+    - bolt:
+        name: serve-top-ten
+        module: lucy_slow_queries.serve
+        groupings:
+            - global_grouping: top-ten-global

@@ -1,0 +1,36 @@
+# This topology monitor the traffic volume generated per IP
+# address in a certain time window, based on an Apache HTTP server
+# access log. The traffic volume is shown only if it is greater than a
+# threshold specified as an option, as well as the time window size.
+# The result is updated every 2 seconds, while statistics each second.
+
+name: bandwith_monitoring
+
+topology:
+
+    - spout:
+        name: access-log-generator
+        module: bandwith_monitoring.access_log_generator
+        options:
+            base_log: access_log
+
+    - bolt:
+        name: traffic-aggregator
+        module: bandwith_monitoring.traffic_aggregator
+        options:
+            time_window: 10
+            threshold: 380000
+        tick_freq_secs: 1
+        parallelism_hint: 3
+        groupings:
+            - fields_grouping:
+                component: access-log-generator
+                fields:
+                    - ip_address
+
+    - bolt:
+        name: traffic-monitor
+        module: bandwith_monitoring.traffic_monitor
+        tick_freq_secs: 2
+        groupings:
+            - global_grouping: traffic-aggregator

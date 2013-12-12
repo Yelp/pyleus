@@ -1,0 +1,26 @@
+# Exclamation Topology
+#
+# The topology used as example in the Storm tutorial has been implemented with
+# Pyleus. https://github.com/nathanmarz/storm/wiki/Tutorial
+name: exclamation_topology
+
+topology:
+
+    - spout:
+        name: words
+        module: exclamation_topology.test_word_spout
+        parallelism_hint: 10
+
+    - bolt:
+        name: exclaim1
+        module: exclamation_topology.exclamation_bolt
+        parallelism_hint: 3
+        groupings:
+            - shuffle_grouping: words
+
+    - bolt:
+        name: exclaim2
+        module: exclamation_topology.exclamation_bolt
+        parallelism_hint: 2
+        groupings:
+            - shuffle_grouping: exclaim1
