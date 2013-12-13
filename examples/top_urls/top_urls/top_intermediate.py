@@ -28,7 +28,7 @@ class TopIntermediateBolt(SimpleBolt):
         top_N = self.calculate_top_N()
         log.debug("-------------")
         log.debug(top_N)
-        self.emit((top_N,), anchors=[tup])
+        self.emit((top_N,))
 
     def process_tuple(self, tup):
         fields = Fields(*tup.values)

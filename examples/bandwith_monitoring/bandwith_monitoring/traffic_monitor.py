@@ -14,7 +14,7 @@ class TrafficMonitorBolt(SimpleBolt):
     def initialize(self, conf, context, _):
         self.records = {}
 
-    def process_tick(self, tup):
+    def process_tick(self):
         log.debug("-------------------------------")
         for ip_address, traffic in self.records.iteritems():
             log.debug("{0}: {1} B".format(ip_address, traffic))

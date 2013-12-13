@@ -20,7 +20,7 @@ class TopGlobalBolt(SimpleBolt):
     def process_tick(self):
         log.debug("-------------")
         log.debug(self.top_N)
-        self.emit((self.top_N,), anchors=[tup])
+        self.emit((self.top_N,))
         self.top_N = []
 
     def process_tuple(self, tup):

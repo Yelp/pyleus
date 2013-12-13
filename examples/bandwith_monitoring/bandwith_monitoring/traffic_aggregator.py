@@ -42,9 +42,7 @@ class TrafficAggregatorBolt(SimpleBolt):
         for ip_address, slcnt in self.slot_counters.iteritems():
             if slcnt.counter > self.threshold:
                 log.debug(Traffic(ip_address, slcnt.counter))
-                self.emit(
-                    Traffic(ip_address, slcnt.counter),
-                    anchors=[tup])
+                self.emit(Traffic(ip_address, slcnt.counter))
         self.advance_window()
 
     def process_tuple(self, tup):
