@@ -21,7 +21,7 @@ class LocalSubCommand(RunSubCommand):
     NAME = "local"
     USAGE = "%(prog)s [options] TOPOLOGY_PATH"
     DESCRIPTION = "Run a Pyleus topology locally."
-    HELP_MSG = "Run a Pyleus topology locally."
+    HELP = "Run a Pyleus topology locally."
 
     def run_topology(self, jar_path, configs):
         run_topology_locally(jar_path, configs)

@@ -17,7 +17,7 @@ class ListSubCommand(SubCommand):
     NAME = "list"
     USAGE = "%(prog)s [--storm-cluster STORM_CLUSTER_IP]"
     DESCRIPTION = "List all the topology running on a Storm cluster."
-    HELP_MSG = "List all the topology running on a Storm cluster."
+    HELP = "List all the topology running on a Storm cluster."
 
     def add_arguments(self, parser):
         add_storm_cluster_ip_argument(parser)

@@ -20,7 +20,7 @@ class SubCommand(object):
     NAME = None
     USAGE = None
     DESCRIPTION = None
-    HELP_MSG = None
+    HELP = None
 
     def add_arguments(self, parser):
         """Define arguments and options of the sub-command

@@ -19,7 +19,7 @@ class SubmitSubCommand(RunSubCommand):
     NAME = "submit"
     USAGE = "%(prog)s [options] TOPOLOGY_PATH"
     DESCRIPTION = "Submit a Pyleus topology to a Storm cluster for execution"
-    HELP_MSG = "Submit a Pyleus topology to a Storm cluster for execution"
+    HELP = "Submit a Pyleus topology to a Storm cluster for execution"
 
     def add_specific_arguments(self, parser):
         add_storm_cluster_ip_argument(parser)

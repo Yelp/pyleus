@@ -24,7 +24,7 @@ class RunSubCommand(SubCommand):
     NAME = None
     USAGE = None
     DESCRIPTION = None
-    HELP_MSG = None
+    HELP = None
 
     def add_specific_arguments(self, parser):
         """Override this method in order to add subcommand specific
