@@ -106,7 +106,7 @@ class LocalStormCluster(object):
 
         # Having no feedback from Storm misses the point of running a topology
         # locally, so output is always redirected to stdout
-        proc = subprocess.Popen(storm_cmd, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(storm_cmd)
 
         _watch_over_storm(proc.pid)
 
