@@ -352,6 +352,8 @@ class Spout(StormComponent):
     def emit(self, values, stream=None, tup_id=None, direct_task=None):
         """Build and send an output tuple command dict; return the tasks to
         which the tuple was sent by Storm.
+
+        tup_id should be JSON-serializable.
         """
         assert isinstance(values, list) or isinstance(values, tuple)
 
