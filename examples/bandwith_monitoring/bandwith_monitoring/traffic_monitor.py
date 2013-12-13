@@ -2,7 +2,7 @@ from __future__ import absolute_import, division
 
 import logging
 
-from pyleus.storm import SimpleBolt, is_tick
+from pyleus.storm import SimpleBolt
 from bandwith_monitoring.traffic_aggregator import Traffic
 
 
@@ -14,16 +14,13 @@ class TrafficMonitorBolt(SimpleBolt):
     def initialize(self, conf, context, _):
         self.records = {}
 
-    def process_tuple(self, tup):
-        # a tick tuple is triggered every 2 second, as declared in the yaml
-        if is_tick(tup):
-            log.debug("-------------------------------")
-            for ip_address, traffic in self.records.iteritems():
-                log.debug("{0}: {1} B".format(ip_address, traffic))
-            self.records.clear()
-            return
+    def process_tick(self, tup):
+        log.debug("-------------------------------")
+        for ip_address, traffic in self.records.iteritems():
+            log.debug("{0}: {1} B".format(ip_address, traffic))
+        self.records.clear()
 
-        # when a normal tuple is received
+    def process_tuple(self, tup):
         record = Traffic(*tup.values)
         self.records[record.ip_address] = record.traffic
 

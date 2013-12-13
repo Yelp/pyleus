@@ -5,7 +5,7 @@ import logging
 from operator import itemgetter
 import time
 
-from pyleus.storm import SimpleBolt, is_tick
+from pyleus.storm import SimpleBolt
 
 from top_urls.fields import Fields
 
@@ -23,17 +23,15 @@ class TopIntermediateBolt(SimpleBolt):
         self.N = options["N"]
         self.min_records = options["min_records"]
 
+    def process_tick(self):
+        self.cull_old_records()
+        top_N = self.calculate_top_N()
+        log.debug("-------------")
+        log.debug(top_N)
+        self.emit((top_N,), anchors=[tup])
+
     def process_tuple(self, tup):
-        if is_tick(tup):
-            self.cull_old_records()
-            top_N = self.calculate_top_N()
-            log.debug("-------------")
-            log.debug(top_N)
-            self.emit((top_N,), anchors=[tup])
-            return
-
         fields = Fields(*tup.values)
-
         self.urls[fields.url].append(fields.timestamp)
         self.urls[fields.url].sort() # Sorts by timestamp
 

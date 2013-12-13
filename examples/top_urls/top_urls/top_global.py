@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import logging
 from operator import itemgetter
 
-from pyleus.storm import SimpleBolt, is_tick
+from pyleus.storm import SimpleBolt
 
 log = logging.getLogger('top_global_bolt')
 
@@ -17,16 +17,16 @@ class TopGlobalBolt(SimpleBolt):
         self.top_N = []
         self.N = options["N"]
 
-    def process_tuple(self, tup):
-        if is_tick(tup):
-            log.debug("-------------")
-            log.debug(self.top_N)
-            self.emit((self.top_N,), anchors=[tup])
-            self.top_N = []
-            return
+    def process_tick(self):
+        log.debug("-------------")
+        log.debug(self.top_N)
+        self.emit((self.top_N,), anchors=[tup])
+        self.top_N = []
 
+    def process_tuple(self, tup):
         task_ranking, = tup.values
         log.debug("Task {0}: {1}".format(tup.task, task_ranking))
+
         # Update top N
         self.top_N.extend(task_ranking)
         self.top_N.sort(key=itemgetter(1), reverse=True)

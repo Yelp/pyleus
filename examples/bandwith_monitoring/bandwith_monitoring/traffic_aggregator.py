@@ -5,7 +5,7 @@ import logging
 from collections import defaultdict
 from collections import namedtuple
 
-from pyleus.storm import SimpleBolt, is_tick
+from pyleus.storm import SimpleBolt
 from bandwith_monitoring.access_log_generator import Request
 
 
@@ -38,19 +38,16 @@ class TrafficAggregatorBolt(SimpleBolt):
         self.slot_counters = defaultdict(lambda: SlotsCounter(self.N))
         self.curr = 0
 
-    def process_tuple(self, tup):
-        # a tick tuple is triggered every second, as declared in the yaml file
-        if is_tick(tup):
-            for ip_address, slcnt in self.slot_counters.iteritems():
-                if slcnt.counter > self.threshold:
-                    log.debug(Traffic(ip_address, slcnt.counter))
-                    self.emit(
-                        Traffic(ip_address, slcnt.counter),
-                        anchors=[tup])
-            self.advance_window()
-            return
+    def process_tick(self):
+        for ip_address, slcnt in self.slot_counters.iteritems():
+            if slcnt.counter > self.threshold:
+                log.debug(Traffic(ip_address, slcnt.counter))
+                self.emit(
+                    Traffic(ip_address, slcnt.counter),
+                    anchors=[tup])
+        self.advance_window()
 
-        # when a normal tuple is received
+    def process_tuple(self, tup):
         request = Request(*tup.values)
         slcnt = self.slot_counters[request.ip_address]
         slcnt.counter += request.size

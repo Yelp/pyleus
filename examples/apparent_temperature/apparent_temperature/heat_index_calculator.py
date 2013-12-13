@@ -5,7 +5,7 @@ from collections import defaultdict
 import logging
 import time
 
-from pyleus.storm import SimpleBolt, is_tick
+from pyleus.storm import SimpleBolt
 
 from apparent_temperature.measure_generator import Measure
 
@@ -45,17 +45,14 @@ class HeatIndexBolt(SimpleBolt):
         # which produced the measures
         self.join = defaultdict(default)
 
-    def process_tuple(self, tup):
-        # a tick tuple has been triggered
-        if is_tick(tup):
-            for idx, vals in self.join.iteritems():
-                if vals[0] != float('inf') and vals[1] != float('inf'):
-                    log.debug("id: {0}, heat-index: {1} F"
-                              .format(idx, _heat_index(*vals)))
-            self.join.clear()
-            return
+    def process_tick(self):
+        for idx, vals in self.join.iteritems():
+            if vals[0] != float('inf') and vals[1] != float('inf'):
+                log.debug("id: {0}, heat-index: {1} F"
+                          .format(idx, _heat_index(*vals)))
+        self.join.clear()
 
-        # a normal tuple has been received
+    def process_tuple(self, tup):
         measure = Measure(*tup.values)
 
         # accept only measures within the update time window
