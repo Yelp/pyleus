@@ -5,7 +5,6 @@ from __future__ import absolute_import
 
 import os
 import signal
-import socket
 import subprocess
 
 from pyleus.exception import ConfigurationError
@@ -30,18 +29,6 @@ def _watch_over_storm(storm_pid):
     signal.signal(signal.SIGINT, _kill_storm_handler)
 
 
-def _validate_ip_address(address):
-    """Ensure that the given address is valid.
-
-    Note: IPv4 only.
-    """
-    try:
-        socket.inet_aton(address)
-    except socket.error:
-        raise ConfigurationError("The IP address specified is invalid: {0}"
-                                 .format(address))
-
-
 class StormCluster(object):
     """Object representing an interface to a Storm cluster.
     All the requests are basically translated into Storm commands.
@@ -54,7 +41,6 @@ class StormCluster(object):
                 "You must specify a storm cluster IP address."
                 " Use option <storm_cluster_ip> in the configuration file"
                 " or the command line option --storm-cluster")
-        _validate_ip_address(nimbus_ip)
 
         self.nimbus_ip = nimbus_ip
         self.verbose = verbose
