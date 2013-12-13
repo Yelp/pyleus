@@ -18,11 +18,11 @@ def add_storm_cluster_ip_argument(parser):
     """
     parser.add_argument(
         "-s", "--storm-cluster", dest="storm_cluster_ip",
-        help="The Nimbus IP address of the Strom cluster to query")
+        help="The Nimbus IP address of the Storm cluster to query")
 
 
 def run_topology_locally(jar_path, configs):
-    """Run the pyleus topology jar on the lcal machine"""
+    """Run the pyleus topology jar on the local machine"""
     LocalStormCluster().run(jar_path)
 
 

@@ -82,7 +82,7 @@ class ComponentSpec(object):
                 "[{0}] Empty components are not allowed. At least 'name'"
                 " and 'module' must be specified".format(self.COMPONENT))
 
-        if not "name" in specs:
+        if "name" not in specs:
             raise InvalidTopologyError(
                 "[{0}] Tag not found in yaml file: {1}"
                 .format(self.COMPONENT, "name"))
@@ -93,7 +93,7 @@ class ComponentSpec(object):
                 "[{0}] These tags are not allowed: {1}"
                 .format(self.name, _as_list(specs) - set(self.KEYS_LIST)))
 
-        if not "module" in specs:
+        if "module" not in specs:
             raise InvalidTopologyError(
                 "[{0}] Tag not found in yaml file: {1}"
                 .format(self.name, "module"))
