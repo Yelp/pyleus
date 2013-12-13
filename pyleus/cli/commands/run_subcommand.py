@@ -20,6 +20,12 @@ from pyleus.exception import PyleusError
 class RunSubCommand(SubCommand):
     """Run subcommand class"""
 
+    # Override these in subclass
+    NAME = None
+    USAGE = None
+    DESCRIPTION = None
+    HELP_MSG = None
+
     def add_specific_arguments(self, parser):
         """Override this method in order to add subcommand specific
         arguments.
@@ -46,4 +52,4 @@ class RunSubCommand(SubCommand):
             self.run_topology(jar_path, configs)
         except PyleusError as e:
             sys.exit(
-                command_error_fmt(self.get_sub_command_info().command_name, e))
+                command_error_fmt(self.NAME, e))

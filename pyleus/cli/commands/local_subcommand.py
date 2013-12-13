@@ -13,21 +13,15 @@ from __future__ import absolute_import
 
 from pyleus.cli.topologies import run_topology_locally
 from pyleus.cli.commands.run_subcommand import RunSubCommand
-from pyleus.cli.commands.subcommand import SubCommandInfo
-
-
-CMD = "local"
 
 
 class LocalSubCommand(RunSubCommand):
     """Run subcommand class"""
 
-    def get_sub_command_info(self):
-        return SubCommandInfo(
-            command_name=CMD,
-            usage="%(prog)s [options] TOPOLOGY_PATH",
-            description="Run a Pyleus topology locally.",
-            help_msg="Run a Pyleus topology locally.")
+    NAME = "local"
+    USAGE = "%(prog)s [options] TOPOLOGY_PATH"
+    DESCRIPTION = "Run a Pyleus topology locally."
+    HELP_MSG = "Run a Pyleus topology locally."
 
     def run_topology(self, jar_path, configs):
         run_topology_locally(jar_path, configs)

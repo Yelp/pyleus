@@ -11,23 +11,15 @@ from __future__ import absolute_import
 from pyleus.cli.topologies import add_storm_cluster_ip_argument
 from pyleus.cli.topologies import submit_topology
 from pyleus.cli.commands.run_subcommand import RunSubCommand
-from pyleus.cli.commands.subcommand import SubCommandInfo
-
-
-CMD = "submit"
 
 
 class SubmitSubCommand(RunSubCommand):
     """Run subcommand class"""
 
-    def get_sub_command_info(self):
-        return SubCommandInfo(
-            command_name=CMD,
-            usage="%(prog)s [options] TOPOLOGY_PATH",
-            description="Submit a Pyleus topology to a Storm cluster for"
-                        " execution",
-            help_msg="Submit a Pyleus topology to a Storm cluster for"
-                     " execution")
+    NAME = "submit"
+    USAGE = "%(prog)s [options] TOPOLOGY_PATH"
+    DESCRIPTION = "Submit a Pyleus topology to a Storm cluster for execution"
+    HELP_MSG = "Submit a Pyleus topology to a Storm cluster for execution"
 
     def add_specific_arguments(self, parser):
         add_storm_cluster_ip_argument(parser)

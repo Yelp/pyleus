@@ -22,7 +22,6 @@ from pyleus.exception import JarError
 from pyleus.exception import TopologyError
 from pyleus.utils import expand_path
 
-
 RESOURCES_PATH = "resources"
 YAML_FILENAME = "pyleus_topology.yaml"
 REQUIREMENTS_FILENAME = "requirements.txt"

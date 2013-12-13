@@ -36,11 +36,12 @@ def main():
     subparsers = parser.add_subparsers(
         title="commands",
         metavar="COMMAND")
-    BuildSubCommand().add_parser(subparsers)
-    ListSubCommand().add_parser(subparsers)
-    LocalSubCommand().add_parser(subparsers)
-    SubmitSubCommand().add_parser(subparsers)
-    KillSubCommand().add_parser(subparsers)
+
+    BuildSubCommand().init_subparser(subparsers)
+    ListSubCommand().init_subparser(subparsers)
+    LocalSubCommand().init_subparser(subparsers)
+    SubmitSubCommand().init_subparser(subparsers)
+    KillSubCommand().init_subparser(subparsers)
 
     args = parser.parse_args()
 

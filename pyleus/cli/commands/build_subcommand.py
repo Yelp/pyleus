@@ -24,25 +24,18 @@ from __future__ import absolute_import
 import sys
 
 from pyleus.cli.commands.subcommand import SubCommand
-from pyleus.cli.commands.subcommand import SubCommandInfo
 from pyleus.cli.build import build_topology_jar
 from pyleus.exception import command_error_fmt
 from pyleus.exception import PyleusError
 
 
-CMD = "build"
-
-
 class BuildSubCommand(SubCommand):
     """Build subcommand class"""
 
-    def get_sub_command_info(self):
-        return SubCommandInfo(
-            command_name=CMD,
-            usage="%(prog)s [options] TOPOLOGY_DIRECTORY",
-            description="Build up a Storm jar from a topology source"
-                        " directory",
-            help_msg="Build up a Storm jar from a topology source directory")
+    NAME = "build"
+    USAGE = "%(prog)s [options] TOPOLOGY_DIRECTORY"
+    DESCRIPTION = "Build up a Storm jar from a topology source directory"
+    HELP = "Build up a Storm jar from a topology source directory"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -62,4 +55,4 @@ class BuildSubCommand(SubCommand):
         try:
             build_topology_jar(configs)
         except PyleusError as e:
-            sys.exit(command_error_fmt(CMD, e))
+            sys.exit(command_error_fmt(self.NAME, e))
