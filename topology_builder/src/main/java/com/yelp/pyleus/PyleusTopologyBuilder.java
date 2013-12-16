@@ -190,6 +190,10 @@ public class PyleusTopologyBuilder {
                 conf.setMaxSpoutPending(spec.max_spout_pending);
             }
 
+            if (spec.message_timeout_secs != -1) {
+                conf.setMessageTimeoutSecs(spec.message_timeout_secs);
+            }
+
             try {
                 StormSubmitter.submitTopology(spec.name, conf, topology);
             } catch (Exception e) {

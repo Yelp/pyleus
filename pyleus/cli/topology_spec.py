@@ -36,6 +36,8 @@ class TopologySpec(object):
             self.workers = specs["workers"]
         if "max_spout_pending" in specs:
             self.max_spout_pending = specs["max_spout_pending"]
+        if "message_timeout_secs" in specs:
+            self.message_timeout_secs = specs["message_timeout_secs"]
 
         self.topology = []
         for component in specs["topology"]:
