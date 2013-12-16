@@ -26,14 +26,18 @@ class TopologySpec(object):
         """Convert the specs dictionary coming from the yaml file into
         attributes and perform validation at topology level."""
 
-        if _as_set(specs) != set(["name", "topology"]):
+        if not _as_set(specs).issuperset(set(["name", "topology"])):
             raise InvalidTopologyError(
                 "Each topology must specify tags 'name' and 'topology'"
-                "only. Found: {1}".format(self.name, _as_list(specs)))
+                " Found: {0}".format(_as_list(specs)))
 
         self.name = specs["name"]
-        self.topology = []
+        if "workers" in specs:
+            self.workers = specs["workers"]
+        if "max_spout_pending" in specs:
+            self.max_spout_pending = specs["max_spout_pending"]
 
+        self.topology = []
         for component in specs["topology"]:
             if "spout" in component:
                 self.topology.append(SpoutSpec(component["spout"]))
@@ -72,7 +76,7 @@ class ComponentSpec(object):
 
     KEYS_LIST = [
         "name", "module", "tick_freq_secs", "parallelism_hint", "options",
-        "output_fields", "groupings"]
+        "output_fields", "groupings", "tasks"]
 
     def __init__(self, specs):
         """Convert a component specs dictionary coming from the yaml file into
@@ -91,7 +95,8 @@ class ComponentSpec(object):
         if not set(self.KEYS_LIST).issuperset(_as_set(specs)):
             raise InvalidTopologyError(
                 "[{0}] These tags are not allowed: {1}"
-                .format(self.name, _as_list(specs) - set(self.KEYS_LIST)))
+                .format(self.name,
+                        _as_list(_as_set(specs) - set(self.KEYS_LIST))))
 
         if "module" not in specs:
             raise InvalidTopologyError(
@@ -99,8 +104,14 @@ class ComponentSpec(object):
                 .format(self.name, "module"))
         self.module = specs["module"]
 
-        self.tick_freq_secs = specs.get("tick_freq_secs", None)
-        self.parallelism_hint = specs.get("parallelism_hint", None)
+        # Optional parameters
+        if "tick_freq_secs" in specs:
+            self.tick_freq_secs = specs["tick_freq_secs"]
+        if "parallelism_hint" in specs:
+            self.parallelism_hint = specs["parallelism_hint"]
+        if "tasks" in specs:
+            self.tasks = specs["tasks"]
+
         # These two are not currently specified in the yaml file
         self.options = specs.get("options", None)
         self.output_fields = specs.get("output_fields", None)

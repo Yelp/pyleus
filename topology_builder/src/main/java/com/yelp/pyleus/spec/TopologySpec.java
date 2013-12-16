@@ -10,6 +10,8 @@ import org.yaml.snakeyaml.constructor.Constructor;
 public class TopologySpec {
     public String name;
     public List<ComponentSpec> topology;
+    public Integer workers = -1;
+    public Integer max_spout_pending = -1;
 
     private static Constructor getConstructor() {
         Constructor constructor = new Constructor(TopologySpec.class);

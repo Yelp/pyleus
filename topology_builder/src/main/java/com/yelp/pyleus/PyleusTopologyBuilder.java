@@ -14,6 +14,7 @@ import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
+import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import backtype.storm.utils.Utils;
@@ -39,21 +40,24 @@ public class PyleusTopologyBuilder {
             pythonBolt.setOutputFields(bolt.output_fields);
         }
 
-        if (bolt.tick_freq_secs != null) {
+        if (bolt.tick_freq_secs != -1) {
             pythonBolt.setTickFreqSecs(bolt.tick_freq_secs);
         }
 
         IRichBolt stormBolt = pythonBolt;
 
         BoltDeclarer declarer = null;
-        if (bolt.parallelism_hint != null) {
+        if (bolt.parallelism_hint != -1) {
             declarer = builder.setBolt(bolt.name, stormBolt, bolt.parallelism_hint);
         } else {
             declarer = builder.setBolt(bolt.name, stormBolt);
         }
 
+        if(bolt.tasks != -1) {
+            declarer.setNumTasks(bolt.tasks);
+        }
+
         for (Map<String, Object> grouping : bolt.groupings) {
-            assert grouping.size() == 1;
             Map.Entry<String, Object> entry = grouping.entrySet().iterator().next();
             String groupingType = entry.getKey();
 
@@ -86,15 +90,20 @@ public class PyleusTopologyBuilder {
             throw new RuntimeException(String.format("Spouts must have output_fields"));
         }
 
-        if (spout.tick_freq_secs != null) {
+        if (spout.tick_freq_secs != -1) {
             pythonSpout.setTickFreqSecs(spout.tick_freq_secs);
         }
 
         IRichSpout stormSpout = pythonSpout;
-        if (spout.parallelism_hint != null) {
-            builder.setSpout(spout.name, stormSpout, spout.parallelism_hint);
+        SpoutDeclarer declarer = null;
+        if (spout.parallelism_hint != -1) {
+            declarer = builder.setSpout(spout.name, stormSpout, spout.parallelism_hint);
         } else {
-            builder.setSpout(spout.name, stormSpout);
+            declarer = builder.setSpout(spout.name, stormSpout);
+        }
+
+        if(spout.tasks != -1) {
+            declarer.setNumTasks(spout.tasks);
         }
     }
 
@@ -172,8 +181,14 @@ public class PyleusTopologyBuilder {
         } else {
             Config conf = new Config();
             conf.setDebug(false);
-            conf.setNumWorkers(100);
-            conf.setMaxSpoutPending(1000);
+
+            if (spec.workers != -1) {
+                conf.setNumWorkers(spec.workers);
+            }
+
+            if (spec.max_spout_pending != -1) {
+                conf.setMaxSpoutPending(spec.max_spout_pending);
+            }
 
             try {
                 StormSubmitter.submitTopology(spec.name, conf, topology);
