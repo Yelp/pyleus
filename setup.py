@@ -16,11 +16,6 @@ BASE_JAR_SRC = os.path.join(JAVA_SRC_DIR, "dist", BASE_JAR)
 BASE_JAR_DST = os.path.join("java", BASE_JAR)
 
 
-install_requires = ["PyYAML==3.10"]
-if sys.version_info < (2, 7):
-    install_requires.append("argparse==1.2.1")
-
-
 class build_java(Command):
 
     description = "Build the topology base JAR and add it to the manifest."
@@ -75,6 +70,12 @@ class sdist(_sdist):
         _sdist.run(self)
 
 
+extra_install_requires = []
+if sys.version_info < (2, 7):
+    # argparse is in the standard library of Python >= 2.7
+    extra_install_requires.append("argparse >= 1.2.1, < 2.0")
+
+
 setup(
     name="pyleus",
     version=__version__,
@@ -84,7 +85,9 @@ setup(
         "with Storm",
     packages=["pyleus", "pyleus.cli", "pyleus.cli.commands"],
     scripts=["scripts/pyleus"],
-    install_requires=install_requires,
+    install_requires=[
+        "PyYAML >= 3.10, < 4.0",
+    ] + extra_install_requires,
     data_files=[(BASE_JAR_INSTALL_DIR, [BASE_JAR_DST])],
     cmdclass={
         'build_java': build_java,
