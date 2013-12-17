@@ -50,7 +50,7 @@ public class PyleusTopologyBuilder {
             bolt.setOutputFields(spec.output_fields);
         }
 
-        if (spec.tick_freq_secs != -1) {
+        if (spec.tick_freq_secs != -1.f) {
             bolt.setTickFreqSecs(spec.tick_freq_secs);
         }
 

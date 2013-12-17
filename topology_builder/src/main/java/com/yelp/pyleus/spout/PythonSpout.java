@@ -12,7 +12,7 @@ import backtype.storm.tuple.Fields;
 
 public class PythonSpout extends ShellSpout implements IRichSpout {
     protected Map<String, Object> outputFields;
-    protected Integer tickFreqSecs = null;
+    protected Float tickFreqSecs = null;
 
     public PythonSpout(final String... command) {
         super(command);
@@ -31,7 +31,7 @@ public class PythonSpout extends ShellSpout implements IRichSpout {
         }
     }
 
-    public void setTickFreqSecs(Integer tickFreqSecs) {
+    public void setTickFreqSecs(Float tickFreqSecs) {
         this.tickFreqSecs = tickFreqSecs;
     }
 

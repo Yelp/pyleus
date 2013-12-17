@@ -12,7 +12,7 @@ import backtype.storm.tuple.Fields;
 
 public class PythonBolt extends ShellBolt implements IRichBolt {
     protected Map<String, Object> outputFields;
-    protected Integer tickFreqSecs = null;
+    protected Float tickFreqSecs = null;
 
     public PythonBolt(final String... command) {
         super(command);
@@ -36,7 +36,7 @@ public class PythonBolt extends ShellBolt implements IRichBolt {
         }
     }
 
-    public void setTickFreqSecs(Integer tickFreqSecs) {
+    public void setTickFreqSecs(Float tickFreqSecs) {
         this.tickFreqSecs = tickFreqSecs;
     }
 
