@@ -19,7 +19,7 @@ topology:
         module: bandwith_monitoring.traffic_aggregator
         options:
             time_window: 10
-            threshold: 380000
+            threshold: 170000 # Bytes/sec
         tick_freq_secs: 1
         parallelism_hint: 3
         groupings:
