@@ -6,6 +6,8 @@
 
 name: bandwith_monitoring
 
+workers: 5
+
 topology:
 
     - spout:
@@ -31,6 +33,6 @@ topology:
     - bolt:
         name: traffic-monitor
         module: bandwith_monitoring.traffic_monitor
-        tick_freq_secs: 2
+        tick_freq_secs: 3.9
         groupings:
             - global_grouping: traffic-aggregator
