@@ -20,7 +20,7 @@ CONFIG_FILES_PATH = [
 
 Configuration = collections.namedtuple(
     "Configuration",
-    "base_jar config_file func include_packages output_jar \
+    "base_jar config_file debug func include_packages output_jar \
      pypi_index_url storm_cluster_ip system_site_packages topology_dir \
      topology_name verbose wait_time"
 )
@@ -29,6 +29,7 @@ Configuration = collections.namedtuple(
 DEFAULTS = Configuration(
     base_jar=BASE_JAR_PATH,
     config_file=None,
+    debug=False,
     func=None,
     include_packages=None,
     output_jar=None,

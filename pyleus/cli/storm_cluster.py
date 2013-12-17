@@ -14,6 +14,7 @@ from pyleus.exception import StormError
 STORM_PATH = "/usr/share/storm/bin/storm"
 TOPOLOGY_BUILDER_CLASS = "com.yelp.pyleus.PyleusTopologyBuilder"
 LOCAL_OPTION = "--local"
+DEBUG_OPTION = "--debug"
 
 
 def _watch_over_storm(storm_pid):
@@ -95,7 +96,7 @@ class LocalStormCluster(object):
     All the requests are basically translated into Storm commands.
     """
 
-    def run(self, jar_path):
+    def run(self, jar_path, debug):
         """Run locally a pyleus topology jar
 
         Note: In order to trigger the local mode for the selcted topology,
@@ -103,6 +104,9 @@ class LocalStormCluster(object):
         """
         storm_cmd = [
             STORM_PATH, "jar", jar_path, TOPOLOGY_BUILDER_CLASS, LOCAL_OPTION]
+
+        if debug:
+            storm_cmd.append(DEBUG_OPTION)
 
         # Having no feedback from Storm misses the point of running a topology
         # locally, so output is always redirected to stdout

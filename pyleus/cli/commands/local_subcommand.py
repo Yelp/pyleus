@@ -23,5 +23,12 @@ class LocalSubCommand(RunSubCommand):
     DESCRIPTION = "Run a Pyleus topology locally."
     HELP = "Run a Pyleus topology locally."
 
+    def add_specific_arguments(self, parser):
+        parser.add_argument(
+            "-d", "--debug", dest="debug",
+            action="store_true",
+            help="Enable Storm debug logging for all components"
+            " in the topology")
+
     def run_topology(self, jar_path, configs):
         run_topology_locally(jar_path, configs)

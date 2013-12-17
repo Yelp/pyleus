@@ -127,9 +127,9 @@ public class PyleusTopologyBuilder {
         return PyleusTopologyBuilder.class.getResourceAsStream(filename);
     }
 
-    private static void demo(final String topologyName, final StormTopology topology) {
+    private static void demo(final String topologyName, final StormTopology topology, boolean debug) {
         Config conf = new Config();
-        conf.setDebug(false);
+        conf.setDebug(debug);
         conf.setMaxTaskParallelism(1);
 
         LocalCluster cluster = new LocalCluster();
@@ -143,9 +143,10 @@ public class PyleusTopologyBuilder {
 
     public static void main(String[] args) {
         boolean runLocally = false;
+        boolean debug = false;
 
-        if (args.length > 1) {
-            System.err.println("Usage: PyleusTopologyBuilder [--local]");
+        if (args.length > 2) {
+            System.err.println("Usage: PyleusTopologyBuilder [--local [--debug]]");
             System.exit(1);
         }
 
@@ -153,7 +154,17 @@ public class PyleusTopologyBuilder {
             if (args[0].equals("--local")) {
                 runLocally = true;
             } else {
-                System.err.println("Usage: PyleusTopologyBuilder [--local]");
+                System.err.println("Usage: PyleusTopologyBuilder [--local [--debug]]");
+                System.exit(1);
+            }
+        }
+
+        if (args.length == 2) {
+            if (args[0].equals("--local") && args[1].equals("--debug")) {
+                runLocally = true;
+                debug = true;
+            } else {
+                System.err.println("Usage: PyleusTopologyBuilder [--local [--debug]]");
                 System.exit(1);
             }
         }
@@ -177,7 +188,7 @@ public class PyleusTopologyBuilder {
         StormTopology topology = buildTopology(spec);
 
         if (runLocally) {
-            demo(spec.name, topology);
+            demo(spec.name, topology, debug);
         } else {
             Config conf = new Config();
             conf.setDebug(false);

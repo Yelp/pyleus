@@ -23,7 +23,7 @@ def add_storm_cluster_ip_argument(parser):
 
 def run_topology_locally(jar_path, configs):
     """Run the pyleus topology jar on the local machine"""
-    LocalStormCluster().run(jar_path)
+    LocalStormCluster().run(jar_path, configs.debug)
 
 
 def submit_topology(jar_path, configs):
