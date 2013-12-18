@@ -13,23 +13,27 @@ class ConverterBolt(SimpleBolt):
 
     OUTPUT_FIELDS = {
         "pound": ["value"],
-        "euro": ["value"]
+        "euro": ["value"],
     }
 
     def initialize(self, conf, context, _):
-        self.rates = {"pound": 1., "euro": 1.}
+        self.rates = {"pound": None, "euro": None}
 
     def process_tuple(self, tup):
-        if tup.component == "micro-transactions":
+        if tup.comp == "micro-transactions":
             if tup.stream not in self.rates:
                 raise ValueError("Unknown stream: {0}".format(tup.stream))
-            value, = tup.values
-            converted = value * self.rates[tup.stream]
-            log.debug("{0} {1} -> USD{2} ({3})".format(
-                SHORT[tup.stream], value, converted, self.rates[tup.stream]))
-            self.emit((converted,), tup.stream)
+            if self.rates[tup.stream] is not None:
+                value, = tup.values
+                converted = round(value * self.rates[tup.stream], 2)
+                log.debug("{0} {1} -> USD{2} ({3})".format(
+                    SHORT[tup.stream],
+                    value,
+                    converted,
+                    self.rates[tup.stream]))
+                self.emit((converted,), tup.stream)
 
-        elif tup.component == "exchange-rates":
+        elif tup.comp == "exchange-rates":
             rate = ExchangeRate(*tup.values)
             self.rates[rate.currency] = rate.rate
 

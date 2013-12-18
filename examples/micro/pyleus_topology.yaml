@@ -36,7 +36,7 @@ topology:
         module: micro.earnings_bolt
         tick_freq_secs: 2
         groupings:
-            - shuffle_groping:
+            - shuffle_grouping:
                 component: micro-transactions
                 stream: dollar
             - shuffle_grouping:

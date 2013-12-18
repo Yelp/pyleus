@@ -8,9 +8,9 @@ log = logging.getLogger('microtransactions')
 
 CURRENCY = ["dollar", "dollar", "dollar", "euro", "pound"]
 VALUES = {
-    "dollar": ["0.50", "0.99", "1.37"],
-    "pound": ["0.36", "0.72", "1.0"],
-    "euro": ["0.30", "0.61", "0.84"],
+    "dollar": [0.50, 0.99, 1.37],
+    "pound": [0.36, 0.72, 1.0],
+    "euro": [0.30, 0.61, 0.84],
 }
 
 
@@ -19,7 +19,7 @@ class MicroGeneratorSpout(Spout):
     OUTPUT_FIELDS = {
         "dollar": ["value"],
         "pound": ["value"],
-        "euro": ["value"]
+        "euro": ["value"],
     }
 
     def next_tuple(self):

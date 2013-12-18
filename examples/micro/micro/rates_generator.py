@@ -18,9 +18,9 @@ class RatesGeneratorSpout(Spout):
     OUTPUT_FIELDS = ExchangeRate
 
     def next_tuple(self):
-        time.sleep(0.01)
-        currency = random.choice(BASE)
-        rate = random.choice(BASE[currency] + random.uniform(-RANGE, RANGE))
+        time.sleep(0.1)
+        currency = random.choice(BASE.keys())
+        rate = BASE[currency] + random.uniform(-RANGE, RANGE)
         log.debug("{0} {1}".format(currency, rate))
         self.emit((currency, rate,))
 

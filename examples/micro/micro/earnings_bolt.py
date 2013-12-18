@@ -22,9 +22,8 @@ class EarningsBolt(SimpleBolt):
             raise ValueError("Unknown stream: {0}".format(tup.stream))
 
         value, = tup.values
-        log.debug("{0}: {1}".format(tup.stream, value))
-        self.earnings[tup.stream] += self.earnings
-        self.earnings["total"] += self.earnings
+        self.earnings[tup.stream] += value
+        self.earnings["total"] += value
 
 
 if __name__ == '__main__':
