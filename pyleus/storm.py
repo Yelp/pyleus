@@ -316,11 +316,11 @@ class Spout(StormComponent):
         """Implement in subclass"""
         pass
 
-    def ack(self, tup):
+    def ack(self, tup_id):
         """Implement in subclass"""
         pass
 
-    def fail(self, tup):
+    def fail(self, tup_id):
         """Implement in subclass"""
         pass
 
