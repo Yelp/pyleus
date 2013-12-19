@@ -182,15 +182,18 @@ class BoltSpec(ComponentSpec):
                     group_type == "shuffle_grouping"):
                 group_obj = group[group_type]
 
+                # specified only the name of the component
                 if isinstance(group_obj, str):
                     group[group_type] = {
                         "component": group_obj,
                         "stream": DEFAULT_STREAM,
                     }
 
+                # specified component tag but not stream
                 elif _as_set(group_obj) == set(["component"]):
                     group_obj["stream"] = DEFAULT_STREAM
 
+                # otherwise only component-stream notation is allowed
                 elif _as_set(group_obj) != set(["component", "stream"]):
                     raise InvalidTopologyError(
                         "[{0}] [{1}] Unrecognized format: {2}".format(
@@ -200,9 +203,11 @@ class BoltSpec(ComponentSpec):
             elif group_type == "fields_grouping":
                 group_dict = group["fields_grouping"]
 
+                # specified only component and fields, but not stream
                 if _as_set(group_dict) == set(["component", "fields"]):
                     group_dict["stream"] = DEFAULT_STREAM
 
+                # verify format
                 if (_as_set(group_dict) !=
                         set(["component", "stream", "fields"])):
                     raise InvalidTopologyError(
