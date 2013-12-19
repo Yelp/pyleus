@@ -59,11 +59,6 @@ class TopologySpec(object):
         """
         topology_out_fields = {}
         for component in self.topology:
-
-            if isinstance(component.output_fields, list):
-                component.output_fields = {
-                    DEFAULT_STREAM: component.output_fields}
-
             topology_out_fields[component.name] = component.output_fields
 
         for component in self.topology:
