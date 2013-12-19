@@ -61,20 +61,18 @@ public class PyleusTopologyBuilder {
         for (Map<String, Object> grouping : bolt.groupings) {
             Map.Entry<String, Object> entry = grouping.entrySet().iterator().next();
             String groupingType = entry.getKey();
+            Map<String, Object> groupingMap = (Map<String, Object>) entry.getValue();
+            String component = (String) groupingMap.get("component");
+            String stream = (String) groupingMap.get("stream");
 
             if (groupingType.equals("shuffle_grouping")) {
-                String groupingTarget = (String) entry.getValue();
-                declarer.shuffleGrouping(groupingTarget);
-            } else if (groupingType.equals("fields_grouping")) {
-                Map<String, Object> groupingOptions = (Map<String, Object>) entry.getValue();
-                String groupingTarget = (String) groupingOptions.get("component");
-                List<String> fields = (List<String>) groupingOptions.get("fields");
-
-                String[] fieldsArray = fields.toArray(new String[fields.size()]);
-                declarer.fieldsGrouping(groupingTarget, new Fields(fieldsArray));
+                    declarer.shuffleGrouping(component, stream);
             } else if (groupingType.equals("global_grouping")) {
-                String groupingTarget = (String) entry.getValue();
-                declarer.globalGrouping(groupingTarget);
+                    declarer.globalGrouping(component, stream);
+            } else if (groupingType.equals("fields_grouping")) {
+                List<String> fields = (List<String>) groupingMap.get("fields");
+                String[] fieldsArray = fields.toArray(new String[fields.size()]);
+                declarer.fieldsGrouping(component, stream, new Fields(fieldsArray));
             } else {
                 throw new RuntimeException(String.format("Unknown grouping type: %s", groupingType));
             }

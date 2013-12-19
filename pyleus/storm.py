@@ -15,6 +15,7 @@ except ImportError:
 
 DESCRIBE_OPT = "--describe"
 OPTIONS_OPT = "--options"
+DEFAULT_STREAM = "default"
 
 log = logging.getLogger(__name__)
 
@@ -35,6 +36,15 @@ def _listify(obj):
         return list(obj._fields)
     # obj is a list or a tuple
     return list(obj)
+
+
+def _serialize_streams(obj):
+    if not isinstance(obj, dict):
+        return {DEFAULT_STREAM: _listify(obj)}
+
+    for key, value in obj.items():
+        obj[key] = _listify(value)
+    return obj
 
 
 def is_tick(tup):
@@ -90,7 +100,7 @@ class StormComponent(object):
 
         print json.dumps({
             "type": component_type,
-            "output_fields": _listify(self.OUTPUT_FIELDS),
+            "output_fields": _serialize_streams(self.OUTPUT_FIELDS),
             "options": _listify(self.OPTIONS)})
 
     def setup_component(self):

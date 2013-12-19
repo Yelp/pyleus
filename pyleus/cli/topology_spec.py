@@ -9,6 +9,7 @@ from __future__ import absolute_import
 import copy
 
 from pyleus.exception import InvalidTopologyError
+from pyleus.storm import DEFAULT_STREAM
 
 
 def _as_set(obj):
@@ -58,6 +59,11 @@ class TopologySpec(object):
         """
         topology_out_fields = {}
         for component in self.topology:
+
+            if isinstance(component.output_fields, list):
+                component.output_fields = {
+                    DEFAULT_STREAM: component.output_fields}
+
             topology_out_fields[component.name] = component.output_fields
 
         for component in self.topology:
@@ -163,12 +169,13 @@ class BoltSpec(ComponentSpec):
         if "groupings" in specs:
             self.groupings = specs["groupings"]
 
-    def _stream_exists(self, stream, group_type, topo_out_fields):
+    def _stream_exists(self, component, stream, group_type, topo_out_fields):
         """If stream does not exist in the topology specs, raise an error"""
-        if stream not in topo_out_fields:
+        if (component not in topo_out_fields and
+                stream not in topo_out_fields[component]):
             raise InvalidTopologyError(
-                "[{0}] [{1}] Unknown stream: {2}"
-                .format(self.name, group_type, stream))
+                "[{0}] [{1}] Unknown stream: {2} {3}"
+                .format(self.name, group_type, component, stream))
 
     def verify_groupings(self, topo_out_fields):
         """Verify that the groupings specified in the yaml file for that
@@ -184,30 +191,59 @@ class BoltSpec(ComponentSpec):
 
             if (group_type == "global_grouping" or
                     group_type == "shuffle_grouping"):
-                stream = group[group_type]
-                self._stream_exists(stream, group_type, topo_out_fields)
+                group_obj = group[group_type]
+
+                if isinstance(group_obj, str):
+                    group[group_type] = {
+                        "component": group_obj,
+                        "stream": DEFAULT_STREAM,
+                    }
+
+                elif _as_set(group_obj) == set(["component"]):
+                    group_obj["stream"] = DEFAULT_STREAM
+
+                elif _as_set(group_obj) != set(["component", "stream"]):
+                    raise InvalidTopologyError(
+                        "[{0}] [{1}] Unrecognized format: {2}".format(
+                            self.name, group_type,
+                            _as_list(group_obj)))
+
+                self._stream_exists(
+                    group[group_type]["component"],
+                    group[group_type]["stream"],
+                    group_type,
+                    topo_out_fields)
 
             elif group_type == "fields_grouping":
-                fields_dict = group["fields_grouping"]
+                group_dict = group["fields_grouping"]
 
-                if _as_set(fields_dict) != set(["component", "fields"]):
+                if _as_set(group_dict) == set(["component", "fields"]):
+                    group_dict["stream"] = DEFAULT_STREAM
+
+                if (_as_set(group_dict) !=
+                        set(["component", "stream", "fields"])):
                     raise InvalidTopologyError(
-                        "[{0}] [{1}] Must specify tags 'component' and"
-                        " 'fields' only. Found: {2}".format(
+                        "[{0}] [{1}] Unrecognized format: {2}".format(
                             self.name, group_type,
-                            _as_list(fields_dict)))
+                            _as_list(group_dict)))
 
-                stream = fields_dict["component"]
-                self._stream_exists(stream, group_type, topo_out_fields)
+                component = group_dict["component"]
+                stream = group_dict["stream"]
 
-                fields = fields_dict["fields"]
+                self._stream_exists(
+                    component,
+                    stream,
+                    group_type,
+                    topo_out_fields)
+
+                fields = group_dict["fields"]
                 if fields is None:
                     raise InvalidTopologyError(
                         "[{0}] [{1}] Must specify at least one field."
                         .format(self.name, group_type))
 
                 for field in fields:
-                    if field not in topo_out_fields[stream]:
+                    if field not in topo_out_fields[component][stream]:
                         raise InvalidTopologyError(
                             "[{0}] [{1}] Stream {2} does not have field:"
                             " {3}.".format(
