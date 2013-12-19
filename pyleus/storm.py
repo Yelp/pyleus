@@ -28,7 +28,7 @@ def _is_namedtuple(obj):
             hasattr(obj, "_fields"))
 
 
-def _listify(obj):
+def _serialize(obj):
     if obj is None:
         return None
     # obj is a namedtuple "class"
@@ -38,12 +38,14 @@ def _listify(obj):
     return list(obj)
 
 
-def _serialize_streams(obj):
+def _expand_output_fields(obj):
+    # if single-stream notation
     if not isinstance(obj, dict):
-        return {DEFAULT_STREAM: _listify(obj)}
+        return {DEFAULT_STREAM: _serialize(obj)}
 
+    # if multiple-streams notation
     for key, value in obj.items():
-        obj[key] = _listify(value)
+        obj[key] = _serialize(value)
     return obj
 
 
@@ -100,8 +102,8 @@ class StormComponent(object):
 
         print json.dumps({
             "type": component_type,
-            "output_fields": _serialize_streams(self.OUTPUT_FIELDS),
-            "options": _listify(self.OPTIONS)})
+            "output_fields": _expand_output_fields(self.OUTPUT_FIELDS),
+            "options": _serialize(self.OPTIONS)})
 
     def setup_component(self):
         """Storm component setup before execution. It will also
