@@ -164,17 +164,11 @@ class BoltSpec(ComponentSpec):
         if "groupings" in specs:
             self.groupings = specs["groupings"]
 
-    def _stream_exists(self, component, stream, group_type, topo_out_fields):
-        """If stream does not exist in the topology specs, raise an error"""
-        if (component not in topo_out_fields and
-                stream not in topo_out_fields[component]):
-            raise InvalidTopologyError(
-                "[{0}] [{1}] Unknown stream: {2} {3}"
-                .format(self.name, group_type, component, stream))
+        self._expand_groupings()
 
-    def verify_groupings(self, topo_out_fields):
-        """Verify that the groupings specified in the yaml file for that
-        component match with all the other specs.
+    def _expand_groupings(self):
+        """Normalize the groupings specified in the yaml file for that
+        component.
         """
         for group in self.groupings:
             if len(group) != 1:
@@ -203,12 +197,6 @@ class BoltSpec(ComponentSpec):
                             self.name, group_type,
                             _as_list(group_obj)))
 
-                self._stream_exists(
-                    group[group_type]["component"],
-                    group[group_type]["stream"],
-                    group_type,
-                    topo_out_fields)
-
             elif group_type == "fields_grouping":
                 group_dict = group["fields_grouping"]
 
@@ -222,20 +210,44 @@ class BoltSpec(ComponentSpec):
                             self.name, group_type,
                             _as_list(group_dict)))
 
-                component = group_dict["component"]
-                stream = group_dict["stream"]
-
-                self._stream_exists(
-                    component,
-                    stream,
-                    group_type,
-                    topo_out_fields)
-
                 fields = group_dict["fields"]
                 if fields is None:
                     raise InvalidTopologyError(
                         "[{0}] [{1}] Must specify at least one field."
                         .format(self.name, group_type))
+
+            else:
+                raise InvalidTopologyError(
+                    "[{0}] Unkonown grouping type. Allowed:"
+                    " 'global_grouping', 'shuffle_grouping','fields_grouping'"
+                    ". Found: {1}".format(self.name, group_type))
+
+    def _stream_exists(self, component, stream, group_type, topo_out_fields):
+        """If stream does not exist in the topology specs, raise an error"""
+        if (component not in topo_out_fields or
+                stream not in topo_out_fields[component]):
+            raise InvalidTopologyError(
+                "[{0}] [{1}] Unknown stream: [{2}] [{3}]"
+                .format(self.name, group_type, component, stream))
+
+    def verify_groupings(self, topo_out_fields):
+        """Verify that the groupings specified in the yaml file for that
+        component match with all the other specs.
+        """
+        for group in self.groupings:
+            group_type = group.keys()[0]
+            group_dict = group[group_type]
+
+            component = group_dict["component"]
+            stream = group_dict["stream"]
+            self._stream_exists(
+                component,
+                stream,
+                group_type,
+                topo_out_fields)
+
+            if "fields" in group_dict:
+                fields = group_dict["fields"]
 
                 for field in fields:
                     if field not in topo_out_fields[component][stream]:
@@ -243,12 +255,6 @@ class BoltSpec(ComponentSpec):
                             "[{0}] [{1}] Stream {2} does not have field:"
                             " {3}.".format(
                                 self.name, group_type, stream, field))
-
-            else:
-                raise InvalidTopologyError(
-                    "[{0}] Unkonown grouping type. Allowed:"
-                    " 'global_grouping', 'shuffle_grouping','fields_grouping'"
-                    ". Found: {1}".format(self.name, group_type))
 
 
 class SpoutSpec(ComponentSpec):
