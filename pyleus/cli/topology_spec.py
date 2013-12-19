@@ -157,83 +157,101 @@ class BoltSpec(ComponentSpec):
 
     COMPONENT = "bolt"
 
+    GROUPINGS_LIST = ["global_grouping", "shuffle_grouping", "fields_grouping"]
+
     def __init__(self, specs):
         """Bolt specific initialization. Bolts may have a grouping section"""
         super(BoltSpec, self).__init__(specs)
 
         if "groupings" in specs:
-            self.groupings = specs["groupings"]
+            self.groupings = []
+            for grouping in specs["groupings"]:
+                self.groupings.append(self._expand_grouping(grouping))
 
-        self._expand_groupings()
-
-    def _expand_groupings(self):
+    def _expand_grouping(self, group):
         """Normalize the groupings specified in the yaml file for that
         component.
         """
-        for group in self.groupings:
-            if len(group) != 1:
+        if len(group) != 1:
+            raise InvalidTopologyError(
+                "[{0}] Each grouping element must specify one and only"
+                " one type. Found: {1}"
+                .format(self.name, group.keys()))
+
+        group_type = group.keys()[0]
+
+        if (group_type not in self.GROUPINGS_LIST):
+            raise InvalidTopologyError(
+                "[{0}] Unkonown grouping type. Allowed: {1}. Found: {2}"
+                .format(self.name, self.GROUPINGS_LIST, group_type))
+
+        group_spec = group[group_type]
+        # only the name of the component has been specified
+        if isinstance(group[group_type], str):
+            group_spec = {
+                "component": group_spec,
+                "stream": DEFAULT_STREAM,
+            }
+
+        # specified component tag, but not stream
+        elif "stream" not in group_spec:
+            group_spec["stream"] = DEFAULT_STREAM
+
+        return {group_type: group_spec}
+
+    def _verify_grouping_format(self, group_type, group_spec):
+        """Verify grouping format based on the kind of grouping."""
+        if (group_type == "global_grouping" or
+                group_type == "shuffle_grouping"):
+            if _as_set(group_spec) != set(["component", "stream"]):
                 raise InvalidTopologyError(
-                    "[{0}] Each grouping element must specify one and only"
-                    " one type. Found: {1}"
-                    .format(self.name, group.keys()))
-            group_type = group.keys()[0]
+                    "[{0}] [{1}] Unrecognized format: {2}".format(
+                        self.name, group_type,
+                        _as_list(group_spec)))
 
-            if (group_type == "global_grouping" or
-                    group_type == "shuffle_grouping"):
-                group_obj = group[group_type]
-
-                # specified only the name of the component
-                if isinstance(group_obj, str):
-                    group[group_type] = {
-                        "component": group_obj,
-                        "stream": DEFAULT_STREAM,
-                    }
-
-                # specified component tag but not stream
-                elif _as_set(group_obj) == set(["component"]):
-                    group_obj["stream"] = DEFAULT_STREAM
-
-                # otherwise only component-stream notation is allowed
-                elif _as_set(group_obj) != set(["component", "stream"]):
-                    raise InvalidTopologyError(
-                        "[{0}] [{1}] Unrecognized format: {2}".format(
-                            self.name, group_type,
-                            _as_list(group_obj)))
-
-            elif group_type == "fields_grouping":
-                group_dict = group["fields_grouping"]
-
-                # specified only component and fields, but not stream
-                if _as_set(group_dict) == set(["component", "fields"]):
-                    group_dict["stream"] = DEFAULT_STREAM
-
-                # verify format
-                if (_as_set(group_dict) !=
-                        set(["component", "stream", "fields"])):
-                    raise InvalidTopologyError(
-                        "[{0}] [{1}] Unrecognized format: {2}".format(
-                            self.name, group_type,
-                            _as_list(group_dict)))
-
-                fields = group_dict["fields"]
-                if fields is None:
-                    raise InvalidTopologyError(
-                        "[{0}] [{1}] Must specify at least one field."
-                        .format(self.name, group_type))
-
-            else:
+        elif group_type == "fields_grouping":
+            if (_as_set(group_spec) !=
+                    set(["component", "stream", "fields"])):
                 raise InvalidTopologyError(
-                    "[{0}] Unkonown grouping type. Allowed:"
-                    " 'global_grouping', 'shuffle_grouping','fields_grouping'"
-                    ". Found: {1}".format(self.name, group_type))
+                    "[{0}] [{1}] Unrecognized format: {2}".format(
+                        self.name, group_type,
+                        _as_list(group_spec)))
+
+            fields = group_spec["fields"]
+            if fields is None:
+                raise InvalidTopologyError(
+                    "[{0}] [{1}] Must specify at least one field."
+                    .format(self.name, group_type))
 
     def _stream_exists(self, component, stream, group_type, topo_out_fields):
-        """If stream does not exist in the topology specs, raise an error"""
+        """If stream does not exist in the topology specs, raise an error."""
         if (component not in topo_out_fields or
                 stream not in topo_out_fields[component]):
             raise InvalidTopologyError(
                 "[{0}] [{1}] Unknown stream: [{2}] [{3}]"
                 .format(self.name, group_type, component, stream))
+
+    def _verify_grouping_input(self, group_type, group_spec, topo_out_fields):
+        """Verify that grouping input streams and fields exist within the
+        topology.
+        """
+        component = group_spec["component"]
+        stream = group_spec["stream"]
+        self._stream_exists(
+            component,
+            stream,
+            group_type,
+            topo_out_fields)
+
+        if "fields" in group_spec:
+            fields = group_spec["fields"]
+
+            for field in fields:
+                if field not in topo_out_fields[component][stream]:
+                    raise InvalidTopologyError(
+                        "[{0}] [{1}] Stream {2} does not have field:"
+                        " {3}.".format(
+                            self.name, group_type, stream, field))
 
     def verify_groupings(self, topo_out_fields):
         """Verify that the groupings specified in the yaml file for that
@@ -241,25 +259,11 @@ class BoltSpec(ComponentSpec):
         """
         for group in self.groupings:
             group_type = group.keys()[0]
-            group_dict = group[group_type]
+            group_spec = group[group_type]
 
-            component = group_dict["component"]
-            stream = group_dict["stream"]
-            self._stream_exists(
-                component,
-                stream,
-                group_type,
-                topo_out_fields)
-
-            if "fields" in group_dict:
-                fields = group_dict["fields"]
-
-                for field in fields:
-                    if field not in topo_out_fields[component][stream]:
-                        raise InvalidTopologyError(
-                            "[{0}] [{1}] Stream {2} does not have field:"
-                            " {3}.".format(
-                                self.name, group_type, stream, field))
+            self._verify_grouping_format(group_type, group_spec)
+            self._verify_grouping_input(group_type, group_spec,
+                                        topo_out_fields)
 
 
 class SpoutSpec(ComponentSpec):
