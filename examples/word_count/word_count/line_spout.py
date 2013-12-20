@@ -1,6 +1,9 @@
+import logging
 import random
 
 from pyleus.storm import Spout
+
+log = logging.getLogger('counter')
 
 LINES = """
 Lorem ipsum dolor sit amet, consectetur
@@ -43,8 +46,17 @@ class LineSpout(Spout):
     OUTPUT_FIELDS = ["line"]
 
     def next_tuple(self):
-        self.emit((random.choice(LINES),), tup_id=random.randrange(999999999))
+        line = random.choice(LINES)
+        log.debug(line)
+        self.emit((line,), tup_id=random.randrange(999999999))
 
 
 if __name__ == '__main__':
+    logging.basicConfig(
+        level=logging.DEBUG,
+        filename='/tmp/word_count_lines.log',
+        format="%(message)s",
+        filemode='a',
+    )
+
     LineSpout().run()
