@@ -28,7 +28,7 @@ class RatesGeneratorSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/exchange_rates.log',
+        filename='/tmp/micro_exchange_rates.log',
         format="%(message)s",
         filemode='a',
     )

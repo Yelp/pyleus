@@ -29,7 +29,7 @@ class EarningsBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/earnings.log',
+        filename='/tmp/micro_earnings.log',
         format="%(message)s",
         filemode='a',
     )

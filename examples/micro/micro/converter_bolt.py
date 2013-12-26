@@ -44,7 +44,7 @@ class ConverterBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/conversions.log',
+        filename='/tmp/micro_conversions.log',
         format="%(message)s",
         filemode='a',
     )

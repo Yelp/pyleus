@@ -33,7 +33,7 @@ class MicroGeneratorSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/microtransactions.log',
+        filename='/tmp/micro_microtransactions.log',
         format="%(message)s",
         filemode='a',
     )
