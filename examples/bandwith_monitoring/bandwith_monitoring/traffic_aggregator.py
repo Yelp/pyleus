@@ -71,7 +71,7 @@ class TrafficAggregatorBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/traffic_aggregator.log',
+        filename='/tmp/bandwith_monitoring_traffic_aggregator.log',
         filemode='a',
     )
 

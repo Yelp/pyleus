@@ -45,7 +45,7 @@ class TemperatureSpout(MeasureGeneratorSpout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/temperature.log',
+        filename='/tmp/apparent_temperature_temperature.log',
         filemode='a',
     )
 

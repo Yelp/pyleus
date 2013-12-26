@@ -36,7 +36,7 @@ class TopGlobalBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/top_global.log',
+        filename='/tmp/top_urls_top_global.log',
         filemode='a',
     )
 

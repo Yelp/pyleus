@@ -58,7 +58,7 @@ class RequestsGeneratorSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/requests_generator.log',
+        filename='/tmp/top_urls_requests_generator.log',
         filemode='a',
     )
 

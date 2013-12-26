@@ -64,7 +64,7 @@ class TopIntermediateBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/top_intermediate.log',
+        filename='/tmp/top_urls_top_intermediate.log',
         filemode='a',
     )
 

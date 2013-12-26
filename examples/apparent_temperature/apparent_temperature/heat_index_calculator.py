@@ -74,7 +74,7 @@ class HeatIndexBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/heat_index.log',
+        filename='/tmp/apparent_temperature_heat_index.log',
         filemode='a',
     )
 

@@ -45,7 +45,7 @@ class HumiditySpout(MeasureGeneratorSpout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/humidity.log',
+        filename='/tmp/apparent_temperature_humidity.log',
         filemode='a',
     )
 

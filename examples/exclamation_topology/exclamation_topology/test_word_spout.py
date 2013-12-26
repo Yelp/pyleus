@@ -27,7 +27,7 @@ class TestWordSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/test_word_spout.log',
+        filename='/tmp/exclamation_spout.log',
         filemode='a',
     )
 

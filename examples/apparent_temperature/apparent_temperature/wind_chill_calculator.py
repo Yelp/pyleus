@@ -59,7 +59,7 @@ class WindChillBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/wind_chill.log',
+        filename='/tmp/apparent_temperature_wind_chill.log',
         filemode='a',
     )
 

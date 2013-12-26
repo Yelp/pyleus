@@ -27,7 +27,7 @@ class FieldsBolt(JSONFieldsBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/fields.log',
+        filename='/tmp/top_urls_fields.log',
         filemode='a',
     )
 

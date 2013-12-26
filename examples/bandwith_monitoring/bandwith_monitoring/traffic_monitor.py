@@ -28,7 +28,7 @@ class TrafficMonitorBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/traffic_monitor.log',
+        filename='/tmp/bandwith_monitoring_traffic_monitor.log',
         filemode='a',
     )
 

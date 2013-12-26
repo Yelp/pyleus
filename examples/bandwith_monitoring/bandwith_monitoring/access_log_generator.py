@@ -48,7 +48,7 @@ class AccessLogGeneratorSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/access_log_generator.log',
+        filename='/tmp/bandwith_monitoring_access_log_generator.log',
         filemode='a',
     )
 

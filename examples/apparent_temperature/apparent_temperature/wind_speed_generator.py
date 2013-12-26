@@ -45,7 +45,7 @@ class WindSpeedSpout(MeasureGeneratorSpout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/wind_speed.log',
+        filename='/tmp/apparent_temperature_wind_speed.log',
         filemode='a',
     )
 
