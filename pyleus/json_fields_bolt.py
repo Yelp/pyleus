@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import logging
+
 try:
     import simplejson as json
     _ = json # pyflakes
@@ -7,6 +9,8 @@ except ImportError:
     import json
 
 from .storm import SimpleBolt
+
+log = logging.getLogger(__name__)
 
 
 class JSONFieldsBolt(SimpleBolt):
