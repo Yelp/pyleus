@@ -31,12 +31,14 @@ class VirtualenvProxy(object):
     def __init__(self, name, path,
                  system_site_packages=False,
                  pypi_index_url=None,
+                 use_wheel=True,
                  verbose=False):
         """Creates the virtualenv with the options specified"""
         self._name = name
         self._path = path
         self._system_site_packages = system_site_packages
         self._pypi_index_url = pypi_index_url
+        self._use_wheel = use_wheel
 
         self._verbose = verbose
         self._out_stream = None
@@ -64,6 +66,9 @@ class VirtualenvProxy(object):
         if self._pypi_index_url is not None:
             cmd += ["-i", self._pypi_index_url]
 
+        if self._use_wheel:
+            cmd += ['--use-wheel']
+
         _exec_shell_cmd(
             cmd, cwd=self._path,
             stdout=self._out_stream, stderr=self._err_stream,
@@ -76,6 +81,9 @@ class VirtualenvProxy(object):
 
         if self._pypi_index_url is not None:
             cmd += ["-i", self._pypi_index_url]
+
+        if self._use_wheel:
+            cmd += ['--use-wheel']
 
         _exec_shell_cmd(
             cmd, cwd=self._path,

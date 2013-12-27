@@ -104,6 +104,7 @@ class VirtualenvProxyMethodsTest(T.TestCase):
             [
                 "{0}/bin/pip".format(VENV_NAME), "install", "Ninja==7.7.7",
                 "-i", PYPI_URL,
+                '--use-wheel',
             ],
             cwd=VENV_PATH,
             stdout=self.venv._out_stream,
@@ -119,6 +120,7 @@ class VirtualenvProxyMethodsTest(T.TestCase):
                 "{0}/bin/pip".format(VENV_NAME), "install",
                 "-r", "foo.txt",
                 "-i", PYPI_URL,
+                '--use-wheel',
             ],
             cwd=VENV_PATH,
             stdout=self.venv._out_stream,
