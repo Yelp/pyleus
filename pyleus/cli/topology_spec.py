@@ -12,11 +12,11 @@ from pyleus.exception import InvalidTopologyError
 
 
 def _as_set(obj):
-    return None if obj is None else set(obj)
+    return set() if obj is None else set(obj)
 
 
 def _as_list(obj):
-    return None if obj is None else list(obj)
+    return list() if obj is None else list(obj)
 
 
 class TopologySpec(object):
@@ -129,7 +129,10 @@ class ComponentSpec(object):
                 " Spout?".format(self.name, specs))
 
         self.output_fields = specs["output_fields"]
-        if _as_set(specs["options"]) != _as_set(self.options):
+
+        module_opt = _as_set(specs["options"])
+        yaml_opt = _as_set(self.options)
+        if not module_opt.issuperset(yaml_opt):
             raise InvalidTopologyError(
                 "[{0}] Options mismatch. Python class: {1}. Yaml file: {2}"
                 .format(self.name,
