@@ -13,6 +13,7 @@ public class TopologySpec {
     public Integer workers = -1;
     public Integer max_spout_pending = -1;
     public Integer message_timeout_secs = -1;
+    public Integer ackers = -1;
 
     private static Constructor getConstructor() {
         Constructor constructor = new Constructor(TopologySpec.class);

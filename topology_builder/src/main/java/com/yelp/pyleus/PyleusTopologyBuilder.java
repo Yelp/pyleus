@@ -220,6 +220,10 @@ public class PyleusTopologyBuilder {
                 conf.setMessageTimeoutSecs(spec.message_timeout_secs);
             }
 
+            if (spec.ackers != -1) {
+                conf.setNumAckers(spec.ackers);
+            }
+
             try {
                 StormSubmitter.submitTopology(spec.name, conf, topology);
             } catch (Exception e) {

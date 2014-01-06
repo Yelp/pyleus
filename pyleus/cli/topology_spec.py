@@ -34,6 +34,8 @@ class TopologySpec(object):
         self.name = specs["name"]
         if "workers" in specs:
             self.workers = specs["workers"]
+        if "ackers" in specs:
+            self.ackers = specs["ackers"]
         if "max_spout_pending" in specs:
             self.max_spout_pending = specs["max_spout_pending"]
         if "message_timeout_secs" in specs:
