@@ -74,7 +74,16 @@ class StormComponent(object):
         The java code will use the JSON descrption for topology
         cofiguration and validation.
         """
+        # The same word should be used in the yaml and in ComponentSpec.
+        # Note: it is lowercase
+        component_type = "other"
+        if isinstance(self, Bolt):
+            component_type = "bolt"
+        elif isinstance(self, Spout):
+            component_type = "spout"
+
         print json.dumps({
+            "type": component_type,
             "output_fields": _listify(self.OUTPUT_FIELDS),
             "options": _listify(self.OPTIONS)})
 

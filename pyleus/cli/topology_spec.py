@@ -122,11 +122,16 @@ class ComponentSpec(object):
         """Update the component specs wyith the ones coming from the python
         module and perform some additional validation.
         """
-        if _as_set(specs) != set(["output_fields", "options"]):
+        if _as_set(specs) != set(["type", "output_fields", "options"]):
             raise InvalidTopologyError(
                 "[{0}] Python class should specify attributes 'output_fields'"
                 " and 'options'. Found: {1}. Are you inheriting from Bolt or"
                 " Spout?".format(self.name, specs))
+
+        if specs["type"] != self.COMPONENT:
+            raise InvalidTopologyError(
+                "[{0}] Component type mismatch. Python class: {1}. Yaml"
+                " file: {2}".format(self.name, specs["type"], self.COMPONENT))
 
         self.output_fields = specs["output_fields"]
 
