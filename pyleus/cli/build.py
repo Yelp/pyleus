@@ -140,17 +140,21 @@ def _assemble_full_topology_yaml(yaml, venv):
         specs_dict = yaml_module.load(old_yaml_file)
 
         with tempfile.NamedTemporaryFile("w", delete=False) as new_yaml_file:
-            specs = TopologySpec(specs_dict)
+            try:
+                specs = TopologySpec(specs_dict)
 
-            for component in specs.topology:
-                module_specs = yaml_module.load(venv.execute_module(
-                    component.module, DESCRIBE_OPT))
-                component.update_from_module(module_specs)
+                for component in specs.topology:
+                    module_specs = yaml_module.load(venv.execute_module(
+                        component.module, DESCRIBE_OPT))
+                    component.update_from_module(module_specs)
 
-            specs.verify_groupings()
+                specs.verify_groupings()
 
-            yaml_module.dump(specs.asdict(), new_yaml_file)
-            return new_yaml_file.name
+                yaml_module.dump(specs.asdict(), new_yaml_file)
+                return new_yaml_file.name
+            except:
+                os.remove(new_yaml_file.name)
+                raise
 
 
 def _exclude_content(src):
