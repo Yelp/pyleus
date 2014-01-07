@@ -138,14 +138,10 @@ public class PyleusTopologyBuilder {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
-                    try {
-                        KillOptions killOpt = new KillOptions();
-                        killOpt.set_wait_secs(0);
-                        cluster.killTopologyWithOpts(topologyName, killOpt);
-                    } finally {
-                        cluster.shutdown();
-                    }
-                } catch(Exception uninmportant) {}
+                    cluster.shutdown();
+                } catch(Exception e) {
+                    System.err.println(e.toString());
+                }
             }
         });
 
