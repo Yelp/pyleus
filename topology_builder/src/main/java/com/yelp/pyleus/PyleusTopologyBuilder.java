@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
+import backtype.storm.generated.KillOptions;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.IRichBolt;
@@ -132,13 +133,31 @@ public class PyleusTopologyBuilder {
         conf.setDebug(debug);
         conf.setMaxTaskParallelism(1);
 
-        LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology(topologyName, conf, topology);
+        final LocalCluster cluster = new LocalCluster();
 
-        Utils.sleep(10 * 60 * 1000);
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                try {
+                    try {
+                        KillOptions killOpt = new KillOptions();
+                        killOpt.set_wait_secs(0);
+                        cluster.killTopologyWithOpts(topologyName, killOpt);
+                    } finally {
+                        cluster.shutdown();
+                    }
+                } catch(Exception uninmportant) {}
+            }
+        });
 
-        cluster.killTopology(topologyName);
-        cluster.shutdown();
+        try {
+            cluster.submitTopology(topologyName, conf, topology);
+
+            Utils.sleep(10 * 60 * 1000);
+
+            cluster.killTopology(topologyName);
+        } finally {
+            cluster.shutdown();
+        }
     }
 
     public static void main(String[] args) {
