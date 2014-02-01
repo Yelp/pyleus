@@ -99,6 +99,6 @@ class VirtualenvProxy(object):
                                 stderr=subprocess.PIPE)
         out_data, err_data = proc.communicate()
         if proc.returncode != 0:
-            raise VirtualenvError("Failed to execute pyhton module: {0}."
+            raise VirtualenvError("Failed to execute Python module: {0}."
                                   " Error: {1}".format(module, err_data))
         return out_data
