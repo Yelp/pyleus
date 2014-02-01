@@ -11,7 +11,7 @@ log = logging.getLogger('traffic_monitor')
 
 class TrafficMonitorBolt(SimpleBolt):
 
-    def initialize(self, conf, context, _):
+    def initialize(self, conf, context):
         self.records = {}
 
     def process_tick(self):

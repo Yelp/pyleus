@@ -28,9 +28,9 @@ class TrafficAggregatorBolt(SimpleBolt):
     OUTPUT_FIELDS = Traffic
     OPTIONS = ["time_window", "threshold"]
 
-    def initialize(self, conf, context, options):
-        self.time_window = options["time_window"]
-        self.threshold = options["threshold"]
+    def initialize(self, conf, context):
+        self.time_window = self.options["time_window"]
+        self.threshold = self.options["threshold"]
         if self.time_window % conf.tick_tuple_freq != 0:
             raise ValueError("Time window must be a multiple of"
                              " tick_tuple_freq_secs")

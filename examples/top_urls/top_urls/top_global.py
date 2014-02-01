@@ -13,9 +13,9 @@ class TopGlobalBolt(SimpleBolt):
     OPTIONS = ["N"]
     OUTPUT_FIELDS = ["top_N"]
 
-    def initialize(self, conf, context, options):
+    def initialize(self, conf, context):
         self.top_N = []
-        self.N = options["N"]
+        self.N = self.options["N"]
 
     def process_tick(self):
         log.debug("-------------")

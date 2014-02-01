@@ -17,11 +17,11 @@ class TopIntermediateBolt(SimpleBolt):
     OPTIONS = ["N", "time_window", "min_records"]
     OUTPUT_FIELDS = ["top_N"]
 
-    def initialize(self, conf, context, options):
+    def initialize(self, conf, context):
         self.urls = defaultdict(list)
-        self.time_window = options["time_window"]
-        self.N = options["N"]
-        self.min_records = options["min_records"]
+        self.time_window = self.options["time_window"]
+        self.N = self.options["N"]
+        self.min_records = self.options["min_records"]
 
     def process_tick(self):
         self.cull_old_records()

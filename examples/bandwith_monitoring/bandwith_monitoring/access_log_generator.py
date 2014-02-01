@@ -21,11 +21,11 @@ class AccessLogGeneratorSpout(Spout):
     OPTIONS = ["base_log"]
     OUTPUT_FIELDS = Request
 
-    def initialize(self, conf, context, options):
+    def initialize(self, conf, context):
         self.ip = set()
         self.request = set()
         self.size = set()
-        with open(options["base_log"], "r") as base_log:
+        with open(self.options["base_log"], "r") as base_log:
             for line in base_log:
                 line = line.split()
                 self.ip.add(line[0])

@@ -11,7 +11,7 @@ class CountWordsBolt(SimpleBolt):
 
     OUTPUT_FIELDS = Counter
 
-    def initialize(self, conf, context, options=None):
+    def initialize(self, conf, context):
         self.words = defaultdict(int)
 
     def process_tuple(self, tup):
