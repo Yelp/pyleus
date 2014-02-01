@@ -114,9 +114,9 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
     """
     venv = VirtualenvProxy(
         venv_name, tmp_dir,
-        system_site_packages,
-        pypi_index_url,
-        verbose
+        system_site_packages=system_site_packages,
+        pypi_index_url=pypi_index_url,
+        verbose=verbose
     )
 
     packages = ["pyleus=={0}".format(__version__)]
