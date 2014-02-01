@@ -78,14 +78,14 @@ class StormComponent(object):
             "output_fields": _listify(self.OUTPUT_FIELDS),
             "options": _listify(self.OPTIONS)})
 
-    def setup_component(self, options=None):
+    def setup_component(self):
         """Storm component setup before execution. It will also
         call the initialization method implemented in the subclass."""
         self.conf, self.context = self.init_component()
 
-        self.initialize(self.conf, self.context, options)
+        self.initialize(self.conf, self.context)
 
-    def initialize(self, conf, context, options=None):
+    def initialize(self, conf, context):
         """Implement in subclass"""
         pass
 
@@ -100,12 +100,12 @@ class StormComponent(object):
 
         if args.describe:
             self.describe()
-        elif args.options is not None:
-            self.run_component(json.loads(args.options))
-        else:
-            self.run_component()
+            return
 
-    def run_component(self, options=None):
+        self.options = json.loads(args.options) if args.options else {}
+        self.run_component()
+
+    def run_component(self):
         """Implement in subclass"""
         raise NotImplementedError
 
@@ -241,9 +241,9 @@ class Bolt(StormComponent):
         """
         return self.process_tuple(tup)
 
-    def run_component(self, options=None):
+    def run_component(self):
         try:
-            self.setup_component(options)
+            self.setup_component()
 
             while True:
                 tup = self.read_tuple()
@@ -337,9 +337,9 @@ class Spout(StormComponent):
     def _sync(self):
         self.send_command('sync')
 
-    def run_component(self, options=None):
+    def run_component(self):
         try:
-            self.setup_component(options)
+            self.setup_component()
 
             while True:
                 msg = self.read_command()
