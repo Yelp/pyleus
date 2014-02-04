@@ -17,7 +17,6 @@ class SubmitSubCommand(RunSubCommand):
     """Run subcommand class"""
 
     NAME = "submit"
-    USAGE = "%(prog)s [options] TOPOLOGY_PATH"
     DESCRIPTION = "Submit a Pyleus topology to a Storm cluster for execution"
     HELP = "Submit a Pyleus topology to a Storm cluster for execution"
 

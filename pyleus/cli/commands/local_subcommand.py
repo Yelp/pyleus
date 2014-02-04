@@ -19,7 +19,6 @@ class LocalSubCommand(RunSubCommand):
     """Run subcommand class"""
 
     NAME = "local"
-    USAGE = "%(prog)s [options] TOPOLOGY_PATH"
     DESCRIPTION = "Run a Pyleus topology locally."
     HELP = "Run a Pyleus topology locally."
 

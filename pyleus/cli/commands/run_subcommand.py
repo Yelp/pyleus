@@ -22,7 +22,7 @@ class RunSubCommand(SubCommand):
 
     # Override these in subclass
     NAME = None
-    USAGE = None
+    USAGE = "%(prog)s [options] TOPOLOGY_PATH"
     DESCRIPTION = None
     HELP = None
 
