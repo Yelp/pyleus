@@ -34,11 +34,12 @@ class RunSubCommand(SubCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "topology_dir", metavar="TOPOLOGY_PATH",
+            "topology_dir", metavar="TOPOLOGY_PATH", nargs="?", default=".",
             help="If the path to a directory containing the topology source "
-                 "code is specified, a Pyleus jar will be created on the fly "
-                 "before execution. If the path to a Pyleus jar is specified, "
-                 "the jar will be processed for execution immediately.")
+            "code is specified, a Pyleus jar will be created on the fly "
+            "before execution. If the path to a Pyleus jar is specified, the "
+            "jar will be processed for execution immediately. (default: "
+            "%(default)s)")
         self.add_specific_arguments(parser)
 
     def run_topology(jar_path, configs):
