@@ -43,14 +43,12 @@ class BuildSubCommand(SubCommand):
             default=".", help="Directory containing Pyleus topology source "
             "code. (default: %(default)s)")
         parser.add_argument(
-            "-o", "--out", dest="output_jar",
-            help="Path of the jar file that will contain"
-            " all the dependencies and the resources")
+            "-o", "--out", dest="output_jar", help="Path of the jar to be "
+            "written.")
         parser.add_argument(
-            "-s", "--system-site-packages",
-            dest="system_site_packages", action="store_true",
-            help="Do not install packages already present"
-            "on your system")
+            "-s", "--system-site-packages", dest="system_site_packages",
+            action="store_true", help="Do not install packages already present "
+            "on your system.")
 
     def run(self, configs):
         try:
