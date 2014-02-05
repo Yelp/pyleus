@@ -25,6 +25,7 @@ import sys
 
 from pyleus.cli.commands.subcommand import SubCommand
 from pyleus.cli.build import build_topology_jar
+from pyleus.configuration import DEFAULTS
 from pyleus.exception import command_error_fmt
 from pyleus.exception import PyleusError
 
@@ -40,8 +41,8 @@ class BuildSubCommand(SubCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "topology_dir", metavar="TOPOLOGY_DIRECTORY", nargs="?",
-            default=".", help="Directory containing Pyleus topology source "
-            "code. (default: %(default)s)")
+            default=DEFAULTS.topology_dir, help="Directory containing Pyleus "
+            "topology source code. (default: %(default)s)")
         parser.add_argument(
             "-o", "--out", dest="output_jar", help="Path of the jar to be "
             "written.")
