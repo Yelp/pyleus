@@ -133,24 +133,24 @@ class BuildTest(T.TestCase):
         T.assert_equal(venv.install_from_requirements.call_count, 0)
 
     @mock.patch.object(glob, 'glob', autospec=True)
-    def test__exclude_content(self, mock_glob):
-        mock_glob.return_value = ["foo/spam", "foo/ham",
-                                  "foo/requirements.txt",
-                                  "foo/pyleus_topology.yaml"]
-        content = build._exclude_content("foo")
+    def test__content_to_copy(self, mock_glob):
+        mock_glob.return_value = ["foo/good1.mkv", "foo/good2.bat",
+                                  "foo/bad1.txt", "foo/bad2.jar"]
+        content = build._content_to_copy("foo", ["foo/bad1.txt",
+                                                 "foo/bad2.jar"])
         mock_glob.assert_called_once_with("foo/*")
-        T.assert_sorted_equal(content, ["foo/spam", "foo/ham"])
+        T.assert_sorted_equal(content, ["foo/good1.mkv", "foo/good2.bat"])
 
-    @mock.patch.object(build, '_exclude_content', autospec=True)
+    @mock.patch.object(build, '_content_to_copy', autospec=True)
     @mock.patch.object(os.path, 'isdir', autospec=True)
     @mock.patch.object(shutil, 'copytree', autospec=True)
     @mock.patch.object(shutil, 'copy2', autospec=True)
     def test__copy_dir_content(
-            self, mock_copy2, mock_copytree, mock_isdir, mock_exclude_cont):
-        mock_exclude_cont.return_value = ["foo/ham", "foo/honey"]
+            self, mock_copy2, mock_copytree, mock_isdir, mock_cont_to_copy):
+        mock_cont_to_copy.return_value = ["foo/ham", "foo/honey"]
         mock_isdir.side_effect = iter([True, False])
-        build._copy_dir_content("foo", "bar")
-        mock_exclude_cont.assert_called_once_with("foo")
+        build._copy_dir_content(src="foo", dst="bar", exclude=[])
+        mock_cont_to_copy.assert_called_once_with("foo", [])
         expected = [mock.call("foo/ham"), mock.call("foo/honey")]
         mock_isdir.assert_has_calls(expected)
         mock_copytree.assert_called_once_with(

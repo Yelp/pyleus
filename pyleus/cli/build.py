@@ -157,16 +157,16 @@ def _assemble_full_topology_yaml(yaml, venv):
                 raise
 
 
-def _exclude_content(src):
-    """Remove from the content list the yaml file and the reuirements file."""
+def _content_to_copy(src, exclude):
+    """Remove from the content list the yaml file, requirements file, and
+    Pyleus jar we are replacing.
+    """
     content = set(glob.glob(os.path.join(src, "*")))
-    yaml = os.path.join(src, YAML_FILENAME)
-    req = os.path.join(src, REQUIREMENTS_FILENAME)
-    content -= set([yaml, req])
+    content -= set(exclude)
     return content
 
 
-def _copy_dir_content(src, dst):
+def _copy_dir_content(src, dst, exclude):
     """Copy the content of a directory excluding the yaml file
     and requirements.txt exclude_req is True.
 
@@ -174,7 +174,7 @@ def _copy_dir_content(src, dst):
     the latter always creates a top level directory, while only
     the content need to be copied in this case.
     """
-    content = _exclude_content(src)
+    content = _content_to_copy(src, exclude)
 
     for t in content:
         if os.path.isdir(t):
@@ -214,7 +214,11 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
     shutil.copy2(yaml, resources_dir)
 
     # Add the topology directory skipping yaml and requirements
-    _copy_dir_content(topology_dir, os.path.join(tmp_dir, RESOURCES_PATH))
+    _copy_dir_content(
+        src=topology_dir,
+        dst=os.path.join(tmp_dir, RESOURCES_PATH),
+        exclude=[yaml, venv, req, output_jar],
+    )
 
     venv = _set_up_virtualenv(
         venv_name=VIRTUALENV_NAME,
