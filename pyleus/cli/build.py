@@ -158,8 +158,8 @@ def _assemble_full_topology_yaml(yaml, venv):
 
 
 def _content_to_copy(src, exclude):
-    """Remove from the content list the yaml file, requirements file, and
-    Pyleus jar we are replacing.
+    """Return a set of top-level content to copy, excluding exact matches
+    from the exclude list.
     """
     content = set(glob.glob(os.path.join(src, "*")))
     content -= set(exclude)
