@@ -56,11 +56,17 @@ class StormComponent(object):
     OUTPUT_FIELDS = None
     OPTIONS = None
 
-    def __init__(self, input_stream=sys.stdin, output_stream=sys.stdout):
+    def __init__(self, input_stream=None, output_stream=None):
         """The Storm component will parse the command line in order
         to figure out if it has been queried for a description or for
         actually running."""
         super(StormComponent, self).__init__()
+
+        if input_stream is None:
+            input_stream = sys.stdin
+
+        if output_stream is None:
+            output_stream = sys.stdout
 
         self._input_stream = input_stream
         self._output_stream = output_stream
