@@ -1,9 +1,21 @@
 .DELETE_ON_ERROR:
 
-all:
-	echo >&2 "Must specify target."
+all: sdist bdist_wheel topology_builder
+
+sdist:
+	python setup.py sdist
+
+bdist_wheel:
+	python setup.py bdist_wheel
 
 test:
-	cd pyleus; tox -c tox-yelp.ini
+	tox -c tox-yelp.ini
 
-.PHONY: all test test-pyleus test-pyleus-util test-storm-util
+topology_builder:
+	make -C topology_builder/
+
+clean:
+	rm -rf build/ dist/ pyleus.egg-info/
+	make -C topology_builder/ clean
+
+.PHONY: all sdist bdist_wheel test clean
