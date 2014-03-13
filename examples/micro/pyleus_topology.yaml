@@ -1,0 +1,47 @@
+# Topology built to demonstrate how to handle multiple output streams.
+# The aim of this simple topology is to compute the total earning coming
+# from in-app microtransactions of our MobilePyleus app.
+# However, since we also launched in UK and in Italy, some transactions are
+# expressed in foreign currency. Other than the total earnings, we would like
+# to compute the earnings for each currency once exchanged in dollars.
+# Exchange rates are also represented as a real-time data flow.
+# Parallelism and optimizations have been put aside for sake of clarity.
+
+name: micro
+
+topology:
+
+    - spout:
+        name: micro-transactions
+        module: micro.micro_generator
+
+    - spout:
+        name: exchange-rates
+        module: micro.rates_generator
+
+    - bolt:
+        name: live-converter
+        module: micro.converter_bolt
+        groupings:
+            - shuffle_grouping: exchange-rates
+            - shuffle_grouping:
+                component: micro-transactions
+                stream: euro
+            - shuffle_grouping:
+                component: micro-transactions
+                stream: pound
+
+    - bolt:
+        name: earnings-calculator
+        module: micro.earnings_bolt
+        tick_freq_secs: 2
+        groupings:
+            - shuffle_grouping:
+                component: micro-transactions
+                stream: dollar
+            - shuffle_grouping:
+                component: live-converter
+                stream: euro
+            - shuffle_grouping:
+                component: live-converter
+                stream: pound
