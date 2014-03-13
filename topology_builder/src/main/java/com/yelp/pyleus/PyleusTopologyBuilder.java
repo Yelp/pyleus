@@ -54,7 +54,7 @@ public class PyleusTopologyBuilder {
             declarer = builder.setBolt(bolt.name, stormBolt);
         }
 
-        if(bolt.tasks != -1) {
+        if (bolt.tasks != -1) {
             declarer.setNumTasks(bolt.tasks);
         }
 
@@ -66,9 +66,9 @@ public class PyleusTopologyBuilder {
             String stream = (String) groupingMap.get("stream");
 
             if (groupingType.equals("shuffle_grouping")) {
-                    declarer.shuffleGrouping(component, stream);
+                declarer.shuffleGrouping(component, stream);
             } else if (groupingType.equals("global_grouping")) {
-                    declarer.globalGrouping(component, stream);
+                declarer.globalGrouping(component, stream);
             } else if (groupingType.equals("fields_grouping")) {
                 List<String> fields = (List<String>) groupingMap.get("fields");
                 String[] fieldsArray = fields.toArray(new String[fields.size()]);
@@ -101,7 +101,7 @@ public class PyleusTopologyBuilder {
             declarer = builder.setSpout(spout.name, stormSpout);
         }
 
-        if(spout.tasks != -1) {
+        if (spout.tasks != -1) {
             declarer.setNumTasks(spout.tasks);
         }
     }

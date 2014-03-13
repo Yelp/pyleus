@@ -24,10 +24,11 @@ public class PythonBolt extends ShellBolt implements IRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        // Can this condition ever happen?
         if (this.outputFields.size() == 1 && this.outputFields.get("default") == null) {
             declarer.declare(new Fields());
         } else {
-            for(Entry<String, Object> outEntry : this.outputFields.entrySet()) {
+            for (Entry<String, Object> outEntry : this.outputFields.entrySet()) {
                 String stream = outEntry.getKey();
                 List<String> fields = (List<String>) outEntry.getValue();
                 declarer.declareStream(stream, new Fields(fields.toArray(new String[fields.size()])));

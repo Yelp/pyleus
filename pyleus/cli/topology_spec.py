@@ -182,7 +182,7 @@ class BoltSpec(ComponentSpec):
 
         if (group_type not in self.GROUPINGS_LIST):
             raise InvalidTopologyError(
-                "[{0}] Unkonown grouping type. Allowed: {1}. Found: {2}"
+                "[{0}] Unknown grouping type. Allowed: {1}. Found: {2}"
                 .format(self.name, self.GROUPINGS_LIST, group_type))
 
         group_spec = group[group_type]
