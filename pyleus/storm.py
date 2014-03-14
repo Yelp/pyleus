@@ -275,6 +275,8 @@ class Bolt(StormComponent):
             while True:
                 tup = self.read_tuple()
                 self._process_tuple(tup)
+        except StormWentAwayError as e:
+            log.warning("Disconnected from Storm. Exiting.")
         except Exception as e:
             log.exception("Exception in Bolt.run")
             self.error(traceback.format_exc(e))
@@ -372,6 +374,8 @@ class Spout(StormComponent):
                 msg = self.read_command()
                 self._handle_command(msg)
                 self._sync()
+        except StormWentAwayError as e:
+            log.warning("Disconnected from Storm. Exiting.")
         except Exception as e:
             log.exception("Exception in Spout.run")
             self.error(traceback.format_exc(e))
