@@ -73,7 +73,7 @@ class sdist(_sdist):
 extra_install_requires = []
 if sys.version_info < (2, 7):
     # argparse is in the standard library of Python >= 2.7
-    extra_install_requires.append("argparse >= 1.2.1, < 2.0")
+    extra_install_requires.append("argparse >= 1.1, < 2.0")
 
 
 setup(
@@ -86,7 +86,7 @@ setup(
     packages=["pyleus", "pyleus.cli", "pyleus.cli.commands"],
     scripts=["scripts/pyleus"],
     install_requires=[
-        "PyYAML >= 3.10, < 4.0",
+        "PyYAML >= 3.09, < 4.0",
     ] + extra_install_requires,
     data_files=[(BASE_JAR_INSTALL_DIR, [BASE_JAR_DST])],
     cmdclass={
