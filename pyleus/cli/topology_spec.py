@@ -157,7 +157,8 @@ class BoltSpec(ComponentSpec):
 
     COMPONENT = "bolt"
 
-    GROUPINGS_LIST = ["global_grouping", "shuffle_grouping", "fields_grouping"]
+    GROUPINGS_LIST = ["global_grouping", "shuffle_grouping", "fields_grouping",
+                      "local_or_shuffle_grouping"]
 
     def __init__(self, specs):
         """Bolt specific initialization. Bolts may have a grouping section"""
@@ -201,8 +202,8 @@ class BoltSpec(ComponentSpec):
 
     def _verify_grouping_format(self, group_type, group_spec):
         """Verify grouping format based on the kind of grouping."""
-        if (group_type == "global_grouping" or
-                group_type == "shuffle_grouping"):
+        if group_type in ("global_grouping", "shuffle_grouping",
+                          "local_or_shuffle_grouping"):
             if _as_set(group_spec) != set(["component", "stream"]):
                 raise InvalidTopologyError(
                     "[{0}] [{1}] Unrecognized format: {2}".format(
