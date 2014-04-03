@@ -22,7 +22,7 @@ Configuration = collections.namedtuple(
     "Configuration",
     "base_jar config_file debug func include_packages output_jar \
      pypi_index_url storm_cluster_ip system_site_packages topology_dir \
-     topology_name verbose wait_time"
+     topology_name verbose wait_time jvm_opts"
 )
 
 
@@ -40,6 +40,7 @@ DEFAULTS = Configuration(
     topology_name=None,
     verbose=False,
     wait_time=None,
+    jvm_opts=None,
 )
 
 
@@ -64,7 +65,7 @@ def load_configuration(cmd_line_file):
     """Load configurations from the more generic to the
     more specific configuration file. The latter configurations
     override the previous one.
-    If a file is specified from command line, it  is considered
+    If a file is specified from command line, it is considered
     the most specific.
 
     Returns:

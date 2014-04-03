@@ -23,23 +23,28 @@ def add_storm_cluster_ip_argument(parser):
 
 def run_topology_locally(jar_path, configs):
     """Run the pyleus topology jar on the local machine"""
-    LocalStormCluster().run(jar_path, configs.debug)
+    LocalStormCluster().run(jar_path, configs.debug, configs.jvm_opts)
 
 
 def submit_topology(jar_path, configs):
     """Submit the topology jar to the Storm cluster specified in configs"""
-    StormCluster(configs.storm_cluster_ip, configs.verbose).submit(jar_path)
+    StormCluster(configs.storm_cluster_ip,
+                 configs.verbose,
+                 configs.jvm_opts).submit(jar_path)
 
 
 def list_topologies(configs):
     """List the topologies running on the Storm cluster specified in configs"""
-    StormCluster(configs.storm_cluster_ip, configs.verbose).list()
+    StormCluster(configs.storm_cluster_ip,
+                 configs.verbose,
+                 configs.jvm_opts).list()
 
 
 def kill_topology(configs):
     """Kill a topology running on the Storm cluster specified in configs"""
-    StormCluster(configs.storm_cluster_ip, configs.verbose).kill(
-        configs.topology_name, configs.wait_time)
+    StormCluster(configs.storm_cluster_ip,
+                configs.verbose,
+                configs.jvm_opts).kill(configs.topology_name, configs.wait_time)
 
 
 def get_runnable_jar_path(configs):
