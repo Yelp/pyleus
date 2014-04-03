@@ -15,6 +15,7 @@ STORM_PATH = "/usr/share/storm/bin/storm"
 TOPOLOGY_BUILDER_CLASS = "com.yelp.pyleus.PyleusTopologyBuilder"
 LOCAL_OPTION = "--local"
 DEBUG_OPTION = "--debug"
+STORM_JAR_JVM_OPTS = "STORM_JAR_JVM_OPTS"
 
 
 def _watch_over_storm(storm_pid):
@@ -30,11 +31,25 @@ def _watch_over_storm(storm_pid):
     signal.signal(signal.SIGINT, _kill_storm_handler)
 
 
+def _get_storm_cmd_env(jvm_opts):
+    """Return a copy of os.environ containing JVM options from the user
+
+    If no JVM options were specified, return None to defer to the default
+    behavior of subprocess.Popen.
+    """
+    if jvm_opts:
+        env = os.environ.copy()
+        env[STORM_JAR_JVM_OPTS] = jvm_opts
+        return env
+
+    return None
+
+
 class StormCluster(object):
     """Object representing an interface to a Storm cluster.
     All the requests are basically translated into Storm commands.
     """
-    def __init__(self, nimbus_ip, verbose):
+    def __init__(self, nimbus_ip, verbose, jvm_opts):
         """Create the cluster object"""
 
         if nimbus_ip is None:
@@ -45,6 +60,7 @@ class StormCluster(object):
 
         self.nimbus_ip = nimbus_ip
         self.verbose = verbose
+        self.jvm_opts = jvm_opts
 
     def _exec_storm_cmd(self, cmd, verbose=None):
         """Interface to any storm command"""
@@ -58,9 +74,12 @@ class StormCluster(object):
         storm_cmd += cmd
         storm_cmd += ["-c", "nimbus.host={0}".format(self.nimbus_ip)]
 
+        env = _get_storm_cmd_env(self.jvm_opts)
+
         proc = subprocess.Popen(storm_cmd,
                                 stdout=out_stream,
-                                stderr=subprocess.STDOUT)
+                                stderr=subprocess.STDOUT,
+                                env=env)
         out_data, _ = proc.communicate()
         if proc.returncode != 0:
             raise StormError(
@@ -96,7 +115,7 @@ class LocalStormCluster(object):
     All the requests are basically translated into Storm commands.
     """
 
-    def run(self, jar_path, debug):
+    def run(self, jar_path, debug, jvm_opts):
         """Run locally a pyleus topology jar
 
         Note: In order to trigger the local mode for the selcted topology,
@@ -108,9 +127,11 @@ class LocalStormCluster(object):
         if debug:
             storm_cmd.append(DEBUG_OPTION)
 
+        env = _get_storm_cmd_env(jvm_opts)
+
         # Having no feedback from Storm misses the point of running a topology
         # locally, so output is always redirected to stdout
-        proc = subprocess.Popen(storm_cmd)
+        proc = subprocess.Popen(storm_cmd, env=env)
 
         _watch_over_storm(proc.pid)
 
