@@ -2,6 +2,7 @@ import contextlib
 from cStringIO import StringIO
 
 import mock
+from mock import call, sentinel
 import testify as T
 
 try:
@@ -10,7 +11,7 @@ try:
 except ImportError:
     import json
 
-from pyleus.storm import StormTuple, Bolt, Spout, is_tick
+from pyleus.storm import StormTuple, Bolt, SimpleBolt, Spout, is_tick
 from pyleus.testing import StormComponentTestCase
 
 
@@ -153,7 +154,7 @@ class StormComponentTest(StormComponentTestCase):
 
         mock_open.assert_called_once_with("pid_dir/pid", 'a')
 
-    def test_init_component(self):
+    def test__init_component(self):
         handshake_msg = {
             'conf': {"foo": "bar"},
             'context': "context",
@@ -171,7 +172,7 @@ class StormComponentTest(StormComponentTestCase):
             patch__send_msg, patch__create_pidfile)
 
         with patches as (_, _, mock__send_msg, mock__create_pidfile):
-            conf, context = self.instance.init_component()
+            conf, context = self.instance._init_component()
 
         mock__send_msg.assert_called_once_with({'pid': 1234})
         mock__create_pidfile.assert_called_once_with("pidDir", 1234)
@@ -261,12 +262,12 @@ class BoltTest(StormComponentTestCase):
     def test_emit_with_stream(self):
         expected_command_dict = {
             'anchors': [],
-            'stream': mock.sentinel.stream,
+            'stream': sentinel.stream,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), stream=mock.sentinel.stream)
+            self.instance.emit((1, 2, 3), stream=sentinel.stream)
 
     def test_emit_with_anchors(self):
         expected_command_dict = {
@@ -282,16 +283,94 @@ class BoltTest(StormComponentTestCase):
     def test_emit_with_direct_task(self):
         expected_command_dict = {
             'anchors': [],
-            'task': mock.sentinel.direct_task,
+            'task': sentinel.direct_task,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), direct_task=mock.sentinel.direct_task)
+            self.instance.emit((1, 2, 3), direct_task=sentinel.direct_task)
 
     def test_emit_with_bad_values(self):
         T.assert_raises(AssertionError, self.instance.emit,
             "not-a-list-or-tuple")
+
+
+class SimpleBoltTest(StormComponentTestCase):
+
+    INSTANCE_CLS = SimpleBolt
+
+    TICK = StormTuple(None, '__system', '__tick', None, None)
+    TUPLE = StormTuple(None, None, None, None, None)
+
+    @T.setup_teardown
+    def setup_mocks(self):
+        patches = contextlib.nested(
+            mock.patch.object(self.instance, 'process_tick'),
+            mock.patch.object(self.instance, 'process_tuple'),
+            mock.patch.object(self.instance, 'fail'),
+            mock.patch.object(self.instance, 'ack'),
+        )
+
+        with patches as (self.mock_process_tick, self.mock_process_tuple,
+                         self.mock_fail, self.mock_ack):
+            yield
+
+    def test_fail(self):
+        self.mock_process_tick.side_effect = Exception()
+        self.mock_process_tuple.side_effect = Exception()
+
+        try:
+            self.instance._process_tuple(self.TUPLE)
+        except:
+            # Exception expected
+            pass
+
+        try:
+            self.instance._process_tuple(self.TICK)
+        except:
+            # Exception expected
+            pass
+
+        self.mock_fail.assert_has_calls([
+            call(self.TUPLE),
+            call(self.TICK),
+        ])
+
+        T.assert_equal(self.mock_ack.called, False)
+
+    def test_ack(self):
+        self.instance._process_tuple(self.TICK)
+        self.instance._process_tuple(self.TUPLE)
+
+        T.assert_equal(self.mock_fail.called, False)
+
+        self.mock_ack.assert_has_calls([
+            call(self.TICK),
+            call(self.TUPLE),
+        ])
+
+    def test_tick(self):
+        self.instance._process_tuple(self.TICK)
+
+        self.mock_process_tick.assert_called_once_with()
+        T.assert_equal(self.mock_process_tuple.called, False)
+
+    def test_tuple(self):
+        self.instance._process_tuple(self.TUPLE)
+
+        T.assert_equal(self.mock_process_tick.called, False)
+        self.mock_process_tuple.assert_called_once_with(self.TUPLE)
+
+    def test_exception(self):
+        class MyException(Exception): pass
+        self.mock_process_tick.side_effect = MyException()
+        self.mock_process_tuple.side_effect = MyException()
+
+        with T.assert_raises(MyException):
+            self.instance._process_tuple(self.TICK)
+
+        with T.assert_raises(MyException):
+            self.instance._process_tuple(self.TUPLE)
 
 
 class SpoutTest(StormComponentTestCase):
@@ -328,30 +407,30 @@ class SpoutTest(StormComponentTestCase):
 
     def test_emit_with_stream(self):
         expected_command_dict = {
-            'stream': mock.sentinel.stream,
+            'stream': sentinel.stream,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), stream=mock.sentinel.stream)
+            self.instance.emit((1, 2, 3), stream=sentinel.stream)
 
     def test_emit_with_tup_id(self):
         expected_command_dict = {
-            'id': mock.sentinel.tup_id,
+            'id': sentinel.tup_id,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), tup_id=mock.sentinel.tup_id)
+            self.instance.emit((1, 2, 3), tup_id=sentinel.tup_id)
 
     def test_emit_with_direct_task(self):
         expected_command_dict = {
-            'task': mock.sentinel.direct_task,
+            'task': sentinel.direct_task,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), direct_task=mock.sentinel.direct_task)
+            self.instance.emit((1, 2, 3), direct_task=sentinel.direct_task)
 
     def test__handle_command_next(self):
         msg = dict(command='next')
@@ -361,18 +440,18 @@ class SpoutTest(StormComponentTestCase):
         mock_next_tuple.assert_called_once_with()
 
     def test__handle_command_ack(self):
-        msg = dict(command='ack', id=mock.sentinel.tuple_id)
+        msg = dict(command='ack', id=sentinel.tuple_id)
         with mock.patch.object(self.instance, 'ack') as mock_ack:
             self.instance._handle_command(msg)
 
-        mock_ack.assert_called_once_with(mock.sentinel.tuple_id)
+        mock_ack.assert_called_once_with(sentinel.tuple_id)
 
     def test__handle_command_fail(self):
-        msg = dict(command='fail', id=mock.sentinel.tuple_id)
+        msg = dict(command='fail', id=sentinel.tuple_id)
         with mock.patch.object(self.instance, 'fail') as mock_fail:
             self.instance._handle_command(msg)
 
-        mock_fail.assert_called_once_with(mock.sentinel.tuple_id)
+        mock_fail.assert_called_once_with(sentinel.tuple_id)
 
 
 class StormUtilFunctionTestCase(T.TestCase):

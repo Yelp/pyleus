@@ -16,7 +16,7 @@ class ConverterBolt(SimpleBolt):
         "euro": ["value"],
     }
 
-    def initialize(self, conf, context):
+    def initialize(self):
         self.rates = {"pound": None, "euro": None}
 
     def process_tuple(self, tup):

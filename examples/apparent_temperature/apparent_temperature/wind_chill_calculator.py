@@ -20,7 +20,7 @@ def _wind_chill(temp, wind):
 
 class WindChillBolt(SimpleBolt):
 
-    def initialize(self, conf, context):
+    def initialize(self):
         # The two measures to be joined will be stored togheter in an array,
         # where the inf value means that the measure is missing
         default = lambda: array('f', [float('inf')] * 2)

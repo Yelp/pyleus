@@ -9,7 +9,7 @@ GEO = {"pound": "UK", "euro": "Italy", "dollar": "US", "total": "total"}
 
 class EarningsBolt(SimpleBolt):
 
-    def initialize(self, conf, context):
+    def initialize(self):
         self.earnings = {"pound": 0, "euro": 0, "dollar": 0, "total": 0}
 
     def process_tick(self):
