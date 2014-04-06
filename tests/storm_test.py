@@ -2,7 +2,7 @@ import contextlib
 from cStringIO import StringIO
 
 import mock
-from mock import call
+from mock import call, sentinel
 import testify as T
 
 try:
@@ -262,12 +262,12 @@ class BoltTest(StormComponentTestCase):
     def test_emit_with_stream(self):
         expected_command_dict = {
             'anchors': [],
-            'stream': mock.sentinel.stream,
+            'stream': sentinel.stream,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), stream=mock.sentinel.stream)
+            self.instance.emit((1, 2, 3), stream=sentinel.stream)
 
     def test_emit_with_anchors(self):
         expected_command_dict = {
@@ -283,12 +283,12 @@ class BoltTest(StormComponentTestCase):
     def test_emit_with_direct_task(self):
         expected_command_dict = {
             'anchors': [],
-            'task': mock.sentinel.direct_task,
+            'task': sentinel.direct_task,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), direct_task=mock.sentinel.direct_task)
+            self.instance.emit((1, 2, 3), direct_task=sentinel.direct_task)
 
     def test_emit_with_bad_values(self):
         T.assert_raises(AssertionError, self.instance.emit,
@@ -407,30 +407,30 @@ class SpoutTest(StormComponentTestCase):
 
     def test_emit_with_stream(self):
         expected_command_dict = {
-            'stream': mock.sentinel.stream,
+            'stream': sentinel.stream,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), stream=mock.sentinel.stream)
+            self.instance.emit((1, 2, 3), stream=sentinel.stream)
 
     def test_emit_with_tup_id(self):
         expected_command_dict = {
-            'id': mock.sentinel.tup_id,
+            'id': sentinel.tup_id,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), tup_id=mock.sentinel.tup_id)
+            self.instance.emit((1, 2, 3), tup_id=sentinel.tup_id)
 
     def test_emit_with_direct_task(self):
         expected_command_dict = {
-            'task': mock.sentinel.direct_task,
+            'task': sentinel.direct_task,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), direct_task=mock.sentinel.direct_task)
+            self.instance.emit((1, 2, 3), direct_task=sentinel.direct_task)
 
     def test__handle_command_next(self):
         msg = dict(command='next')
@@ -440,18 +440,18 @@ class SpoutTest(StormComponentTestCase):
         mock_next_tuple.assert_called_once_with()
 
     def test__handle_command_ack(self):
-        msg = dict(command='ack', id=mock.sentinel.tuple_id)
+        msg = dict(command='ack', id=sentinel.tuple_id)
         with mock.patch.object(self.instance, 'ack') as mock_ack:
             self.instance._handle_command(msg)
 
-        mock_ack.assert_called_once_with(mock.sentinel.tuple_id)
+        mock_ack.assert_called_once_with(sentinel.tuple_id)
 
     def test__handle_command_fail(self):
-        msg = dict(command='fail', id=mock.sentinel.tuple_id)
+        msg = dict(command='fail', id=sentinel.tuple_id)
         with mock.patch.object(self.instance, 'fail') as mock_fail:
             self.instance._handle_command(msg)
 
-        mock_fail.assert_called_once_with(mock.sentinel.tuple_id)
+        mock_fail.assert_called_once_with(sentinel.tuple_id)
 
 
 class StormUtilFunctionTestCase(T.TestCase):
