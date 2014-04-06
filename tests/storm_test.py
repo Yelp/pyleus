@@ -2,6 +2,7 @@ import contextlib
 from cStringIO import StringIO
 
 import mock
+from mock import call
 import testify as T
 
 try:
@@ -10,7 +11,7 @@ try:
 except ImportError:
     import json
 
-from pyleus.storm import StormTuple, Bolt, Spout, is_tick
+from pyleus.storm import StormTuple, Bolt, SimpleBolt, Spout, is_tick
 from pyleus.testing import StormComponentTestCase
 
 
@@ -292,6 +293,84 @@ class BoltTest(StormComponentTestCase):
     def test_emit_with_bad_values(self):
         T.assert_raises(AssertionError, self.instance.emit,
             "not-a-list-or-tuple")
+
+
+class SimpleBoltTest(StormComponentTestCase):
+
+    INSTANCE_CLS = SimpleBolt
+
+    TICK = StormTuple(None, '__system', '__tick', None, None)
+    TUPLE = StormTuple(None, None, None, None, None)
+
+    @T.setup_teardown
+    def setup_mocks(self):
+        patches = contextlib.nested(
+            mock.patch.object(self.instance, 'process_tick'),
+            mock.patch.object(self.instance, 'process_tuple'),
+            mock.patch.object(self.instance, 'fail'),
+            mock.patch.object(self.instance, 'ack'),
+        )
+
+        with patches as (self.mock_process_tick, self.mock_process_tuple,
+                         self.mock_fail, self.mock_ack):
+            yield
+
+    def test_fail(self):
+        self.mock_process_tick.side_effect = Exception()
+        self.mock_process_tuple.side_effect = Exception()
+
+        try:
+            self.instance._process_tuple(self.TUPLE)
+        except:
+            # Exception expected
+            pass
+
+        try:
+            self.instance._process_tuple(self.TICK)
+        except:
+            # Exception expected
+            pass
+
+        self.mock_fail.assert_has_calls([
+            call(self.TUPLE),
+            call(self.TICK),
+        ])
+
+        T.assert_equal(self.mock_ack.called, False)
+
+    def test_ack(self):
+        self.instance._process_tuple(self.TICK)
+        self.instance._process_tuple(self.TUPLE)
+
+        T.assert_equal(self.mock_fail.called, False)
+
+        self.mock_ack.assert_has_calls([
+            call(self.TICK),
+            call(self.TUPLE),
+        ])
+
+    def test_tick(self):
+        self.instance._process_tuple(self.TICK)
+
+        self.mock_process_tick.assert_called_once_with()
+        T.assert_equal(self.mock_process_tuple.called, False)
+
+    def test_tuple(self):
+        self.instance._process_tuple(self.TUPLE)
+
+        T.assert_equal(self.mock_process_tick.called, False)
+        self.mock_process_tuple.assert_called_once_with(self.TUPLE)
+
+    def test_exception(self):
+        class MyException(Exception): pass
+        self.mock_process_tick.side_effect = MyException()
+        self.mock_process_tuple.side_effect = MyException()
+
+        with T.assert_raises(MyException):
+            self.instance._process_tuple(self.TICK)
+
+        with T.assert_raises(MyException):
+            self.instance._process_tuple(self.TUPLE)
 
 
 class SpoutTest(StormComponentTestCase):
