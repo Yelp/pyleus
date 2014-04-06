@@ -1,7 +1,6 @@
 from distutils.command.bdist import bdist as _bdist
 from distutils.core import Command
 import os
-import shutil
 import subprocess
 import sys
 
@@ -13,12 +12,11 @@ from pyleus import BASE_JAR, BASE_JAR_INSTALL_DIR
 
 JAVA_SRC_DIR = "topology_builder/"
 BASE_JAR_SRC = os.path.join(JAVA_SRC_DIR, "dist", BASE_JAR)
-BASE_JAR_DST = os.path.join("java", BASE_JAR)
 
 
 class build_java(Command):
 
-    description = "Build the topology base JAR and add it to the manifest."
+    description = "Build the topology base JAR"
     user_options = []
 
     def initialize_options(self):
@@ -30,22 +28,8 @@ class build_java(Command):
     def _make_jar(self):
         subprocess.check_call(["make", "-C", JAVA_SRC_DIR])
 
-    def _move_jar(self):
-        dest_dir = os.path.dirname(BASE_JAR_DST)
-        if not os.path.isdir(dest_dir):
-            os.mkdir(dest_dir)
-        shutil.copy2(BASE_JAR_SRC, BASE_JAR_DST)
-
-    def _write_manifest(self):
-        with open("MANIFEST.in", 'w') as f:
-            f.write("include %s\n" % BASE_JAR_DST)
-
     def run(self):
         self._make_jar()
-        self._move_jar()
-
-        if sys.version_info < (2, 7):
-            self._write_manifest()
 
 
 class bdist(_bdist):
@@ -88,7 +72,7 @@ setup(
     install_requires=[
         "PyYAML >= 3.09, < 4.0",
     ] + extra_install_requires,
-    data_files=[(BASE_JAR_INSTALL_DIR, [BASE_JAR_DST])],
+    data_files=[(BASE_JAR_INSTALL_DIR, [BASE_JAR_SRC])],
     cmdclass={
         'build_java': build_java,
         'bdist': bdist,

@@ -34,7 +34,3 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
-
-# Pyleus
-/java
-/MANIFEST.in
