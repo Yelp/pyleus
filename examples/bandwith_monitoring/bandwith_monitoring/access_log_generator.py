@@ -21,7 +21,7 @@ class AccessLogGeneratorSpout(Spout):
     OPTIONS = ["base_log"]
     OUTPUT_FIELDS = Request
 
-    def initialize(self, conf, context):
+    def initialize(self):
         self.ip = set()
         self.request = set()
         self.size = set()

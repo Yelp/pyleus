@@ -17,7 +17,7 @@ class TopIntermediateBolt(SimpleBolt):
     OPTIONS = ["N", "time_window", "min_records"]
     OUTPUT_FIELDS = ["top_N"]
 
-    def initialize(self, conf, context):
+    def initialize(self):
         self.urls = defaultdict(list)
         self.time_window = self.options["time_window"]
         self.N = self.options["N"]

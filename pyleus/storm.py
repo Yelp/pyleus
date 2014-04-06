@@ -107,13 +107,15 @@ class StormComponent(object):
 
     def setup_component(self):
         """Storm component setup before execution. It will also
-        call the initialization method implemented in the subclass."""
-        self.conf, self.context = self.init_component()
+        call the initialization method implemented in the subclass.
+        """
+        self.conf, self.context = self._init_component()
+        self.initialize()
 
-        self.initialize(self.conf, self.context)
-
-    def initialize(self, conf, context):
-        """Implement in subclass"""
+    def initialize(self):
+        """Called after component has been launched, but before processing
+        any tuples. Implement in subclass.
+        """
         pass
 
     def run(self):

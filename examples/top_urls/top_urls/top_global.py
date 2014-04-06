@@ -13,7 +13,7 @@ class TopGlobalBolt(SimpleBolt):
     OPTIONS = ["N"]
     OUTPUT_FIELDS = ["top_N"]
 
-    def initialize(self, conf, context):
+    def initialize(self):
         self.top_N = []
         self.N = self.options["N"]
 
