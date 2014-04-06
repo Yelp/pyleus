@@ -12,10 +12,10 @@ except ImportError:
     import json
 
 from pyleus.storm import StormTuple, Bolt, SimpleBolt, Spout, is_tick
-from pyleus.testing import StormComponentTestCase
+from pyleus.testing import ComponentTestCase
 
 
-class StormComponentTest(StormComponentTestCase):
+class ComponentTest(ComponentTestCase):
 
     def test__read_msg_dict(self):
         msg_dict = {
@@ -206,7 +206,7 @@ class StormComponentTest(StormComponentTestCase):
         })
 
 
-class BoltTest(StormComponentTestCase):
+class BoltTest(ComponentTestCase):
 
     INSTANCE_CLS = Bolt
 
@@ -295,7 +295,7 @@ class BoltTest(StormComponentTestCase):
             "not-a-list-or-tuple")
 
 
-class SimpleBoltTest(StormComponentTestCase):
+class SimpleBoltTest(ComponentTestCase):
 
     INSTANCE_CLS = SimpleBolt
 
@@ -373,7 +373,7 @@ class SimpleBoltTest(StormComponentTestCase):
             self.instance._process_tuple(self.TUPLE)
 
 
-class SpoutTest(StormComponentTestCase):
+class SpoutTest(ComponentTestCase):
 
     INSTANCE_CLS = Spout
 
