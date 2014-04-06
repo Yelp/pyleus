@@ -222,7 +222,7 @@ class StormComponent(object):
     def _create_pidfile(self, pid_dir, pid):
         open(os.path.join(pid_dir, str(pid)), 'a').close()
 
-    def init_component(self):
+    def _init_component(self):
         """Receive the setup_info dict from the Storm task and report back with
         our pid; also touch a pidfile in the pidDir specified in setup_info.
         """

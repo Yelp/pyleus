@@ -153,7 +153,7 @@ class StormComponentTest(StormComponentTestCase):
 
         mock_open.assert_called_once_with("pid_dir/pid", 'a')
 
-    def test_init_component(self):
+    def test__init_component(self):
         handshake_msg = {
             'conf': {"foo": "bar"},
             'context': "context",
@@ -171,7 +171,7 @@ class StormComponentTest(StormComponentTestCase):
             patch__send_msg, patch__create_pidfile)
 
         with patches as (_, _, mock__send_msg, mock__create_pidfile):
-            conf, context = self.instance.init_component()
+            conf, context = self.instance._init_component()
 
         mock__send_msg.assert_called_once_with({'pid': 1234})
         mock__create_pidfile.assert_called_once_with("pidDir", 1234)
