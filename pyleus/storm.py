@@ -135,15 +135,14 @@ class StormComponent(object):
         self.run_component()
 
     def run_component(self):
-        """Implement in subclass"""
+        """Run the main loop of the component. Implemented in the Bolt and
+        Spout subclasses.
+        """
         raise NotImplementedError
 
     def _read_msg(self):
-        """The Storm multilang protocol specifies that messages are some JSON
-        followed by the string "end\n".
-
-        It is unclear whether there is any case in which the message preceding
-        "end" will span multiple lines.
+        """The Storm multilang protocol consists of JSON messages followed by
+        a newline and "end\n".
         """
         lines = []
 
@@ -165,7 +164,7 @@ class StormComponent(object):
 
     def _msg_is_command(self, msg):
         """Storm differentiates between commands and taskids by whether the
-        message is in dict or list form.
+        message is a dict or list.
         """
         return isinstance(msg, dict)
 
@@ -193,7 +192,7 @@ class StormComponent(object):
 
     def read_taskid(self):
         """Like read_command(), but returns the next taskid and queues any
-        commands received while reading the input stream to do so.
+        commands received while reading the input stream.
         """
         if self._pending_taskids:
             return self._pending_taskids.popleft()
@@ -320,7 +319,7 @@ class Bolt(StormComponent):
 class SimpleBolt(Bolt):
     """A Bolt that automatically acks or fails tuples.
 
-    Implement process_tick() in a subclass to handle tick tuples with a better
+    Implement process_tick() in a subclass to handle tick tuples with a nicer
     API.
     """
 
