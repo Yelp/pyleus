@@ -15,7 +15,7 @@ topology_builder:
 	make -C topology_builder/
 
 clean:
-	rm -rf build/ dist/ pyleus.egg-info/
+	rm -rf build/ dist/ pyleus.egg-info/ .tox/
 	make -C topology_builder/ clean
 
 .PHONY: all sdist bdist_wheel test clean
