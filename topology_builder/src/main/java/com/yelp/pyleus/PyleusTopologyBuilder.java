@@ -33,32 +33,32 @@ public class PyleusTopologyBuilder {
 
     public static final PythonComponentsFactory pyFactory = new PythonComponentsFactory();
 
-    public static void handleBolt(final TopologyBuilder builder, final BoltSpec bolt) {
+    public static void handleBolt(final TopologyBuilder builder, final BoltSpec spec) {
+        PythonBolt bolt = pyFactory.createPythonBolt((String) spec.module,
+            (Map<String, Object>) spec.options);
 
-        PythonBolt pythonBolt = pyFactory.createPythonBolt((String) bolt.module, (Map<String, Object>) bolt.options);
-
-        if (bolt.output_fields != null) {
-            pythonBolt.setOutputFields(bolt.output_fields);
+        if (spec.output_fields != null) {
+            bolt.setOutputFields(spec.output_fields);
         }
 
-        if (bolt.tick_freq_secs != -1) {
-            pythonBolt.setTickFreqSecs(bolt.tick_freq_secs);
+        if (spec.tick_freq_secs != -1) {
+            bolt.setTickFreqSecs(spec.tick_freq_secs);
         }
 
-        IRichBolt stormBolt = pythonBolt;
+        IRichBolt stormBolt = bolt;
 
         BoltDeclarer declarer = null;
-        if (bolt.parallelism_hint != -1) {
-            declarer = builder.setBolt(bolt.name, stormBolt, bolt.parallelism_hint);
+        if (spec.parallelism_hint != -1) {
+            declarer = builder.setBolt(spec.name, stormBolt, spec.parallelism_hint);
         } else {
-            declarer = builder.setBolt(bolt.name, stormBolt);
+            declarer = builder.setBolt(spec.name, stormBolt);
         }
 
-        if (bolt.tasks != -1) {
-            declarer.setNumTasks(bolt.tasks);
+        if (spec.tasks != -1) {
+            declarer.setNumTasks(spec.tasks);
         }
 
-        for (Map<String, Object> grouping : bolt.groupings) {
+        for (Map<String, Object> grouping : spec.groupings) {
             Map.Entry<String, Object> entry = grouping.entrySet().iterator().next();
             String groupingType = entry.getKey();
             Map<String, Object> groupingMap = (Map<String, Object>) entry.getValue();
@@ -81,31 +81,36 @@ public class PyleusTopologyBuilder {
         }
     }
 
-    public static void handleSpout(final TopologyBuilder builder, final SpoutSpec spout) {
+    public static void handleSpout(final TopologyBuilder builder, final SpoutSpec spec) {
+        IRichSpout spout = handlePythonSpout(builder, spec);
 
-        PythonSpout pythonSpout = pyFactory.createPythonSpout((String) spout.module, (Map<String, Object>) spout.options);
-
-        if (spout.output_fields != null) {
-            pythonSpout.setOutputFields(spout.output_fields);
-        } else {
-            throw new RuntimeException(String.format("Spouts must have output_fields"));
-        }
-
-        if (spout.tick_freq_secs != -1) {
-            pythonSpout.setTickFreqSecs(spout.tick_freq_secs);
-        }
-
-        IRichSpout stormSpout = pythonSpout;
         SpoutDeclarer declarer = null;
-        if (spout.parallelism_hint != -1) {
-            declarer = builder.setSpout(spout.name, stormSpout, spout.parallelism_hint);
+        if (spec.parallelism_hint != -1) {
+            declarer = builder.setSpout(spec.name, spout, spec.parallelism_hint);
         } else {
-            declarer = builder.setSpout(spout.name, stormSpout);
+            declarer = builder.setSpout(spec.name, spout);
         }
 
-        if (spout.tasks != -1) {
-            declarer.setNumTasks(spout.tasks);
+        if (spec.tasks != -1) {
+            declarer.setNumTasks(spec.tasks);
         }
+    }
+
+    public static IRichSpout handlePythonSpout(final TopologyBuilder builder, final SpoutSpec spec) {
+        PythonSpout spout = pyFactory.createPythonSpout((String) spec.module,
+            (Map<String, Object>) spec.options);
+
+        if (spec.output_fields != null) {
+            spout.setOutputFields(spec.output_fields);
+        } else {
+            throw new RuntimeException("Spouts must have output_fields");
+        }
+
+        if (spec.tick_freq_secs != -1) {
+            spout.setTickFreqSecs(spec.tick_freq_secs);
+        }
+
+        return spout;
     }
 
     public static StormTopology buildTopology(final TopologySpec spec) {
