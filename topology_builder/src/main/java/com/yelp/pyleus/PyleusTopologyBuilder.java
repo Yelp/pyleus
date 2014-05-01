@@ -19,6 +19,11 @@ import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import backtype.storm.utils.Utils;
+import storm.kafka.KafkaSpout;
+import storm.kafka.KeyValueSchemeAsMultiScheme;
+import storm.kafka.SpoutConfig;
+import storm.kafka.StringKeyValueScheme;
+import storm.kafka.ZkHosts;
 
 import com.yelp.pyleus.bolt.PythonBolt;
 import com.yelp.pyleus.spec.BoltSpec;
@@ -30,6 +35,8 @@ import com.yelp.pyleus.spout.PythonSpout;
 public class PyleusTopologyBuilder {
 
     public static final String YAML_FILENAME = "/resources/pyleus_topology.yaml";
+    public static final String KAFKA_ZK_ROOT_FMT = "/pyleus-kafka-offsets/%s";
+    public static final String KAFKA_CONSUMER_ID_FMT = "pyleus-%s";
 
     public static final PythonComponentsFactory pyFactory = new PythonComponentsFactory();
 
@@ -82,7 +89,12 @@ public class PyleusTopologyBuilder {
     }
 
     public static void handleSpout(final TopologyBuilder builder, final SpoutSpec spec) {
-        IRichSpout spout = handlePythonSpout(builder, spec);
+        IRichSpout spout;
+        if (spec.type.equals("kafka")) {
+            spout = handleKafkaSpout(builder, spec);
+        } else {
+            spout = handlePythonSpout(builder, spec);
+        }
 
         SpoutDeclarer declarer = null;
         if (spec.parallelism_hint != -1) {
@@ -94,6 +106,52 @@ public class PyleusTopologyBuilder {
         if (spec.tasks != -1) {
             declarer.setNumTasks(spec.tasks);
         }
+    }
+
+    public static IRichSpout handleKafkaSpout(final TopologyBuilder builder, final SpoutSpec spec) {
+        String topic = (String) spec.options.get("topic");
+        if (topic == null) {
+            throw new RuntimeException("Kafka spout must have topic");
+        }
+
+        String zkHosts = (String) spec.options.get("zk_hosts");
+        if (topic == null) {
+            throw new RuntimeException("Kafka spout must have zk_hosts");
+        }
+
+        String zkRoot = (String) spec.options.get("zk_root");
+        if (zkRoot == null) {
+            zkRoot = String.format(KAFKA_ZK_ROOT_FMT, spec.name);
+        }
+
+        String consumerId = (String) spec.options.get("consumer_id");
+        if (consumerId == null) {
+            consumerId = String.format(KAFKA_CONSUMER_ID_FMT, spec.name);
+        }
+
+        SpoutConfig config = new SpoutConfig(
+            new ZkHosts(zkHosts),
+            topic,
+            zkRoot,
+            consumerId
+        );
+
+        Boolean forceFromStart = (Boolean) spec.options.get("from_start");
+        if (forceFromStart != null) {
+            config.forceFromStart = forceFromStart;
+        }
+
+        Long startOffsetTime = (Long) spec.options.get("start_offset_time");
+        if (startOffsetTime != null) {
+            config.startOffsetTime = startOffsetTime;
+        }
+
+        // TODO: this mandates that messages are UTF-8. We should allow for binary data
+        // in the future, or once users can have Java components, let them provide their
+        // own JSON serialization method. Or wait on STORM-138.
+        config.scheme = new KeyValueSchemeAsMultiScheme(new StringKeyValueScheme());
+
+        return new KafkaSpout(config);
     }
 
     public static IRichSpout handlePythonSpout(final TopologyBuilder builder, final SpoutSpec spec) {

@@ -286,6 +286,9 @@ class SpoutSpec(ComponentSpec):
                     .format(self.name, "module"))
             self.module = specs["module"]
 
+        if self.type == "kafka":
+            self.output_fields = {DEFAULT_STREAM: ["message"]}
+
     def update_from_module(self, specs):
         """Specific spout validation. Spouts must have output fields."""
         super(SpoutSpec, self).update_from_module(specs)
