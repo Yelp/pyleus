@@ -144,9 +144,10 @@ def _assemble_full_topology_yaml(yaml, venv):
                 specs = TopologySpec(specs_dict)
 
                 for component in specs.topology:
-                    module_specs = yaml_module.load(venv.execute_module(
-                        component.module, DESCRIBE_OPT))
-                    component.update_from_module(module_specs)
+                    if component.type == "python":
+                        module_specs = yaml_module.load(venv.execute_module(
+                            component.module, DESCRIBE_OPT))
+                        component.update_from_module(module_specs)
 
                 specs.verify_groupings()
 
