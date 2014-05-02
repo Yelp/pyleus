@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class SpoutSpec {
     public String name;
+    public String type;
     public String module;
     public Map<String, Object> options;
     public Map<String, Object> output_fields;

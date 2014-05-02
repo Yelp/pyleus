@@ -80,8 +80,8 @@ class ComponentSpec(object):
     COMPONENT = "component"
 
     KEYS_LIST = [
-        "name", "module", "tick_freq_secs", "parallelism_hint", "options",
-        "output_fields", "groupings", "tasks"]
+        "name", "type", "module", "tick_freq_secs", "parallelism_hint",
+        "options", "output_fields", "groupings", "tasks"]
 
     def __init__(self, specs):
         """Convert a component specs dictionary coming from the yaml file into
@@ -97,17 +97,13 @@ class ComponentSpec(object):
                 .format(self.COMPONENT, "name"))
         self.name = specs["name"]
 
+        self.type = specs.get("type", "python")
+
         if not set(self.KEYS_LIST).issuperset(_as_set(specs)):
             raise InvalidTopologyError(
                 "[{0}] These tags are not allowed: {1}"
                 .format(self.name,
                         _as_list(_as_set(specs) - set(self.KEYS_LIST))))
-
-        if "module" not in specs:
-            raise InvalidTopologyError(
-                "[{0}] Tag not found in yaml file: {1}"
-                .format(self.name, "module"))
-        self.module = specs["module"]
 
         # Optional parameters
         if "tick_freq_secs" in specs:
@@ -122,19 +118,20 @@ class ComponentSpec(object):
         self.output_fields = specs.get("output_fields", None)
 
     def update_from_module(self, specs):
-        """Update the component specs wyith the ones coming from the python
+        """Update the component specs with the ones coming from the python
         module and perform some additional validation.
         """
-        if _as_set(specs) != set(["type", "output_fields", "options"]):
+        if _as_set(specs) != set(["component_type", "output_fields", "options"]):
             raise InvalidTopologyError(
                 "[{0}] Python class should specify attributes 'output_fields'"
                 " and 'options'. Found: {1}. Are you inheriting from Bolt or"
                 " Spout?".format(self.name, specs))
 
-        if specs["type"] != self.COMPONENT:
+        if specs["component_type"] != self.COMPONENT:
             raise InvalidTopologyError(
                 "[{0}] Component type mismatch. Python class: {1}. Yaml"
-                " file: {2}".format(self.name, specs["type"], self.COMPONENT))
+                " file: {2}".format(self.name, specs["component_type"],
+                self.COMPONENT))
 
         self.output_fields = specs["output_fields"]
 
@@ -163,6 +160,12 @@ class BoltSpec(ComponentSpec):
     def __init__(self, specs):
         """Bolt specific initialization. Bolts may have a grouping section"""
         super(BoltSpec, self).__init__(specs)
+
+        if "module" not in specs:
+            raise InvalidTopologyError(
+                "[{0}] Tag not found in yaml file: {1}"
+                .format(self.name, "module"))
+        self.module = specs["module"]
 
         if "groupings" in specs:
             self.groupings = []
@@ -272,9 +275,24 @@ class SpoutSpec(ComponentSpec):
 
     COMPONENT = "spout"
 
+    def __init__(self, specs):
+        """Spout specific initialization."""
+        super(SpoutSpec, self).__init__(specs)
+
+        if self.type == "python":
+            if "module" not in specs:
+                raise InvalidTopologyError(
+                    "[{0}] Tag not found in yaml file: {1}"
+                    .format(self.name, "module"))
+            self.module = specs["module"]
+
+        if self.type == "kafka":
+            self.output_fields = {DEFAULT_STREAM: ["message"]}
+
     def update_from_module(self, specs):
         """Specific spout validation. Spouts must have output fields."""
         super(SpoutSpec, self).update_from_module(specs)
+
         if self.output_fields is None:
             raise InvalidTopologyError(
                 "[{0}] Spout must have 'output_fields' specified in its Python"

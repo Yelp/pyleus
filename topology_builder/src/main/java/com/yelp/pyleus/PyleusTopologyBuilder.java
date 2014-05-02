@@ -19,6 +19,11 @@ import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import backtype.storm.utils.Utils;
+import storm.kafka.KafkaSpout;
+import storm.kafka.KeyValueSchemeAsMultiScheme;
+import storm.kafka.SpoutConfig;
+import storm.kafka.StringKeyValueScheme;
+import storm.kafka.ZkHosts;
 
 import com.yelp.pyleus.bolt.PythonBolt;
 import com.yelp.pyleus.spec.BoltSpec;
@@ -30,35 +35,37 @@ import com.yelp.pyleus.spout.PythonSpout;
 public class PyleusTopologyBuilder {
 
     public static final String YAML_FILENAME = "/resources/pyleus_topology.yaml";
+    public static final String KAFKA_ZK_ROOT_FMT = "/pyleus-kafka-offsets/%s";
+    public static final String KAFKA_CONSUMER_ID_FMT = "pyleus-%s";
 
     public static final PythonComponentsFactory pyFactory = new PythonComponentsFactory();
 
-    public static void handleBolt(final TopologyBuilder builder, final BoltSpec bolt) {
+    public static void handleBolt(final TopologyBuilder builder, final BoltSpec spec) {
+        PythonBolt bolt = pyFactory.createPythonBolt((String) spec.module,
+            (Map<String, Object>) spec.options);
 
-        PythonBolt pythonBolt = pyFactory.createPythonBolt((String) bolt.module, (Map<String, Object>) bolt.options);
-
-        if (bolt.output_fields != null) {
-            pythonBolt.setOutputFields(bolt.output_fields);
+        if (spec.output_fields != null) {
+            bolt.setOutputFields(spec.output_fields);
         }
 
-        if (bolt.tick_freq_secs != -1) {
-            pythonBolt.setTickFreqSecs(bolt.tick_freq_secs);
+        if (spec.tick_freq_secs != -1) {
+            bolt.setTickFreqSecs(spec.tick_freq_secs);
         }
 
-        IRichBolt stormBolt = pythonBolt;
+        IRichBolt stormBolt = bolt;
 
         BoltDeclarer declarer = null;
-        if (bolt.parallelism_hint != -1) {
-            declarer = builder.setBolt(bolt.name, stormBolt, bolt.parallelism_hint);
+        if (spec.parallelism_hint != -1) {
+            declarer = builder.setBolt(spec.name, stormBolt, spec.parallelism_hint);
         } else {
-            declarer = builder.setBolt(bolt.name, stormBolt);
+            declarer = builder.setBolt(spec.name, stormBolt);
         }
 
-        if (bolt.tasks != -1) {
-            declarer.setNumTasks(bolt.tasks);
+        if (spec.tasks != -1) {
+            declarer.setNumTasks(spec.tasks);
         }
 
-        for (Map<String, Object> grouping : bolt.groupings) {
+        for (Map<String, Object> grouping : spec.groupings) {
             Map.Entry<String, Object> entry = grouping.entrySet().iterator().next();
             String groupingType = entry.getKey();
             Map<String, Object> groupingMap = (Map<String, Object>) entry.getValue();
@@ -81,31 +88,87 @@ public class PyleusTopologyBuilder {
         }
     }
 
-    public static void handleSpout(final TopologyBuilder builder, final SpoutSpec spout) {
-
-        PythonSpout pythonSpout = pyFactory.createPythonSpout((String) spout.module, (Map<String, Object>) spout.options);
-
-        if (spout.output_fields != null) {
-            pythonSpout.setOutputFields(spout.output_fields);
+    public static void handleSpout(final TopologyBuilder builder, final SpoutSpec spec) {
+        IRichSpout spout;
+        if (spec.type.equals("kafka")) {
+            spout = handleKafkaSpout(builder, spec);
         } else {
-            throw new RuntimeException(String.format("Spouts must have output_fields"));
+            spout = handlePythonSpout(builder, spec);
         }
 
-        if (spout.tick_freq_secs != -1) {
-            pythonSpout.setTickFreqSecs(spout.tick_freq_secs);
-        }
-
-        IRichSpout stormSpout = pythonSpout;
         SpoutDeclarer declarer = null;
-        if (spout.parallelism_hint != -1) {
-            declarer = builder.setSpout(spout.name, stormSpout, spout.parallelism_hint);
+        if (spec.parallelism_hint != -1) {
+            declarer = builder.setSpout(spec.name, spout, spec.parallelism_hint);
         } else {
-            declarer = builder.setSpout(spout.name, stormSpout);
+            declarer = builder.setSpout(spec.name, spout);
         }
 
-        if (spout.tasks != -1) {
-            declarer.setNumTasks(spout.tasks);
+        if (spec.tasks != -1) {
+            declarer.setNumTasks(spec.tasks);
         }
+    }
+
+    public static IRichSpout handleKafkaSpout(final TopologyBuilder builder, final SpoutSpec spec) {
+        String topic = (String) spec.options.get("topic");
+        if (topic == null) {
+            throw new RuntimeException("Kafka spout must have topic");
+        }
+
+        String zkHosts = (String) spec.options.get("zk_hosts");
+        if (topic == null) {
+            throw new RuntimeException("Kafka spout must have zk_hosts");
+        }
+
+        String zkRoot = (String) spec.options.get("zk_root");
+        if (zkRoot == null) {
+            zkRoot = String.format(KAFKA_ZK_ROOT_FMT, spec.name);
+        }
+
+        String consumerId = (String) spec.options.get("consumer_id");
+        if (consumerId == null) {
+            consumerId = String.format(KAFKA_CONSUMER_ID_FMT, spec.name);
+        }
+
+        SpoutConfig config = new SpoutConfig(
+            new ZkHosts(zkHosts),
+            topic,
+            zkRoot,
+            consumerId
+        );
+
+        Boolean forceFromStart = (Boolean) spec.options.get("from_start");
+        if (forceFromStart != null) {
+            config.forceFromStart = forceFromStart;
+        }
+
+        Long startOffsetTime = (Long) spec.options.get("start_offset_time");
+        if (startOffsetTime != null) {
+            config.startOffsetTime = startOffsetTime;
+        }
+
+        // TODO: this mandates that messages are UTF-8. We should allow for binary data
+        // in the future, or once users can have Java components, let them provide their
+        // own JSON serialization method. Or wait on STORM-138.
+        config.scheme = new KeyValueSchemeAsMultiScheme(new StringKeyValueScheme());
+
+        return new KafkaSpout(config);
+    }
+
+    public static IRichSpout handlePythonSpout(final TopologyBuilder builder, final SpoutSpec spec) {
+        PythonSpout spout = pyFactory.createPythonSpout((String) spec.module,
+            (Map<String, Object>) spec.options);
+
+        if (spec.output_fields != null) {
+            spout.setOutputFields(spec.output_fields);
+        } else {
+            throw new RuntimeException("Spouts must have output_fields");
+        }
+
+        if (spec.tick_freq_secs != -1) {
+            spout.setTickFreqSecs(spec.tick_freq_secs);
+        }
+
+        return spout;
     }
 
     public static StormTopology buildTopology(final TopologySpec spec) {

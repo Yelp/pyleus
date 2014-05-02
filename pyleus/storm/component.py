@@ -91,7 +91,7 @@ class Component(object):
         """
 
         print json.dumps({
-            "type": self.COMPONENT_TYPE,
+            "component_type": self.COMPONENT_TYPE,
             "output_fields": _expand_output_fields(self.OUTPUT_FIELDS),
             "options": _serialize(self.OPTIONS)})
 
