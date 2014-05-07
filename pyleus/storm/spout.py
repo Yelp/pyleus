@@ -61,7 +61,7 @@ class Spout(Component):
         assert isinstance(values, list) or isinstance(values, tuple)
 
         command_dict = {
-            'tuple': values
+            'tuple': tuple(values),
         }
 
         if stream is not None:
