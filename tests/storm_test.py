@@ -1,3 +1,4 @@
+from collections import namedtuple
 import contextlib
 from cStringIO import StringIO
 
@@ -236,7 +237,7 @@ class BoltTest(ComponentTestCase):
         )
 
         with patches as (mock_read_taskid, mock_send_command):
-            yield
+            yield mock_send_command
 
         mock_read_taskid.assert_called_once_with()
         mock_send_command.assert_called_once_with('emit', expected_command_dict)
@@ -253,11 +254,32 @@ class BoltTest(ComponentTestCase):
     def test_emit_with_list(self):
         expected_command_dict = {
             'anchors': [],
-            'tuple': [1, 2, 3],
+            'tuple': tuple([1, 2, 3]),
         }
 
         with self._test_emit_helper(expected_command_dict):
             self.instance.emit([1, 2, 3])
+
+    def test_emit_with_namedtuple(self):
+        """Regression test for PYLEUS-60
+
+        Some versions of simplejson serialize namedtuples differently, so
+        Pyleus casts all outgoing tuple values to actual Python tuples before
+        emitting.
+        """
+        MyTuple = namedtuple('MyTuple', "a b c")
+        values = MyTuple(1, 2, 3)
+
+        expected_command_dict = {
+            'anchors': [],
+            'tuple': tuple(values),
+        }
+
+        with self._test_emit_helper(expected_command_dict) as mock_send_command:
+            self.instance.emit(values)
+
+        _, command_dict = mock_send_command.call_args[0]
+        T.assert_equal(command_dict['tuple'].__class__, tuple)
 
     def test_emit_with_stream(self):
         expected_command_dict = {
@@ -392,7 +414,7 @@ class SpoutTest(ComponentTestCase):
         )
 
         with patches as (mock_read_taskid, mock_send_command):
-            yield
+            yield mock_send_command
 
         mock_read_taskid.assert_called_once_with()
         mock_send_command.assert_called_once_with('emit', expected_command_dict)
@@ -404,6 +426,34 @@ class SpoutTest(ComponentTestCase):
 
         with self._test_emit_helper(expected_command_dict):
             self.instance.emit((1, 2, 3))
+
+    def test_emit_with_list(self):
+        expected_command_dict = {
+            'tuple': tuple([1, 2, 3]),
+        }
+
+        with self._test_emit_helper(expected_command_dict):
+            self.instance.emit([1, 2, 3])
+
+    def test_emit_with_namedtuple(self):
+        """Regression test for PYLEUS-60
+
+        Some versions of simplejson serialize namedtuples differently, so
+        Pyleus casts all outgoing tuple values to actual Python tuples before
+        emitting.
+        """
+        MyTuple = namedtuple('MyTuple', "a b c")
+        values = MyTuple(1, 2, 3)
+
+        expected_command_dict = {
+            'tuple': tuple(values),
+        }
+
+        with self._test_emit_helper(expected_command_dict) as mock_send_command:
+            self.instance.emit(values)
+
+        _, command_dict = mock_send_command.call_args[0]
+        T.assert_equal(command_dict['tuple'].__class__, tuple)
 
     def test_emit_with_stream(self):
         expected_command_dict = {

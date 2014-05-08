@@ -60,7 +60,7 @@ class Bolt(Component):
 
         command_dict = {
             'anchors': [anchor.id for anchor in anchors],
-            'tuple': values,
+            'tuple': tuple(values),
         }
 
         if stream is not None:
