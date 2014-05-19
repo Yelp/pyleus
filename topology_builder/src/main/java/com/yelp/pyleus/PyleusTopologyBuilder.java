@@ -191,7 +191,7 @@ public class PyleusTopologyBuilder {
         return PyleusTopologyBuilder.class.getResourceAsStream(filename);
     }
 
-    private static void demo(final String topologyName, final StormTopology topology, boolean debug) {
+    private static void runLocally(final String topologyName, final StormTopology topology, boolean debug) {
         Config conf = new Config();
         conf.setDebug(debug);
         conf.setMaxTaskParallelism(1);
@@ -201,21 +201,26 @@ public class PyleusTopologyBuilder {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
+                    cluster.killTopology(topologyName);
+                } catch (Exception e) {
+                    System.err.println(e.toString());
+                }
+
+                try {
                     cluster.shutdown();
-                } catch(Exception e) {
+                } catch (Exception e) {
                     System.err.println(e.toString());
                 }
             }
         });
 
+        cluster.submitTopology(topologyName, conf, topology);
+
+        // Sleep the main thread forever.
         try {
-            cluster.submitTopology(topologyName, conf, topology);
-
-            Utils.sleep(10 * 60 * 1000);
-
-            cluster.killTopology(topologyName);
-        } finally {
-            cluster.shutdown();
+            Thread.currentThread().join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -266,7 +271,7 @@ public class PyleusTopologyBuilder {
         StormTopology topology = buildTopology(spec);
 
         if (runLocally) {
-            demo(spec.name, topology, debug);
+            runLocally(spec.name, topology, debug);
         } else {
             Config conf = new Config();
             conf.setDebug(false);
