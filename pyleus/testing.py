@@ -1,17 +1,17 @@
 from __future__ import absolute_import
 
 import mock
-import testify as T
+import pytest
 
 from pyleus.storm.component import Component
 
 
-class ComponentTestCase(T.TestCase):
+class ComponentTestCase(object):
 
     INSTANCE_CLS = Component
 
-    @T.setup
-    def setup(self):
+    @pytest.fixture(autouse=True)
+    def instance_fixture(self):
         self.mock_input_stream = mock.Mock()
         self.mock_output_stream = mock.Mock()
         self.instance = self.INSTANCE_CLS(

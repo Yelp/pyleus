@@ -4,7 +4,7 @@ from cStringIO import StringIO
 
 import mock
 from mock import call, sentinel
-import testify as T
+import pytest
 
 try:
     import simplejson as json
@@ -16,7 +16,7 @@ from pyleus.storm import StormTuple, Bolt, SimpleBolt, Spout, is_tick
 from pyleus.testing import ComponentTestCase
 
 
-class ComponentTest(ComponentTestCase):
+class TestComponent(ComponentTestCase):
 
     def test__read_msg_dict(self):
         msg_dict = {
@@ -28,7 +28,7 @@ class ComponentTest(ComponentTestCase):
             "end",
         ]
 
-        T.assert_equal(self.instance._read_msg(), msg_dict)
+        assert self.instance._read_msg() == msg_dict
 
     def test__read_msg_list(self):
         msg_list = [3, 4, 5]
@@ -38,21 +38,21 @@ class ComponentTest(ComponentTestCase):
             "end",
         ]
 
-        T.assert_equal(self.instance._read_msg(), msg_list)
+        assert self.instance._read_msg() == msg_list
 
     def test__msg_is_command(self):
         command_msg = dict(this_is_a_command=True)
         taskid_msg = ["this", "is", "a", "taskid", "list"]
 
-        T.assert_equal(self.instance._msg_is_command(command_msg), True)
-        T.assert_equal(self.instance._msg_is_command(taskid_msg), False)
+        assert self.instance._msg_is_command(command_msg)
+        assert not self.instance._msg_is_command(taskid_msg)
 
     def test__msg_is_taskid(self):
         command_msg = dict(this_is_a_command=True)
         taskid_msg = ["this", "is", "a", "taskid", "list"]
 
-        T.assert_equal(self.instance._msg_is_taskid(command_msg), False)
-        T.assert_equal(self.instance._msg_is_taskid(taskid_msg), True)
+        assert not self.instance._msg_is_taskid(command_msg)
+        assert self.instance._msg_is_taskid(taskid_msg)
 
     def test_read_command(self):
         command_msg = dict(this_is_a_command=True)
@@ -69,8 +69,8 @@ class ComponentTest(ComponentTestCase):
                 side_effect=messages):
             command = self.instance.read_command()
 
-        T.assert_equal(command, command_msg)
-        T.assert_equal(len(self.instance._pending_taskids), 3)
+        assert command == command_msg
+        assert len(self.instance._pending_taskids) == 3
 
     def test_read_command_queued(self):
         next_command = dict(next_command=3)
@@ -82,8 +82,8 @@ class ComponentTest(ComponentTestCase):
             another_command,
         ])
 
-        T.assert_equal(self.instance.read_command(), next_command)
-        T.assert_equal(len(self.instance._pending_commands), 2)
+        assert self.instance.read_command() == next_command
+        assert len(self.instance._pending_commands) == 2
 
     def test_read_taskid(self):
         command_msg = dict(this_is_a_command=True)
@@ -100,8 +100,8 @@ class ComponentTest(ComponentTestCase):
                 side_effect=messages):
             taskid = self.instance.read_taskid()
 
-        T.assert_equal(taskid, taskid_msg)
-        T.assert_equal(len(self.instance._pending_commands), 3)
+        assert taskid == taskid_msg
+        assert len(self.instance._pending_commands) == 3
 
     def test_read_taskid_queued(self):
         next_taskid = dict(next_taskid=3)
@@ -114,8 +114,8 @@ class ComponentTest(ComponentTestCase):
         ])
 
 
-        T.assert_equal(self.instance.read_taskid(), next_taskid)
-        T.assert_equal(len(self.instance._pending_taskids), 2)
+        assert self.instance.read_taskid() == next_taskid
+        assert len(self.instance._pending_taskids) == 2
 
     def test_read_tuple(self):
         command_dict = {
@@ -133,8 +133,8 @@ class ComponentTest(ComponentTestCase):
                 return_value=command_dict):
             storm_tuple = self.instance.read_tuple()
 
-        T.assert_isinstance(storm_tuple, StormTuple)
-        T.assert_equal(storm_tuple, expected_storm_tuple)
+        assert isinstance(storm_tuple, StormTuple)
+        assert storm_tuple == expected_storm_tuple
 
     def test__send_msg(self):
         msg_dict = {
@@ -147,7 +147,7 @@ class ComponentTest(ComponentTestCase):
                 StringIO()) as sio:
             self.instance._send_msg(msg_dict)
 
-        T.assert_equal(sio.getvalue(), expected_output)
+        assert sio.getvalue() == expected_output
 
     def test__create_pidfile(self):
         with mock.patch('__builtin__.open') as mock_open:
@@ -178,8 +178,8 @@ class ComponentTest(ComponentTestCase):
         mock__send_msg.assert_called_once_with({'pid': 1234})
         mock__create_pidfile.assert_called_once_with("pidDir", 1234)
 
-        T.assert_equal(conf, {"foo": "bar"})
-        T.assert_equal(context, "context")
+        assert conf == {"foo": "bar"}
+        assert context == "context"
 
     def test_send_command_with_opts(self):
         with mock.patch.object(self.instance, '_send_msg') as mock__send_msg:
@@ -207,7 +207,7 @@ class ComponentTest(ComponentTestCase):
         })
 
 
-class BoltTest(ComponentTestCase):
+class TestBolt(ComponentTestCase):
 
     INSTANCE_CLS = Bolt
 
@@ -279,7 +279,7 @@ class BoltTest(ComponentTestCase):
             self.instance.emit(values)
 
         _, command_dict = mock_send_command.call_args[0]
-        T.assert_equal(command_dict['tuple'].__class__, tuple)
+        assert command_dict['tuple'].__class__ == tuple
 
     def test_emit_with_stream(self):
         expected_command_dict = {
@@ -313,19 +313,19 @@ class BoltTest(ComponentTestCase):
             self.instance.emit((1, 2, 3), direct_task=sentinel.direct_task)
 
     def test_emit_with_bad_values(self):
-        T.assert_raises(AssertionError, self.instance.emit,
-            "not-a-list-or-tuple")
+        with pytest.raises(AssertionError):
+            self.instance.emit("not-a-list-or-tuple")
 
 
-class SimpleBoltTest(ComponentTestCase):
+class TestSimpleBolt(ComponentTestCase):
 
     INSTANCE_CLS = SimpleBolt
 
     TICK = StormTuple(None, '__system', '__tick', None, None)
     TUPLE = StormTuple(None, None, None, None, None)
 
-    @T.setup_teardown
-    def setup_mocks(self):
+    @pytest.fixture(autouse=True)
+    def setup_mocks(self, request):
         patches = contextlib.nested(
             mock.patch.object(self.instance, 'process_tick'),
             mock.patch.object(self.instance, 'process_tuple'),
@@ -333,9 +333,9 @@ class SimpleBoltTest(ComponentTestCase):
             mock.patch.object(self.instance, 'ack'),
         )
 
-        with patches as (self.mock_process_tick, self.mock_process_tuple,
-                         self.mock_fail, self.mock_ack):
-            yield
+        request.addfinalizer(lambda: patches.__exit__(None, None, None))
+        (self.mock_process_tick, self.mock_process_tuple,
+                         self.mock_fail, self.mock_ack) = patches.__enter__()
 
     def test_fail(self):
         self.mock_process_tick.side_effect = Exception()
@@ -358,13 +358,13 @@ class SimpleBoltTest(ComponentTestCase):
             call(self.TICK),
         ])
 
-        T.assert_equal(self.mock_ack.called, False)
+        assert not self.mock_ack.called
 
     def test_ack(self):
         self.instance._process_tuple(self.TICK)
         self.instance._process_tuple(self.TUPLE)
 
-        T.assert_equal(self.mock_fail.called, False)
+        assert not self.mock_fail.called
 
         self.mock_ack.assert_has_calls([
             call(self.TICK),
@@ -375,12 +375,12 @@ class SimpleBoltTest(ComponentTestCase):
         self.instance._process_tuple(self.TICK)
 
         self.mock_process_tick.assert_called_once_with()
-        T.assert_equal(self.mock_process_tuple.called, False)
+        assert not self.mock_process_tuple.called
 
     def test_tuple(self):
         self.instance._process_tuple(self.TUPLE)
 
-        T.assert_equal(self.mock_process_tick.called, False)
+        assert not self.mock_process_tick.called
         self.mock_process_tuple.assert_called_once_with(self.TUPLE)
 
     def test_exception(self):
@@ -388,14 +388,14 @@ class SimpleBoltTest(ComponentTestCase):
         self.mock_process_tick.side_effect = MyException()
         self.mock_process_tuple.side_effect = MyException()
 
-        with T.assert_raises(MyException):
+        with pytest.raises(MyException):
             self.instance._process_tuple(self.TICK)
 
-        with T.assert_raises(MyException):
+        with pytest.raises(MyException):
             self.instance._process_tuple(self.TUPLE)
 
 
-class SpoutTest(ComponentTestCase):
+class TestSpout(ComponentTestCase):
 
     INSTANCE_CLS = Spout
 
@@ -453,7 +453,7 @@ class SpoutTest(ComponentTestCase):
             self.instance.emit(values)
 
         _, command_dict = mock_send_command.call_args[0]
-        T.assert_equal(command_dict['tuple'].__class__, tuple)
+        assert command_dict['tuple'].__class__ == tuple
 
     def test_emit_with_stream(self):
         expected_command_dict = {
@@ -504,14 +504,14 @@ class SpoutTest(ComponentTestCase):
         mock_fail.assert_called_once_with(sentinel.tuple_id)
 
 
-class StormUtilFunctionTestCase(T.TestCase):
+class TestStormUtilFunctions(object):
 
     def test_is_tick_true(self):
         tup = StormTuple(None, '__system', '__tick', None, None)
-        T.assert_equal(is_tick(tup), True)
+        assert is_tick(tup)
 
     def test_is_tick_false(self):
         tup = StormTuple(None, '__system', None, None, None)
-        T.assert_equal(is_tick(tup), False)
+        assert not is_tick(tup)
         tup = StormTuple(None, None, '__tick', None, None)
-        T.assert_equal(is_tick(tup), False)
+        assert not is_tick(tup)

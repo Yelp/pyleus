@@ -1,26 +1,26 @@
 import __builtin__
 
 import mock
-import testify as T
+import pytest
 
 from pyleus.cli.commands import subcommand
 from pyleus.cli.commands.subcommand import SubCommand
 
 
-class TestSubCommand(T.TestCase):
+class TestSubCommand(object):
 
-    @T.setup
-    def setup_virtualenv(self):
+    @pytest.fixture(autouse=True)
+    def setup(self):
         self.subcmd = SubCommand()
 
     def test_add_arguments(self):
         mock_parser = mock.Mock()
-        with T.assert_raises(NotImplementedError):
+        with pytest.raises(NotImplementedError):
             self.subcmd.add_arguments(mock_parser)
 
     def test_run(self):
         mock_configs = mock.Mock()
-        with T.assert_raises(NotImplementedError):
+        with pytest.raises(NotImplementedError):
             self.subcmd.run(mock_configs)
 
     @mock.patch.object(subcommand, "expand_path", autospec=True)
