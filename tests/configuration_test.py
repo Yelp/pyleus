@@ -1,19 +1,19 @@
 import os
 
 import mock
-import testify as T
+import pytest
 
 from pyleus import configuration
 from pyleus import exception
 
 
-class ConfigurationTest(T.TestCase):
+class TestConfiguration(object):
 
     @mock.patch.object(os.path, 'exists', autospec=True)
     def test__validate_config_file_not_found(
             self, mock_exists):
         mock_exists.return_value = False
-        with T.assert_raises(exception.ConfigurationError):
+        with pytest.raises(exception.ConfigurationError):
             configuration._validate_config_file("foo")
         mock_exists.assert_called_once_with("foo")
 
@@ -23,7 +23,7 @@ class ConfigurationTest(T.TestCase):
             self, mock_isfile, mock_exists):
         mock_exists.return_value = True
         mock_isfile.return_value = False
-        with T.assert_raises(exception.ConfigurationError):
+        with pytest.raises(exception.ConfigurationError):
             configuration._validate_config_file("foo")
         mock_exists.assert_called_once_with("foo")
         mock_isfile.assert_called_once_with("foo")
@@ -34,10 +34,6 @@ class ConfigurationTest(T.TestCase):
             "pypi_index_url": "http://pypi-ninja.ninjacorp.com/simple"}
         updated_config = configuration.update_configuration(
             default_config, update_dict)
-        T.assert_equal(default_config.pypi_index_url, None)
-        T.assert_equal(updated_config.pypi_index_url,
-                       "http://pypi-ninja.ninjacorp.com/simple")
-
-
-if __name__ == '__main__':
-        T.run()
+        assert default_config.pypi_index_url == None
+        assert updated_config.pypi_index_url == \
+                       "http://pypi-ninja.ninjacorp.com/simple"

@@ -4,18 +4,19 @@ import shutil
 import zipfile
 
 import mock
-import testify as T
+import pytest
 
 from pyleus import __version__
 from pyleus import exception
 from pyleus.cli import build
 
-class BuildTest(T.TestCase):
+
+class TestBuild(object):
 
     @mock.patch.object(os.path, 'exists', autospec=True)
     def test__open_jar_jarfile_not_found(self, mock_exists):
         mock_exists.return_value = False
-        with T.assert_raises(exception.JarError):
+        with pytest.raises(exception.JarError):
             build._open_jar("foo")
         mock_exists.assert_called_once_with("foo")
 
@@ -24,7 +25,7 @@ class BuildTest(T.TestCase):
     def test__open_jar_not_jarfile(self, mock_is_zipfile, mock_exists):
         mock_exists.return_value = True
         mock_is_zipfile.return_value = False
-        with T.assert_raises(exception.JarError):
+        with pytest.raises(exception.JarError):
             build._open_jar("foo")
         mock_is_zipfile.assert_called_once_with("foo")
 
@@ -53,7 +54,7 @@ class BuildTest(T.TestCase):
     @mock.patch.object(os.path, 'exists', autospec=True)
     def test__validate_dir_not_found(self, mock_exists):
         mock_exists.return_value = False
-        with T.assert_raises(exception.TopologyError):
+        with pytest.raises(exception.TopologyError):
             build._validate_dir("foo")
         mock_exists.assert_called_once_with("foo")
 
@@ -62,21 +63,21 @@ class BuildTest(T.TestCase):
     def test__validate_dir_not_a_directory(self, mock_isdir, mock_exists):
         mock_exists.return_value = True
         mock_isdir.return_value = False
-        with T.assert_raises(exception.TopologyError):
+        with pytest.raises(exception.TopologyError):
                 build._validate_dir("foo")
         mock_isdir.assert_called_once_with("foo")
 
     @mock.patch.object(os.path, 'isfile', autospec=True)
     def test__validate_yaml_not_found(self, mock_isfile):
         mock_isfile.return_value = False
-        with T.assert_raises(exception.InvalidTopologyError):
+        with pytest.raises(exception.InvalidTopologyError):
             build._validate_yaml("foo")
         mock_isfile.assert_called_once_with("foo")
 
     @mock.patch.object(os.path, 'exists', autospec=True)
     def test__validate_venv_dir_contains_venv(self, mock_exists):
         mock_exists.return_value = True
-        with T.assert_raises(exception.InvalidTopologyError):
+        with pytest.raises(exception.InvalidTopologyError):
                 build._validate_venv("foo", "foo/bar_venv")
         mock_exists.assert_called_once_with("foo/bar_venv")
 
@@ -130,7 +131,7 @@ class BuildTest(T.TestCase):
             mock.call("ninja==7.7.7")
         ]
         venv.install_package.assert_has_calls(expected_install)
-        T.assert_equal(venv.install_from_requirements.call_count, 0)
+        assert venv.install_from_requirements.call_count == 0
 
     @mock.patch.object(glob, 'glob', autospec=True)
     def test__content_to_copy(self, mock_glob):
@@ -139,7 +140,7 @@ class BuildTest(T.TestCase):
         content = build._content_to_copy("foo", ["foo/bad1.txt",
                                                  "foo/bad2.jar"])
         mock_glob.assert_called_once_with("foo/*")
-        T.assert_sorted_equal(content, ["foo/good1.mkv", "foo/good2.bat"])
+        assert content == set(["foo/good1.mkv", "foo/good2.bat"])
 
     @mock.patch.object(build, '_content_to_copy', autospec=True)
     @mock.patch.object(os.path, 'isdir', autospec=True)
@@ -164,7 +165,3 @@ class BuildTest(T.TestCase):
 
         build._build_output_path(None, "bar")
         mock_ex_path.assert_called_with("bar.jar")
-
-
-if __name__ == '__main__':
-        T.run()

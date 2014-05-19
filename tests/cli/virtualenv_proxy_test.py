@@ -3,7 +3,7 @@ import os
 import subprocess
 
 import mock
-import testify as T
+import pytest
 
 from pyleus import exception
 from pyleus.cli import virtualenv_proxy
@@ -15,7 +15,7 @@ VENV_PATH = "/tmp/my/beloved"
 PYPI_URL = "http://pypi-ninja.ninjacorp.com/simple"
 
 
-class VirtualenvProxyTopLevelFunctionsTest(T.TestCase):
+class TestVirtualenvProxyTopLevelFunctions(object):
 
     @mock.patch.object(subprocess, 'Popen', autospec=True)
     def test__exec_bash_cmd(self, mock_popen):
@@ -23,17 +23,22 @@ class VirtualenvProxyTopLevelFunctionsTest(T.TestCase):
         mock_popen.return_value = mock_proc
         mock_proc.communicate.return_value = ["baz", "qux"]
         mock_proc.returncode = 1
-        T.assert_raises_and_contains(
-            exception.VirtualenvError, ["bar"],
-            virtualenv_proxy._exec_shell_cmd, "bash_ninja",
-            cwd="foo", stdout=42, stderr=666,
-            err_msg="bar")
+        with pytest.raises(exception.VirtualenvError) as exc_info:
+            virtualenv_proxy._exec_shell_cmd(
+                "bash_ninja",
+                cwd="foo",
+                stdout=42,
+                stderr=666,
+                err_msg="bar",
+            )
+
+        assert "bar" in str(exc_info.value)
         mock_popen.assert_called_once_with(
             "bash_ninja", cwd="foo", stdout=42, stderr=666)
         mock_proc.communicate.assert_called_once_with()
 
 
-class VirtualenvProxyCreationTest(T.TestCase):
+class TestVirtualenvProxyCreation(object):
 
     @mock.patch.object(__builtin__, 'open', autospec=True)
     @mock.patch.object(VirtualenvProxy, '_create_virtualenv', autospec=True)
@@ -44,15 +49,15 @@ class VirtualenvProxyCreationTest(T.TestCase):
             VENV_PATH,
             verbose=False)
         mock_open.assert_called_once_with(os.devnull, "w")
-        T.assert_equal(venv._out_stream, 42)
+        assert venv._out_stream == 42
         mock_create.assert_called_once_with(venv)
 
         venv = VirtualenvProxy(
             VENV_NAME,
             VENV_PATH,
             verbose=True)
-        T.assert_equals(mock_open.call_count, 1)
-        T.assert_equal(venv._out_stream, None)
+        assert mock_open.call_count == 1
+        assert venv._out_stream is None
 
     @mock.patch.object(__builtin__, 'open', autospec=True)
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
@@ -85,9 +90,9 @@ class VirtualenvProxyCreationTest(T.TestCase):
         )
 
 
-class VirtualenvProxyMethodsTest(T.TestCase):
+class TestVirtualenvProxyMethods(object):
 
-    @T.setup
+    @pytest.fixture(autouse=True)
     @mock.patch.object(__builtin__, 'open', autospec=True)
     @mock.patch.object(VirtualenvProxy, '_create_virtualenv', autospec=True)
     def setup_virtualenv(self, mock_create, mock_open):
@@ -127,7 +132,3 @@ class VirtualenvProxyMethodsTest(T.TestCase):
             stderr=self.venv._err_stream,
             err_msg=mock.ANY
         )
-
-
-if __name__ == '__main__':
-        T.run()
