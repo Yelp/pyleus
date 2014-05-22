@@ -1,5 +1,7 @@
 import contextlib
 from cStringIO import StringIO
+import logging.config
+import os.path
 
 import mock
 
@@ -10,6 +12,7 @@ except ImportError:
     import json
 
 from pyleus.storm import StormTuple
+from pyleus.storm.component import DEFAULT_LOGGING_CONFIG_PATH
 from pyleus.testing import ComponentTestCase
 
 
@@ -202,3 +205,27 @@ class TestComponent(ComponentTestCase):
         mock__send_msg.assert_called_once_with({
             'command': "test",
         })
+
+    @mock.patch.object(logging.config, 'fileConfig')
+    def test_initialize_logging(self, fileConfig):
+        pyleus_config = {'logging_config_path': mock.sentinel.logging_config_path}
+        with mock.patch.object(self.instance, 'pyleus_config', pyleus_config):
+            self.instance.initialize_logging()
+
+        fileConfig.assert_called_once_with(mock.sentinel.logging_config_path)
+
+    @mock.patch.object(logging.config, 'fileConfig')
+    def test_initialize_logging_default_exists(self, fileConfig):
+        with mock.patch.object(self.instance, 'pyleus_config', {}):
+            with mock.patch.object(os.path, 'isfile', return_value=True):
+                self.instance.initialize_logging()
+
+        fileConfig.assert_called_once_with(DEFAULT_LOGGING_CONFIG_PATH)
+
+    @mock.patch.object(logging.config, 'fileConfig')
+    def test_initialize_logging_default_no_exists(self, fileConfig):
+        with mock.patch.object(self.instance, 'pyleus_config', {}):
+            with mock.patch.object(os.path, 'isfile', return_value=False):
+                self.instance.initialize_logging()
+
+        assert not fileConfig.called
