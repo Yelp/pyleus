@@ -28,8 +28,6 @@ class Bolt(Component):
 
     def run_component(self):
         try:
-            self.setup_component()
-
             while True:
                 tup = self.read_tuple()
                 self._process_tuple(tup)

@@ -122,6 +122,8 @@ class Component(object):
             return
 
         self.options = json.loads(args.options) if args.options else {}
+
+        self.setup_component()
         self.run_component()
 
     def run_component(self):

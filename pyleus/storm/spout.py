@@ -40,8 +40,6 @@ class Spout(Component):
 
     def run_component(self):
         try:
-            self.setup_component()
-
             while True:
                 msg = self.read_command()
                 self._handle_command(msg)
