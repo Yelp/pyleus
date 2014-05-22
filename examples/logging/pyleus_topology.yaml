@@ -1,0 +1,19 @@
+name: logging-example
+
+# Pyleus will look for pyleus_logging.conf in your topology dir and use it if
+# present. You can specify a different file with the 'logging_config' option,
+# or set it to null if pyleus_logging.conf is present but you don't want Pyleus
+# to use it.
+#logging_config: my_logging.conf
+
+topology:
+
+    - spout:
+        name: line-spout
+        module: logging_example.line_spout
+
+    - bolt:
+        name: logger-bolt
+        module: logging_example.logger_bolt
+        groupings:
+            - shuffle_grouping: line-spout
