@@ -41,6 +41,8 @@ class TopologySpec(object):
             self.max_spout_pending = specs["max_spout_pending"]
         if "message_timeout_secs" in specs:
             self.message_timeout_secs = specs["message_timeout_secs"]
+        if "logging_config" in specs:
+            self.logging_config = specs["logging_config"]
 
         self.topology = []
         for component in specs["topology"]:
