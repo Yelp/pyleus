@@ -2,8 +2,6 @@ from __future__ import absolute_import
 
 from collections import namedtuple
 
-DESCRIBE_OPT = "--describe"
-OPTIONS_OPT = "--options"
 DEFAULT_STREAM = "default"
 
 StormTuple = namedtuple('StormTuple', "id comp stream task values")

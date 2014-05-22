@@ -11,8 +11,11 @@ try:
 except ImportError:
     import json
 
-from pyleus.storm import DESCRIBE_OPT, OPTIONS_OPT, DEFAULT_STREAM
+from pyleus.storm import DEFAULT_STREAM
 from pyleus.storm import StormTuple, StormWentAwayError
+
+DESCRIBE_OPT = "--describe"
+COMPONENT_OPTIONS_OPT = "--options"
 
 
 def _is_namedtuple(obj):
@@ -109,12 +112,9 @@ class Component(object):
         pass
 
     def run(self):
-        parser = argparse.ArgumentParser(
-            add_help=False)
-        parser.add_argument(
-            DESCRIBE_OPT, default=False, action="store_true")
-        parser.add_argument(
-            OPTIONS_OPT, default=None)
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument(DESCRIBE_OPT, action="store_true", default=False)
+        parser.add_argument(COMPONENT_OPTIONS_OPT, default=None)
         args = parser.parse_args()
 
         if args.describe:
