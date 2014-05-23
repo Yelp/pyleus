@@ -1,5 +1,6 @@
 package com.yelp.pyleus;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -13,7 +14,9 @@ public class PythonComponentsFactory {
     public static final String VIRTUALENV_INTERPRETER = "pyleus_venv/bin/python";
     public static final String MODULE_OPTION = "-m";
 
-    private String[] buildCommand(final String module, final Map<String, Object> argumentsMap) {
+    private String[] buildCommand(final String module, final Map<String, Object> argumentsMap,
+        final String loggingConfig) {
+
         String[] command = new String[3];
 
         command[0] = "bash";
@@ -31,17 +34,30 @@ public class PythonComponentsFactory {
             strBuf.append(String.format(" --options \"%s\"", json));
         }
 
+        {
+            Map<String, Object> pyleusConfig = new HashMap<String, Object>();
+            pyleusConfig.put("logging_config_path", loggingConfig);
+            Gson gson = new GsonBuilder().create();
+            String json = gson.toJson(pyleusConfig);
+            json = json.replace("\"", "\\\"");
+            strBuf.append(String.format(" --pyleus-config \"%s\"", json));
+        }
+
         command[2] = strBuf.toString();
 
         return command;
     }
 
-    public PythonBolt createPythonBolt(final String module, final Map<String, Object> argumentsMap) {
-        return new PythonBolt(buildCommand(module, argumentsMap));
+    public PythonBolt createPythonBolt(final String module, final Map<String, Object> argumentsMap,
+        final String loggingConfig) {
+
+        return new PythonBolt(buildCommand(module, argumentsMap, loggingConfig));
     }
 
-    public PythonSpout createPythonSpout(final String module, final Map<String, Object> argumentsMap) {
-        return new PythonSpout(buildCommand(module, argumentsMap));
+    public PythonSpout createPythonSpout(final String module, final Map<String, Object> argumentsMap,
+        final String loggingConfig) {
+
+        return new PythonSpout(buildCommand(module, argumentsMap, loggingConfig));
     }
 
 }

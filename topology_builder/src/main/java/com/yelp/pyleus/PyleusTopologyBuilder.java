@@ -40,9 +40,11 @@ public class PyleusTopologyBuilder {
 
     public static final PythonComponentsFactory pyFactory = new PythonComponentsFactory();
 
-    public static void handleBolt(final TopologyBuilder builder, final BoltSpec spec) {
+    public static void handleBolt(final TopologyBuilder builder, final BoltSpec spec,
+        final TopologySpec topologySpec) {
+
         PythonBolt bolt = pyFactory.createPythonBolt((String) spec.module,
-            (Map<String, Object>) spec.options);
+            (Map<String, Object>) spec.options, (String) topologySpec.logging_config);
 
         if (spec.output_fields != null) {
             bolt.setOutputFields(spec.output_fields);
@@ -88,12 +90,14 @@ public class PyleusTopologyBuilder {
         }
     }
 
-    public static void handleSpout(final TopologyBuilder builder, final SpoutSpec spec) {
+    public static void handleSpout(final TopologyBuilder builder, final SpoutSpec spec,
+        final TopologySpec topologySpec) {
+
         IRichSpout spout;
         if (spec.type.equals("kafka")) {
             spout = handleKafkaSpout(builder, spec);
         } else {
-            spout = handlePythonSpout(builder, spec);
+            spout = handlePythonSpout(builder, spec, topologySpec);
         }
 
         SpoutDeclarer declarer = null;
@@ -154,9 +158,11 @@ public class PyleusTopologyBuilder {
         return new KafkaSpout(config);
     }
 
-    public static IRichSpout handlePythonSpout(final TopologyBuilder builder, final SpoutSpec spec) {
+    public static IRichSpout handlePythonSpout(final TopologyBuilder builder, final SpoutSpec spec,
+        final TopologySpec topologySpec) {
+
         PythonSpout spout = pyFactory.createPythonSpout((String) spec.module,
-            (Map<String, Object>) spec.options);
+            (Map<String, Object>) spec.options, (String) topologySpec.logging_config);
 
         if (spec.output_fields != null) {
             spout.setOutputFields(spec.output_fields);
@@ -176,9 +182,9 @@ public class PyleusTopologyBuilder {
 
         for (final ComponentSpec component : spec.topology) {
             if (component.isBolt()) {
-                handleBolt(builder, component.bolt);
+                handleBolt(builder, component.bolt, spec);
             } else if (component.isSpout()) {
-                handleSpout(builder, component.spout);
+                handleSpout(builder, component.spout, spec);
             } else {
                 throw new RuntimeException(String.format("Unknown component: only bolts and spouts are supported."));
             }

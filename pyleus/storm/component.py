@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import argparse
 from collections import deque
+import logging.config
 import os
 import sys
 
@@ -11,8 +12,14 @@ try:
 except ImportError:
     import json
 
-from pyleus.storm import DESCRIBE_OPT, OPTIONS_OPT, DEFAULT_STREAM
+from pyleus.storm import DEFAULT_STREAM
 from pyleus.storm import StormTuple, StormWentAwayError
+
+DESCRIBE_OPT = "--describe"
+COMPONENT_OPTIONS_OPT = "--options"
+PYLEUS_CONFIG_OPT = "--pyleus-config"
+
+DEFAULT_LOGGING_CONFIG_PATH = "pyleus_logging.conf"
 
 
 def _is_namedtuple(obj):
@@ -65,6 +72,10 @@ class Component(object):
     OUTPUT_FIELDS = None
     OPTIONS = None
 
+    # Populated in Component.run()
+    options = None
+    pyleus_config = None
+
     def __init__(self, input_stream=None, output_stream=None):
         """The Storm component will parse the command line in order
         to figure out if it has been queried for a description or for
@@ -95,6 +106,13 @@ class Component(object):
             "output_fields": _expand_output_fields(self.OUTPUT_FIELDS),
             "options": _serialize(self.OPTIONS)})
 
+    def initialize_logging(self):
+        logging_config_path = self.pyleus_config.get('logging_config_path')
+        if logging_config_path:
+            logging.config.fileConfig(logging_config_path)
+        elif os.path.isfile(DEFAULT_LOGGING_CONFIG_PATH):
+            logging.config.fileConfig(DEFAULT_LOGGING_CONFIG_PATH)
+
     def setup_component(self):
         """Storm component setup before execution. It will also
         call the initialization method implemented in the subclass.
@@ -109,12 +127,10 @@ class Component(object):
         pass
 
     def run(self):
-        parser = argparse.ArgumentParser(
-            add_help=False)
-        parser.add_argument(
-            DESCRIBE_OPT, default=False, action="store_true")
-        parser.add_argument(
-            OPTIONS_OPT, default=None)
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument(DESCRIBE_OPT, action="store_true", default=False)
+        parser.add_argument(COMPONENT_OPTIONS_OPT, default=None)
+        parser.add_argument(PYLEUS_CONFIG_OPT, default=None)
         args = parser.parse_args()
 
         if args.describe:
@@ -122,6 +138,11 @@ class Component(object):
             return
 
         self.options = json.loads(args.options) if args.options else {}
+        self.pyleus_config = json.loads(args.pyleus_config) \
+            if args.pyleus_config else {}
+
+        self.initialize_logging()
+        self.setup_component()
         self.run_component()
 
     def run_component(self):

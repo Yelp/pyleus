@@ -16,7 +16,7 @@ import zipfile
 from pyleus import __version__
 from pyleus.cli.topology_spec import TopologySpec
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
-from pyleus.storm import DESCRIBE_OPT
+from pyleus.storm.component import DESCRIBE_OPT
 from pyleus.exception import InvalidTopologyError
 from pyleus.exception import JarError
 from pyleus.exception import TopologyError
