@@ -52,48 +52,11 @@ class TestBuild(object):
         mock_zip_dir.assert_called_once_with("foo", mock_zipfile.return_value)
 
     @mock.patch.object(os.path, 'exists', autospec=True)
-    def test__validate_dir_not_found(self, mock_exists):
-        mock_exists.return_value = False
-        with pytest.raises(exception.TopologyError):
-            build._validate_dir("foo")
-        mock_exists.assert_called_once_with("foo")
-
-    @mock.patch.object(os.path, 'exists', autospec=True)
-    @mock.patch.object(os.path, 'isdir', autospec=True)
-    def test__validate_dir_not_a_directory(self, mock_isdir, mock_exists):
-        mock_exists.return_value = True
-        mock_isdir.return_value = False
-        with pytest.raises(exception.TopologyError):
-                build._validate_dir("foo")
-        mock_isdir.assert_called_once_with("foo")
-
-    @mock.patch.object(os.path, 'isfile', autospec=True)
-    def test__validate_yaml_not_found(self, mock_isfile):
-        mock_isfile.return_value = False
-        with pytest.raises(exception.InvalidTopologyError):
-            build._validate_yaml("foo")
-        mock_isfile.assert_called_once_with("foo")
-
-    @mock.patch.object(os.path, 'exists', autospec=True)
     def test__validate_venv_dir_contains_venv(self, mock_exists):
         mock_exists.return_value = True
         with pytest.raises(exception.InvalidTopologyError):
                 build._validate_venv("foo", "foo/bar_venv")
         mock_exists.assert_called_once_with("foo/bar_venv")
-
-    @mock.patch.object(build, '_validate_dir', autospec=True)
-    @mock.patch.object(build, '_validate_yaml', autospec=True)
-    @mock.patch.object(build, '_validate_venv', autospec=True)
-    def test__validate_topology(
-            self, mock_valid_venv,
-            mock_valid_yaml, mock_valid_dir):
-        topo_dir = "foo"
-        yaml = "foo/bar.yaml"
-        venv = "foo/qux"
-        build._validate_topology(topo_dir, yaml, venv)
-        mock_valid_dir.assert_called_once_with(topo_dir)
-        mock_valid_yaml.assert_called_once_with(yaml)
-        mock_valid_venv.assert_called_once_with(topo_dir, venv)
 
     @mock.patch.object(build, 'VirtualenvProxy', autospec=True)
     def test__set_up_virtualenv_with_requirements(self, MockVenv):
