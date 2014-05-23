@@ -21,8 +21,8 @@ CONFIG_FILES_PATH = [
 Configuration = collections.namedtuple(
     "Configuration",
     "base_jar config_file debug func include_packages output_jar \
-     pypi_index_url storm_cluster_ip system_site_packages topology_dir \
-     topology_name verbose wait_time jvm_opts"
+     pypi_index_url storm_cluster_ip system_site_packages topology_path \
+     topology_jar topology_name verbose wait_time jvm_opts"
 )
 
 
@@ -36,7 +36,8 @@ DEFAULTS = Configuration(
     pypi_index_url=None,
     storm_cluster_ip=None,
     system_site_packages=False,
-    topology_dir=".",
+    topology_path="pyleus_topology.yaml",
+    topology_jar=None,
     topology_name=None,
     verbose=False,
     wait_time=None,

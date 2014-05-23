@@ -21,38 +21,28 @@ without modifying the Java code accordingly.
 """
 from __future__ import absolute_import
 
-import sys
-
 from pyleus.cli.commands.subcommand import SubCommand
 from pyleus.cli.build import build_topology_jar
 from pyleus.configuration import DEFAULTS
-from pyleus.exception import command_error_fmt
-from pyleus.exception import PyleusError
 
 
 class BuildSubCommand(SubCommand):
-    """Build subcommand class"""
 
     NAME = "build"
-    USAGE = "%(prog)s [options] TOPOLOGY_DIRECTORY"
-    DESCRIPTION = "Build up a Storm jar from a topology source directory"
-    HELP = "Build up a Storm jar from a topology source directory"
+    DESCRIPTION = "Build a Storm jar from a Pyleus topology file"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "topology_dir", metavar="TOPOLOGY_DIRECTORY", nargs="?",
-            default=DEFAULTS.topology_dir, help="Directory containing Pyleus "
-            "topology source code. (default: %(default)s)")
+            "topology_path", metavar="TOPOLOGY_PATH", nargs="?",
+            default=DEFAULTS.topology_path, help="Path to Pyleus topology file "
+            "Default: %(default)s")
         parser.add_argument(
-            "-o", "--out", dest="output_jar", help="Path of the jar to be "
-            "written.")
+            "-o", "--output", dest="output_jar", help="Path of the jar to be "
+            "written. Default: <topology_name>.jar")
         parser.add_argument(
             "-s", "--system-site-packages", dest="system_site_packages",
             action="store_true", help="Do not install packages already present "
             "on your system.")
 
     def run(self, configs):
-        try:
-            build_topology_jar(configs)
-        except PyleusError as e:
-            sys.exit(command_error_fmt(self.NAME, e))
+        build_topology_jar(configs)

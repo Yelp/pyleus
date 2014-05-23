@@ -9,23 +9,15 @@ Args:
 """
 from __future__ import absolute_import
 
-import sys
-
-from pyleus.cli.topologies import get_runnable_jar_path
 from pyleus.cli.commands.subcommand import SubCommand
-from pyleus.configuration import DEFAULTS
-from pyleus.exception import command_error_fmt
-from pyleus.exception import PyleusError
+from pyleus.cli.topologies import is_jar
 
 
 class RunSubCommand(SubCommand):
-    """Run subcommand class"""
 
     # Override these in subclass
     NAME = None
-    USAGE = "%(prog)s [options] TOPOLOGY_PATH"
     DESCRIPTION = None
-    HELP = None
 
     def add_specific_arguments(self, parser):
         """Override this method in order to add subcommand specific
@@ -34,13 +26,8 @@ class RunSubCommand(SubCommand):
         pass
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            "topology_dir", metavar="TOPOLOGY_PATH", nargs="?",
-            default=DEFAULTS.topology_dir, help="If the path to a directory "
-            "containing the topology source code is specified, a Pyleus jar "
-            "will be created on the fly before execution. If the path to a "
-            "Pyleus jar is specified, the jar will be processed for execution "
-            "immediately. (default: %(default)s)")
+        parser.add_argument("topology_jar", metavar="TOPOLOGY_JAR", help="Path "
+            "to a Pyleus topology jar.")
         self.add_specific_arguments(parser)
 
     def run_topology(jar_path, configs):
@@ -48,9 +35,9 @@ class RunSubCommand(SubCommand):
         raise NotImplementedError
 
     def run(self, configs):
-        try:
-            jar_path = get_runnable_jar_path(configs)
-            self.run_topology(jar_path, configs)
-        except PyleusError as e:
-            sys.exit(
-                command_error_fmt(self.NAME, e))
+        jar_path = configs.topology_jar
+
+        if not is_jar(jar_path):
+            self.error("Invalid jar: {0}".format(jar_path))
+
+        self.run_topology(jar_path, configs)

@@ -14,13 +14,10 @@ from pyleus.utils import expand_path
 
 
 class SubCommand(object):
-    """Sub-command base class"""
 
     # Override these in subclass
     NAME = None
-    USAGE = None
     DESCRIPTION = None
-    HELP = None
 
     def add_arguments(self, parser):
         """Define arguments and options of the sub-command
@@ -49,9 +46,8 @@ class SubCommand(object):
         parser = subparsers.add_parser(
             self.NAME,
             argument_default=argparse.SUPPRESS,
-            usage=self.USAGE,
             description=self.DESCRIPTION,
-            help=self.HELP,
+            help=self.DESCRIPTION,
             add_help=False)
 
         # the help message need to be regenerated, since help has been
@@ -77,9 +73,15 @@ class SubCommand(object):
         try:
             configs = load_configuration(arguments.config_file)
         except PyleusError as e:
-            sys.exit(command_error_fmt(self.NAME, e))
+            self.error(e)
 
         # Update configuration with command line values
         configs = update_configuration(configs, vars(arguments))
 
-        self.run(configs)
+        try:
+            self.run(configs)
+        except PyleusError as e:
+            self.error(e)
+
+    def error(self, message):
+        sys.exit(command_error_fmt(self.NAME, message))

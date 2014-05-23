@@ -16,11 +16,9 @@ from pyleus.cli.commands.run_subcommand import RunSubCommand
 
 
 class LocalSubCommand(RunSubCommand):
-    """Run subcommand class"""
 
     NAME = "local"
-    DESCRIPTION = "Run a Pyleus topology locally."
-    HELP = "Run a Pyleus topology locally."
+    DESCRIPTION = "Run a Pyleus topology locally"
 
     def add_specific_arguments(self, parser):
         parser.add_argument(
