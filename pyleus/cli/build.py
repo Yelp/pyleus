@@ -5,6 +5,7 @@ object. The caller function should handle PyleusError exceptions.
 """
 from __future__ import absolute_import
 
+from cStringIO import StringIO
 import glob
 import re
 import tempfile
@@ -19,7 +20,6 @@ from pyleus.cli.virtualenv_proxy import VirtualenvProxy
 from pyleus.storm.component import DESCRIBE_OPT
 from pyleus.exception import InvalidTopologyError
 from pyleus.exception import JarError
-from pyleus.exception import TopologyError
 from pyleus.utils import expand_path
 
 RESOURCES_PATH = "resources"
@@ -66,44 +66,11 @@ def _pack_jar(tmp_dir, output_jar):
         zf.close()
 
 
-def _validate_dir(topology_dir):
-    """Ensure that the directory exists and is a directory"""
-    if not os.path.exists(topology_dir):
-        raise TopologyError("Topology directory not found: {0}".format(
-            topology_dir))
-
-    if not os.path.isdir(topology_dir):
-        raise TopologyError("Topology directory is not a directory: {0}"
-                            .format(topology_dir))
-
-
-def _validate_yaml(topology_path):
-    """Ensure that TOPOLOGY_YAML exists inside the directory"""
-    if not os.path.isfile(topology_path):
-        raise InvalidTopologyError("Topology YAML not found: {0}".format(topology_path))
-
-
 def _validate_venv(topology_dir, venv):
     """Ensure that VIRTUALENV does not exist inside the directory"""
     if os.path.exists(venv):
         raise InvalidTopologyError("Topology directory must not contain a "
                                    "file named {0}".format(venv))
-
-
-def _validate_topology(topology_dir, topology_path, venv):
-    """Validate topology_dir to ensure that:
-
-        - it exists and is a directory
-        - TOPOLOGY_YAML exists inside
-        - requirements.txt exists if --use-virtualenv was explicitly stated
-        - nothing will be overwritten
-    """
-    _validate_dir(topology_dir)
-
-    _validate_yaml(topology_path)
-
-    # topology_dir should not include a file named as pyleus default virtualenv
-    _validate_venv(topology_dir, venv)
 
 
 def _set_up_virtualenv(venv_name, tmp_dir, req,
@@ -132,30 +99,21 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
     return venv
 
 
-def _assemble_full_topology_yaml(topology_path, venv):
+def _assemble_full_topology_yaml(spec, venv):
     """Assemble a full version of the topology yaml file given by the user
     adding to it the information coming from the python source files.
     """
-    with open(topology_path) as old_yaml_file:
-        specs_dict = yaml.load(old_yaml_file)
+    for component in spec.topology:
+        if component.type == "python":
+            module_spec = yaml.load(venv.execute_module(
+                component.module, DESCRIBE_OPT))
+            component.update_from_module(module_spec)
 
-        with tempfile.NamedTemporaryFile("w", delete=False) as new_yaml_file:
-            try:
-                specs = TopologySpec(specs_dict)
+    spec.verify_groupings()
 
-                for component in specs.topology:
-                    if component.type == "python":
-                        module_specs = yaml.load(venv.execute_module(
-                            component.module, DESCRIBE_OPT))
-                        component.update_from_module(module_specs)
-
-                specs.verify_groupings()
-
-                yaml.dump(specs.asdict(), new_yaml_file)
-                return new_yaml_file.name
-            except:
-                os.remove(new_yaml_file.name)
-                raise
+    new_yaml = StringIO()
+    yaml.dump(spec.asdict(), new_yaml)
+    return new_yaml.getvalue()
 
 
 def _content_to_copy(src, exclude):
@@ -185,9 +143,9 @@ def _copy_dir_content(src, dst, exclude):
             shutil.copy2(t, dst)
 
 
-def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
-                       include_packages, system_site_packages,
-                       pypi_index_url, verbose):
+def _create_pyleus_jar(original_topology_spec, topology_dir, base_jar,
+                       output_jar, zip_file, tmp_dir, include_packages,
+                       system_site_packages, pypi_index_url, verbose):
     """Coordinate the creation of the the topology JAR:
 
         - Validate the topology
@@ -196,13 +154,12 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
         - If using virtualenv, create it and install dependencies
         - Re-pack the temporary directory into the final JAR
     """
-    topology_path = os.path.join(topology_dir, YAML_FILENAME)
     venv = os.path.join(topology_dir, VIRTUALENV_NAME)
     req = os.path.join(topology_dir, REQUIREMENTS_FILENAME)
     if not os.path.isfile(req):
         req = None
 
-    _validate_topology(topology_dir, topology_path, venv)
+    _validate_venv(topology_dir, venv)
 
     # Extract pyleus base jar content in a tmp dir
     zip_file.extractall(tmp_dir)
@@ -211,14 +168,11 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
     resources_dir = os.path.join(tmp_dir, RESOURCES_PATH)
     os.mkdir(resources_dir)
 
-    # Copy yaml into its directory
-    shutil.copy2(topology_path, resources_dir)
-
     # Add the topology directory skipping yaml and requirements
     _copy_dir_content(
         src=topology_dir,
         dst=os.path.join(tmp_dir, RESOURCES_PATH),
-        exclude=[topology_path, venv, req, output_jar],
+        exclude=[venv, req, output_jar],
     )
 
     venv = _set_up_virtualenv(
@@ -232,21 +186,18 @@ def _create_pyleus_jar(topology_dir, base_jar, output_jar, zip_file, tmp_dir,
 
     # Assemble the full version of the topolgy yaml file from the user yaml and
     # the python code
-    new_yaml = _assemble_full_topology_yaml(topology_path, venv)
+    new_yaml = _assemble_full_topology_yaml(original_topology_spec, venv)
 
-    try:
-        # Copy the new yaml file into its directory, overwriting the old one
-        jar_yaml = os.path.join(resources_dir, YAML_FILENAME)
-        os.remove(jar_yaml)
-        shutil.copy2(new_yaml, jar_yaml)
-    finally:
-        os.remove(new_yaml)
+    # Copy the new yaml file into its directory, overwriting the old one
+    jar_yaml = os.path.join(resources_dir, YAML_FILENAME)
+    with open(jar_yaml, 'w') as f:
+        f.write(new_yaml)
 
     # Pack the tmp directory into a jar
     _pack_jar(tmp_dir, output_jar)
 
 
-def _build_output_path(output_arg, topology_dir):
+def _build_output_path(output_arg, topology_name):
     """Return the absolute path of the output jar file.
 
     Default basename:
@@ -255,15 +206,28 @@ def _build_output_path(output_arg, topology_dir):
     if output_arg is not None:
         return expand_path(output_arg)
     else:
-        return expand_path(os.path.basename(topology_dir) + ".jar")
+        return expand_path(topology_name + ".jar")
+
+
+def parse_original_topology(topology_path):
+    with open(topology_path) as f:
+        yaml_spec = yaml.load(f)
+
+    return TopologySpec(yaml_spec)
 
 
 def build_topology_jar(configs):
     """Parse command-line arguments and invoke _create_pyleus_jar()"""
     # Expand paths if necessary
-    topology_dir = expand_path(configs.topology_dir)
+    topology_path = expand_path(configs.topology_path)
+    topology_dir = expand_path(os.path.dirname(topology_path))
     base_jar = expand_path(configs.base_jar)
-    output_jar = _build_output_path(configs.output_jar, topology_dir)
+
+    # Parse the topology
+    original_topology_spec = parse_original_topology(topology_path)
+
+    output_jar = _build_output_path(configs.output_jar,
+                                    original_topology_spec.name)
 
     # Extract list of packages to always include from configuration
     include_packages = None
@@ -278,6 +242,7 @@ def build_topology_jar(configs):
         tmp_dir = tempfile.mkdtemp()
         try:
             _create_pyleus_jar(
+                original_topology_spec=original_topology_spec,
                 topology_dir=topology_dir,
                 base_jar=base_jar,
                 output_jar=output_jar,
