@@ -22,7 +22,7 @@ topology:
         options:
             time_window: 10
             threshold: 170000 # Bytes/sec
-        tick_freq_secs: 1
+        tick_freq_secs: 2.5
         parallelism_hint: 3
         groupings:
             - fields_grouping:
