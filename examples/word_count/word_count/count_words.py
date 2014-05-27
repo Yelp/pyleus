@@ -24,10 +24,11 @@ class CountWordsBolt(SimpleBolt):
 
 
 if __name__ == '__main__':
-    CountWordsBolt().run()
     logging.basicConfig(
         level=logging.DEBUG,
         filename='/tmp/word_count_count_words.log',
         format="%(message)s",
         filemode='a',
     )
+
+    CountWordsBolt().run()
