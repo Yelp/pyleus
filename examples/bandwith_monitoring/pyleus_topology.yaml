@@ -6,8 +6,6 @@
 
 name: bandwith_monitoring
 
-workers: 5
-
 topology:
 
     - spout:
@@ -21,7 +19,7 @@ topology:
         module: bandwith_monitoring.traffic_aggregator
         options:
             time_window: 10
-            threshold: 170000 # Bytes/sec
+            threshold: 300000 # Bytes/sec
         tick_freq_secs: 2.5
         parallelism_hint: 3
         groupings:
