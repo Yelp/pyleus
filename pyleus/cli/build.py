@@ -80,7 +80,7 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
     specified in configuration. Then run `pip install -r requirements.txt`.
     """
     venv = VirtualenvProxy(
-        venv_name, tmp_dir,
+        os.path.join(tmp_dir, venv_name),
         system_site_packages=system_site_packages,
         pypi_index_url=pypi_index_url,
         verbose=verbose

@@ -58,8 +58,9 @@ class TestBuild(object):
                 build._validate_venv("foo", "foo/bar_venv")
         mock_exists.assert_called_once_with("foo/bar_venv")
 
+    @mock.patch.object(build, '_remove_pyleus_base_jar', autospec=True)
     @mock.patch.object(build, 'VirtualenvProxy', autospec=True)
-    def test__set_up_virtualenv_with_requirements(self, MockVenv):
+    def test__set_up_virtualenv_with_requirements(self, MockVenv, _):
         venv = MockVenv.return_value
         build._set_up_virtualenv(
             venv_name="foo",
@@ -77,8 +78,9 @@ class TestBuild(object):
         venv.install_package.assert_has_calls(expected_install)
         venv.install_from_requirements.assert_called_once_with("baz.txt")
 
+    @mock.patch.object(build, '_remove_pyleus_base_jar', autospec=True)
     @mock.patch.object(build, 'VirtualenvProxy', autospec=True)
-    def test__set_up_virtualenv_without_requirements(self, MockVenv):
+    def test__set_up_virtualenv_without_requirements(self, MockVenv, _):
         venv = MockVenv.return_value
         build._set_up_virtualenv(
             venv_name="foo",
