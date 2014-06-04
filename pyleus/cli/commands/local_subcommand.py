@@ -1,13 +1,7 @@
 """Sub-command for running a Pyleus topology in local mode.
 
 Args:
-    TOPOLOGY_PATH - If the path to a directory containing the topology source
-        code is specified, a Pyleus jar will be created on the fly before
-        execution. If the path to a Pyleus jar is specified, the jar will be
-        processed for execution immediately.
-
-Note: In order to trigger the local mode for the selected topology,
-PyleusTopologyBuilder needs to be called with the option <--local>.
+    TOPOLOGY_JAR - The path to the Pyleus jar to run.
 """
 from __future__ import absolute_import
 
