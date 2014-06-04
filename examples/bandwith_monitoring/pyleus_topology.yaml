@@ -19,8 +19,8 @@ topology:
         module: bandwith_monitoring.traffic_aggregator
         options:
             time_window: 10
-            threshold: 380000
-        tick_freq_secs: 1
+            threshold: 300000 # Bytes/sec
+        tick_freq_secs: 2.5
         parallelism_hint: 3
         groupings:
             - fields_grouping:
@@ -31,6 +31,6 @@ topology:
     - bolt:
         name: traffic-monitor
         module: bandwith_monitoring.traffic_monitor
-        tick_freq_secs: 2
+        tick_freq_secs: 3.9
         groupings:
             - global_grouping: traffic-aggregator

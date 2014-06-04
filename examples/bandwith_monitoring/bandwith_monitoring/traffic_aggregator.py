@@ -34,7 +34,7 @@ class TrafficAggregatorBolt(SimpleBolt):
         if self.time_window % self.conf.tick_tuple_freq != 0:
             raise ValueError("Time window must be a multiple of"
                              " tick_tuple_freq_secs")
-        self.N = self.time_window // self.conf.tick_tuple_freq
+        self.N = int(self.time_window / self.conf.tick_tuple_freq)
         self.slot_counters = defaultdict(lambda: SlotsCounter(self.N))
         self.curr = 0
 
