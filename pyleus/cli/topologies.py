@@ -2,14 +2,10 @@
 """
 from __future__ import absolute_import
 
-import os
 import zipfile
 
-from pyleus.cli.build import build_topology_jar
 from pyleus.cli.storm_cluster import LocalStormCluster
 from pyleus.cli.storm_cluster import StormCluster
-from pyleus.exception import TopologyError
-from pyleus.utils import expand_path
 
 
 def add_storm_cluster_ip_argument(parser):
@@ -47,24 +43,5 @@ def kill_topology(configs):
                 configs.jvm_opts).kill(configs.topology_name, configs.wait_time)
 
 
-def get_runnable_jar_path(configs):
-    """Parse command-line arguments, build a Pyleus jar from the topology
-    directory if it is the case, and return the path to the runnable jar.
-    """
-    topo_path = expand_path(configs.topology_dir)
-
-    if not os.path.exists(topo_path):
-        raise TopologyError(
-            "Topology not found: {0}".format(topo_path))
-
-    # if the path points to a directory, build a jar out of it
-    if os.path.isdir(topo_path):
-        return build_topology_jar(configs)
-
-    # if the file is actually a jar, just return its expanded path
-    elif zipfile.is_zipfile(topo_path):
-        return topo_path
-
-    raise TopologyError(
-        "The topology specified is nor a directory nor jar:{0}"
-        .format(topo_path))
+def is_jar(jar_path):
+    return zipfile.is_zipfile(jar_path)

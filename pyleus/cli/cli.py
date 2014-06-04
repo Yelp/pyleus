@@ -12,10 +12,18 @@ from pyleus.cli.commands.local_subcommand import LocalSubCommand
 from pyleus.cli.commands.submit_subcommand import SubmitSubCommand
 from pyleus.cli.commands.kill_subcommand import KillSubCommand
 
+SUB_COMMAND_CLASSES = [
+    BuildSubCommand,
+    ListSubCommand,
+    LocalSubCommand,
+    SubmitSubCommand,
+    KillSubCommand,
+]
+
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Python layer on top of Storm",
+        description="Python interface and tools for Storm",
         add_help=False)
     parser.add_argument(
         "-h", "--help", action="help",
@@ -23,13 +31,13 @@ def main():
     parser.add_argument(
         "-c", "--config", dest="config_file",
         default=None,
-        help="Pyleus configuration file")
+        help="Path to Pyleus configuration file")
     parser.add_argument(
         "-v", "--verbose", dest="verbose",
         default=False, action="store_true",
-        help="Verbose")
+        help="Verbose output")
     parser.add_argument(
-        "-V", "--version", action="version",
+        "--version", action="version",
         version="%(prog)s {0}".format(__version__),
         help="Show version number and exit")
 
@@ -37,12 +45,8 @@ def main():
         title="commands",
         metavar="COMMAND")
 
-    BuildSubCommand().init_subparser(subparsers)
-    ListSubCommand().init_subparser(subparsers)
-    LocalSubCommand().init_subparser(subparsers)
-    SubmitSubCommand().init_subparser(subparsers)
-    KillSubCommand().init_subparser(subparsers)
+    for cls in SUB_COMMAND_CLASSES:
+        cls().init_subparser(subparsers)
 
     args = parser.parse_args()
-
     args.func(args)

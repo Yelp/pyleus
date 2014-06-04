@@ -1,10 +1,7 @@
 """Sub-command for running a Pyleus topology on a Storm cluster.
 
 Args:
-    TOPOLOGY_PATH - If the path to a directory containing the topology source
-        code is specified, a Pyleus jar will be created on the fly before
-        execution. If the path to a Pyleus jar is specified, the jar will be
-        processed for execution immediately.
+    TOPOLOGY_JAR - The path to the Pyleus jar to run.
 """
 from __future__ import absolute_import
 
@@ -14,11 +11,9 @@ from pyleus.cli.commands.run_subcommand import RunSubCommand
 
 
 class SubmitSubCommand(RunSubCommand):
-    """Run subcommand class"""
 
     NAME = "submit"
-    DESCRIPTION = "Submit a Pyleus topology to a Storm cluster for execution"
-    HELP = "Submit a Pyleus topology to a Storm cluster for execution"
+    DESCRIPTION = "Submit a Pyleus topology to a Storm cluster"
 
     def add_specific_arguments(self, parser):
         add_storm_cluster_ip_argument(parser)
