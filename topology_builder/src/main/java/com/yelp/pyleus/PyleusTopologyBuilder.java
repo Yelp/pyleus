@@ -84,6 +84,10 @@ public class PyleusTopologyBuilder {
                 declarer.fieldsGrouping(component, stream, new Fields(fieldsArray));
             } else if (groupingType.equals("local_or_shuffle_grouping")) {
                 declarer.localOrShuffleGrouping(component, stream);
+            } else if (groupingType.equals("none_grouping")) {
+                declarer.noneGrouping(component, stream);
+            } else if (groupingType.equals("all_grouping")) {
+                declarer.allGrouping(component, stream);
             } else {
                 throw new RuntimeException(String.format("Unknown grouping type: %s", groupingType));
             }
