@@ -35,7 +35,7 @@ DEFAULTS = Configuration(
     output_jar=None,
     pypi_index_url=None,
     storm_cluster_ip=None,
-    storm_cmd_path="/usr/share/storm/bin/storm",
+    storm_cmd_path=None,
     system_site_packages=False,
     topology_path="pyleus_topology.yaml",
     topology_jar=None,
@@ -57,7 +57,8 @@ def _validate_config_file(config_file):
 
 
 def update_configuration(config, update_dict):
-    """Update configuration with new values passed as dictionary"""
+    """Update configuration with new values passed as dictionary.
+    returns: new configuration namedtuple"""
     tmp = config._asdict()
     tmp.update(update_dict)
     return Configuration(**tmp)
