@@ -43,6 +43,8 @@ class TopologySpec(object):
             self.message_timeout_secs = specs["message_timeout_secs"]
         if "logging_config" in specs:
             self.logging_config = specs["logging_config"]
+        if "requirements_filename" in specs:
+            self.requirements_filename = specs["requirements_filename"]
 
         self.topology = []
         for component in specs["topology"]:
