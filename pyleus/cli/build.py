@@ -15,6 +15,8 @@ import yaml
 import zipfile
 
 from pyleus import __version__
+from pyleus import BASE_JAR
+from pyleus import BASE_JAR_INSTALL_DIR
 from pyleus.cli.topology_spec import TopologySpec
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
 from pyleus.storm.component import DESCRIBE_OPT
@@ -72,6 +74,13 @@ def _validate_venv(topology_dir, venv):
         raise InvalidTopologyError("Topology directory must not contain a "
                                    "file named {0}".format(venv))
 
+def _remove_pyleus_base_jar(venv):
+    """Remove the Pyleus base jar from the virtualenv since it's redundant and
+    takes up space. See PYLEUS-74.
+    """
+    base_jar_path = os.path.join(venv.path, BASE_JAR_INSTALL_DIR, BASE_JAR)
+    os.remove(base_jar_path)
+
 
 def _set_up_virtualenv(venv_name, tmp_dir, req,
                        include_packages, system_site_packages,
@@ -80,7 +89,7 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
     specified in configuration. Then run `pip install -r requirements.txt`.
     """
     venv = VirtualenvProxy(
-        venv_name, tmp_dir,
+        os.path.join(tmp_dir, venv_name),
         system_site_packages=system_site_packages,
         pypi_index_url=pypi_index_url,
         verbose=verbose
@@ -95,6 +104,8 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
 
     if req is not None:
         venv.install_from_requirements(req)
+
+    _remove_pyleus_base_jar(venv)
 
     return venv
 

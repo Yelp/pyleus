@@ -10,8 +10,7 @@ from pyleus.cli import virtualenv_proxy
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
 
 
-VENV_NAME = "venv"
-VENV_PATH = "/tmp/my/beloved"
+VENV_PATH = "/tmp/my/beloved/venv"
 PYPI_URL = "http://pypi-ninja.ninjacorp.com/simple"
 
 
@@ -26,7 +25,6 @@ class TestVirtualenvProxyTopLevelFunctions(object):
         with pytest.raises(exception.VirtualenvError) as exc_info:
             virtualenv_proxy._exec_shell_cmd(
                 "bash_ninja",
-                cwd="foo",
                 stdout=42,
                 stderr=666,
                 err_msg="bar",
@@ -34,7 +32,7 @@ class TestVirtualenvProxyTopLevelFunctions(object):
 
         assert "bar" in str(exc_info.value)
         mock_popen.assert_called_once_with(
-            "bash_ninja", cwd="foo", stdout=42, stderr=666)
+            "bash_ninja", stdout=42, stderr=666)
         mock_proc.communicate.assert_called_once_with()
 
 
@@ -44,18 +42,12 @@ class TestVirtualenvProxyCreation(object):
     @mock.patch.object(VirtualenvProxy, '_create_virtualenv', autospec=True)
     def test___init__(self, mock_create, mock_open):
         mock_open.return_value = 42
-        venv = VirtualenvProxy(
-            VENV_NAME,
-            VENV_PATH,
-            verbose=False)
+        venv = VirtualenvProxy(VENV_PATH, verbose=False)
         mock_open.assert_called_once_with(os.devnull, "w")
         assert venv._out_stream == 42
         mock_create.assert_called_once_with(venv)
 
-        venv = VirtualenvProxy(
-            VENV_NAME,
-            VENV_PATH,
-            verbose=True)
+        venv = VirtualenvProxy(VENV_PATH, verbose=True)
         assert mock_open.call_count == 1
         assert venv._out_stream is None
 
@@ -63,12 +55,11 @@ class TestVirtualenvProxyCreation(object):
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
     def test__create_virtualenv_system_site_packages(
             self, mock_cmd, mock_open):
-        venv = VirtualenvProxy(
-            VENV_NAME, VENV_PATH,
-            system_site_packages=True, verbose=True)
+        venv = VirtualenvProxy(VENV_PATH,
+                               system_site_packages=True,
+                               verbose=True)
         mock_cmd.assert_called_once_with(
-            ["virtualenv", VENV_NAME, "--system-site-packages"],
-            cwd=VENV_PATH,
+            ["virtualenv", VENV_PATH, "--system-site-packages"],
             stdout=venv._out_stream,
             stderr=venv._err_stream,
             err_msg=mock.ANY
@@ -78,12 +69,11 @@ class TestVirtualenvProxyCreation(object):
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
     def test__create_virtualenv_no_system_site_packages(
             self, mock_cmd, mock_open):
-        venv = VirtualenvProxy(
-            VENV_NAME, VENV_PATH,
-            system_site_packages=False, verbose=True)
+        venv = VirtualenvProxy(VENV_PATH,
+                               system_site_packages=False,
+                               verbose=True)
         mock_cmd.assert_called_once_with(
-            ["virtualenv", VENV_NAME],
-            cwd=VENV_PATH,
+            ["virtualenv", VENV_PATH],
             stdout=venv._out_stream,
             stderr=venv._err_stream,
             err_msg=mock.ANY
@@ -96,22 +86,19 @@ class TestVirtualenvProxyMethods(object):
     @mock.patch.object(__builtin__, 'open', autospec=True)
     @mock.patch.object(VirtualenvProxy, '_create_virtualenv', autospec=True)
     def setup_virtualenv(self, mock_create, mock_open):
-        self.venv = VirtualenvProxy(
-            VENV_NAME,
-            VENV_PATH,
-            pypi_index_url=PYPI_URL,
-            verbose=False)
+        self.venv = VirtualenvProxy(VENV_PATH,
+                                    pypi_index_url=PYPI_URL,
+                                    verbose=False)
 
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
     def test_install_package(self, mock_cmd):
         self.venv.install_package("Ninja==7.7.7")
         mock_cmd.assert_called_once_with(
             [
-                "{0}/bin/pip".format(VENV_NAME), "install", "Ninja==7.7.7",
+                "{0}/bin/pip".format(VENV_PATH), "install", "Ninja==7.7.7",
                 "-i", PYPI_URL,
                 '--use-wheel',
             ],
-            cwd=VENV_PATH,
             stdout=self.venv._out_stream,
             stderr=self.venv._err_stream,
             err_msg=mock.ANY
@@ -122,12 +109,11 @@ class TestVirtualenvProxyMethods(object):
         self.venv.install_from_requirements("foo.txt")
         mock_cmd.assert_called_once_with(
             [
-                "{0}/bin/pip".format(VENV_NAME), "install",
+                "{0}/bin/pip".format(VENV_PATH), "install",
                 "-r", "foo.txt",
                 "-i", PYPI_URL,
                 '--use-wheel',
             ],
-            cwd=VENV_PATH,
             stdout=self.venv._out_stream,
             stderr=self.venv._err_stream,
             err_msg=mock.ANY
