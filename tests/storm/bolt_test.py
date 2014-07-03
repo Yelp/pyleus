@@ -131,42 +131,16 @@ class TestSimpleBolt(ComponentTestCase):
         patches = contextlib.nested(
             mock.patch.object(self.instance, 'process_tick'),
             mock.patch.object(self.instance, 'process_tuple'),
-            mock.patch.object(self.instance, 'fail'),
             mock.patch.object(self.instance, 'ack'),
         )
 
         request.addfinalizer(lambda: patches.__exit__(None, None, None))
-        (self.mock_process_tick, self.mock_process_tuple,
-                         self.mock_fail, self.mock_ack) = patches.__enter__()
-
-    def test_fail(self):
-        self.mock_process_tick.side_effect = Exception()
-        self.mock_process_tuple.side_effect = Exception()
-
-        try:
-            self.instance._process_tuple(self.TUPLE)
-        except:
-            # Exception expected
-            pass
-
-        try:
-            self.instance._process_tuple(self.TICK)
-        except:
-            # Exception expected
-            pass
-
-        self.mock_fail.assert_has_calls([
-            call(self.TUPLE),
-            call(self.TICK),
-        ])
-
-        assert not self.mock_ack.called
+        self.mock_process_tick, self.mock_process_tuple, self.mock_ack \
+            = patches.__enter__()
 
     def test_ack(self):
         self.instance._process_tuple(self.TICK)
         self.instance._process_tuple(self.TUPLE)
-
-        assert not self.mock_fail.called
 
         self.mock_ack.assert_has_calls([
             call(self.TICK),

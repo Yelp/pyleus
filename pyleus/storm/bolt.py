@@ -72,7 +72,7 @@ class Bolt(Component):
 
 
 class SimpleBolt(Bolt):
-    """A Bolt that automatically acks or fails tuples.
+    """A Bolt that automatically acks tuples.
 
     Implement process_tick() in a subclass to handle tick tuples with a nicer
     API.
@@ -83,13 +83,9 @@ class SimpleBolt(Bolt):
         pass
 
     def _process_tuple(self, tup):
-        try:
-            if is_tick(tup):
-                self.process_tick()
-            else:
-                self.process_tuple(tup)
-        except:
-            self.fail(tup)
-            raise
+        if is_tick(tup):
+            self.process_tick()
         else:
-            self.ack(tup)
+            self.process_tuple(tup)
+
+        self.ack(tup)
