@@ -110,14 +110,16 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
     return venv
 
 
-def _assemble_full_topology_yaml(spec, venv):
+def _assemble_full_topology_yaml(spec, venv, resources_dir):
     """Assemble a full version of the topology yaml file given by the user
     adding to it the information coming from the python source files.
     """
     for component in spec.topology:
         if component.type == "python":
-            module_spec = yaml.load(venv.execute_module(
-                component.module, DESCRIBE_OPT))
+            description = venv.execute_module(module=component.module,
+                                              args=[DESCRIBE_OPT],
+                                              cwd=resources_dir)
+            module_spec = yaml.load(description)
             component.update_from_module(module_spec)
 
     spec.verify_groupings()
@@ -182,13 +184,13 @@ def _create_pyleus_jar(original_topology_spec, topology_dir, base_jar,
     # Add the topology directory skipping yaml and requirements
     _copy_dir_content(
         src=topology_dir,
-        dst=os.path.join(tmp_dir, RESOURCES_PATH),
+        dst=resources_dir,
         exclude=[venv, req, output_jar],
     )
 
     venv = _set_up_virtualenv(
         venv_name=VIRTUALENV_NAME,
-        tmp_dir=os.path.join(tmp_dir, RESOURCES_PATH),
+        tmp_dir=resources_dir,
         req=req,
         include_packages=include_packages,
         system_site_packages=system_site_packages,
@@ -197,7 +199,10 @@ def _create_pyleus_jar(original_topology_spec, topology_dir, base_jar,
 
     # Assemble the full version of the topolgy yaml file from the user yaml and
     # the python code
-    new_yaml = _assemble_full_topology_yaml(original_topology_spec, venv)
+    new_yaml = _assemble_full_topology_yaml(
+        spec=original_topology_spec,
+        venv=venv,
+        resources_dir=resources_dir)
 
     # Copy the new yaml file into its directory, overwriting the old one
     jar_yaml = os.path.join(resources_dir, YAML_FILENAME)
