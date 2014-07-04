@@ -123,7 +123,8 @@ class ComponentSpec(object):
         """Update the component specs with the ones coming from the python
         module and perform some additional validation.
         """
-        if _as_set(specs) != set(["component_type", "output_fields", "options"]):
+        required_attributes = ["component_type", "output_fields", "options"]
+        if _as_set(specs) != set(required_attributes):
             raise InvalidTopologyError(
                 "[{0}] Python class should specify attributes 'output_fields'"
                 " and 'options'. Found: {1}. Are you inheriting from Bolt or"
@@ -133,7 +134,7 @@ class ComponentSpec(object):
             raise InvalidTopologyError(
                 "[{0}] Component type mismatch. Python class: {1}. Yaml"
                 " file: {2}".format(self.name, specs["component_type"],
-                self.COMPONENT))
+                                    self.COMPONENT))
 
         self.output_fields = specs["output_fields"]
 
@@ -156,8 +157,9 @@ class BoltSpec(ComponentSpec):
 
     COMPONENT = "bolt"
 
-    GROUPINGS_LIST = ["global_grouping", "shuffle_grouping", "fields_grouping",
-                      "local_or_shuffle_grouping"]
+    GROUPINGS_LIST = [
+        "global_grouping", "shuffle_grouping", "fields_grouping",
+        "local_or_shuffle_grouping", "none_grouping", "all_grouping"]
 
     def __init__(self, specs):
         """Bolt specific initialization. Bolts may have a grouping section"""
@@ -207,8 +209,12 @@ class BoltSpec(ComponentSpec):
 
     def _verify_grouping_format(self, group_type, group_spec):
         """Verify grouping format based on the kind of grouping."""
-        if group_type in ("global_grouping", "shuffle_grouping",
-                          "local_or_shuffle_grouping"):
+        if group_type in (
+                "global_grouping",
+                "shuffle_grouping",
+                "local_or_shuffle_grouping",
+                "none_grouping",
+                "all_grouping"):
             if _as_set(group_spec) != set(["component", "stream"]):
                 raise InvalidTopologyError(
                     "[{0}] [{1}] Unrecognized format: {2}".format(
