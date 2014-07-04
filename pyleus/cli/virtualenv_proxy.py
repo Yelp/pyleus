@@ -17,7 +17,11 @@ from pyleus.exception import VirtualenvError
 
 
 def _exec_shell_cmd(cmd, stdout, stderr, err_msg):
-    """Interface to any bash command"""
+    """Execute a shell command, returning the output
+
+    If the call has a non-zero return code, raise a VirtualenError with
+    err_msg.
+    """
     proc = subprocess.Popen(cmd, stdout=stdout, stderr=stderr)
     out_data, _ = proc.communicate()
     if proc.returncode != 0:
@@ -88,12 +92,14 @@ class VirtualenvProxy(object):
             err_msg="Failed to install dependencies for this topology."
             " Run with --verbose for detailed info.")
 
-    def execute_module(self, module, *args):
+    def execute_module(self, module, args, cwd=None):
         """Call "virtualenv/interpreter -m" to execute a python module."""
         cmd = [os.path.join(self.path, "bin", "python"), "-m", module]
         cmd += args
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                cwd=cwd)
         out_data, err_data = proc.communicate()
         if proc.returncode != 0:
             raise VirtualenvError("Failed to execute Python module: {0}."
