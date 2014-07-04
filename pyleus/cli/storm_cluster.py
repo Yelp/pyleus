@@ -116,14 +116,14 @@ class LocalStormCluster(object):
     All the requests are basically translated into Storm commands.
     """
 
-    def run(self, jar_path, debug, jvm_opts):
+    def run(self, storm_cmd_path, jar_path, debug, jvm_opts):
         """Run locally a pyleus topology jar
 
         Note: In order to trigger the local mode for the selcted topology,
         PyleusTopologyBuilder needs to be called with the option <--local>.
         """
         storm_cmd = [
-            self.storm_cmd_path,
+            storm_cmd_path,
             "jar",
             jar_path,
             TOPOLOGY_BUILDER_CLASS,
