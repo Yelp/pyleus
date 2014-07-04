@@ -11,7 +11,6 @@ from pyleus.exception import ConfigurationError
 from pyleus.exception import StormError
 
 
-STORM_PATH = "/usr/share/storm/bin/storm"
 TOPOLOGY_BUILDER_CLASS = "com.yelp.pyleus.PyleusTopologyBuilder"
 LOCAL_OPTION = "--local"
 DEBUG_OPTION = "--debug"
@@ -49,8 +48,10 @@ class StormCluster(object):
     """Object representing an interface to a Storm cluster.
     All the requests are basically translated into Storm commands.
     """
-    def __init__(self, nimbus_ip, verbose, jvm_opts):
+    def __init__(self, storm_cmd_path, nimbus_ip, verbose, jvm_opts):
         """Create the cluster object"""
+
+        self.storm_cmd_path = storm_cmd_path
 
         if nimbus_ip is None:
             raise ConfigurationError(
@@ -70,7 +71,7 @@ class StormCluster(object):
         if not verbose:
             out_stream = open(os.devnull, "w")
 
-        storm_cmd = [STORM_PATH]
+        storm_cmd = [self.storm_cmd_path]
         storm_cmd += cmd
         storm_cmd += ["-c", "nimbus.host={0}".format(self.nimbus_ip)]
 
@@ -115,14 +116,19 @@ class LocalStormCluster(object):
     All the requests are basically translated into Storm commands.
     """
 
-    def run(self, jar_path, debug, jvm_opts):
+    def run(self, storm_cmd_path, jar_path, debug, jvm_opts):
         """Run locally a pyleus topology jar
 
         Note: In order to trigger the local mode for the selcted topology,
         PyleusTopologyBuilder needs to be called with the option <--local>.
         """
         storm_cmd = [
-            STORM_PATH, "jar", jar_path, TOPOLOGY_BUILDER_CLASS, LOCAL_OPTION]
+            storm_cmd_path,
+            "jar",
+            jar_path,
+            TOPOLOGY_BUILDER_CLASS,
+            LOCAL_OPTION
+        ]
 
         if debug:
             storm_cmd.append(DEBUG_OPTION)

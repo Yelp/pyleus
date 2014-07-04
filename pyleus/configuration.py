@@ -21,8 +21,8 @@ CONFIG_FILES_PATH = [
 Configuration = collections.namedtuple(
     "Configuration",
     "base_jar config_file debug func include_packages output_jar \
-     pypi_index_url storm_cluster_ip system_site_packages topology_path \
-     topology_jar topology_name verbose wait_time jvm_opts"
+     pypi_index_url storm_cluster_ip storm_cmd_path system_site_packages \
+     topology_path topology_jar topology_name verbose wait_time jvm_opts"
 )
 
 
@@ -35,6 +35,7 @@ DEFAULTS = Configuration(
     output_jar=None,
     pypi_index_url=None,
     storm_cluster_ip=None,
+    storm_cmd_path=None,
     system_site_packages=False,
     topology_path="pyleus_topology.yaml",
     topology_jar=None,
@@ -56,7 +57,8 @@ def _validate_config_file(config_file):
 
 
 def update_configuration(config, update_dict):
-    """Update configuration with new values passed as dictionary"""
+    """Update configuration with new values passed as dictionary.
+    returns: new configuration namedtuple"""
     tmp = config._asdict()
     tmp.update(update_dict)
     return Configuration(**tmp)

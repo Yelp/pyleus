@@ -9,8 +9,28 @@ import sys
 from pyleus.configuration import load_configuration
 from pyleus.configuration import update_configuration
 from pyleus.exception import command_error_fmt
+from pyleus.exception import ConfigurationError
 from pyleus.exception import PyleusError
 from pyleus.utils import expand_path
+from pyleus.utils import search_storm_cmd_path
+
+
+def _ensure_storm_path_in_configs(configs):
+    """Ensure that the storm executable path is in the configuration.
+    If not present, search for it and update the config.
+    raises: ConfigurationError if unable to locate storm path
+    """
+
+    if configs.storm_cmd_path is not None:
+        return configs
+
+    storm_cmd_path = search_storm_cmd_path()
+    if storm_cmd_path is None:
+        raise ConfigurationError(
+            "Unable to locate Storm executable. Please either install "
+            "Storm or specify its path in your configuration file")
+
+    return update_configuration(configs, {"storm_cmd_path": storm_cmd_path})
 
 
 class SubCommand(object):
@@ -74,6 +94,8 @@ class SubCommand(object):
             configs = load_configuration(arguments.config_file)
         except PyleusError as e:
             self.error(e)
+
+        configs = _ensure_storm_path_in_configs(configs)
 
         # Update configuration with command line values
         configs = update_configuration(configs, vars(arguments))
