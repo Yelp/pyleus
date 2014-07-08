@@ -2,9 +2,11 @@ from __future__ import absolute_import
 
 import argparse
 from collections import deque
+import logging
 import logging.config
 import os
 import sys
+import traceback
 
 try:
     import simplejson as json
@@ -20,6 +22,9 @@ COMPONENT_OPTIONS_OPT = "--options"
 PYLEUS_CONFIG_OPT = "--pyleus-config"
 
 DEFAULT_LOGGING_CONFIG_PATH = "pyleus_logging.conf"
+
+
+log = logging.getLogger(__name__)
 
 
 def _is_namedtuple(obj):
@@ -141,9 +146,13 @@ class Component(object):
         self.pyleus_config = json.loads(args.pyleus_config) \
             if args.pyleus_config else {}
 
-        self.initialize_logging()
-        self.setup_component()
-        self.run_component()
+        try:
+            self.initialize_logging()
+            self.setup_component()
+            self.run_component()
+        except Exception as e:
+            log.exception("Exception in {0}.run".format(self.COMPONENT_TYPE))
+            self.error(traceback.format_exc(e))
 
     def run_component(self):
         """Run the main loop of the component. Implemented in the Bolt and

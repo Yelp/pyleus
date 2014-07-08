@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import logging
-import traceback
 
 from pyleus.storm import StormWentAwayError
 from pyleus.storm.component import Component
@@ -44,11 +43,8 @@ class Spout(Component):
                 msg = self.read_command()
                 self._handle_command(msg)
                 self._sync()
-        except StormWentAwayError as e:
+        except StormWentAwayError:
             log.warning("Disconnected from Storm. Exiting.")
-        except Exception as e:
-            log.exception("Exception in Spout.run")
-            self.error(traceback.format_exc(e))
 
     def emit(self, values, stream=None, tup_id=None, direct_task=None):
         """Build and send an output tuple command dict; return the tasks to

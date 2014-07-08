@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import logging
-import traceback
 
 from pyleus.storm import is_tick, StormWentAwayError
 from pyleus.storm.component import Component
@@ -31,11 +30,8 @@ class Bolt(Component):
             while True:
                 tup = self.read_tuple()
                 self._process_tuple(tup)
-        except StormWentAwayError as e:
+        except StormWentAwayError:
             log.warning("Disconnected from Storm. Exiting.")
-        except Exception as e:
-            log.exception("Exception in Bolt.run")
-            self.error(traceback.format_exc(e))
 
     def ack(self, tup):
         self.send_command('ack', {
