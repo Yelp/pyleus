@@ -165,11 +165,11 @@ def _create_pyleus_jar(original_topology_spec, topology_dir, base_jar,
         - If using virtualenv, create it and install dependencies
         - Re-pack the temporary directory into the final JAR
     """
-    venv = os.path.join(topology_dir, VIRTUALENV_NAME)
-    try:
-        requirements_filename = original_topology_spec.requirements_filename
-    except AttributeError:
+    requirements_filename = original_topology_spec.requirements_filename
+    if not requirements_filename:
         requirements_filename = DEFAULT_REQUIREMENTS_FILENAME
+
+    venv = os.path.join(topology_dir, VIRTUALENV_NAME)
     req = os.path.join(topology_dir, requirements_filename)
     if not os.path.isfile(req):
         req = None
