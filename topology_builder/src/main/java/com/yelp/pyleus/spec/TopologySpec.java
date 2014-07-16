@@ -15,6 +15,7 @@ public class TopologySpec {
     public Integer message_timeout_secs = -1;
     public Integer ackers = -1;
     public String logging_config;
+    public String requirements_filename; // Not used in Java.
 
     private static Constructor getConstructor() {
         Constructor constructor = new Constructor(TopologySpec.class);

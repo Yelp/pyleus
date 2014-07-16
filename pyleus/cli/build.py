@@ -26,7 +26,7 @@ from pyleus.utils import expand_path
 
 RESOURCES_PATH = "resources"
 YAML_FILENAME = "pyleus_topology.yaml"
-REQUIREMENTS_FILENAME = "requirements.txt"
+DEFAULT_REQUIREMENTS_FILENAME = "requirements.txt"
 VIRTUALENV_NAME = "pyleus_venv"
 
 
@@ -86,7 +86,7 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
                        include_packages, system_site_packages,
                        pypi_index_url, verbose):
     """Create a virtualenv with the specified options and the default packages
-    specified in configuration. Then run `pip install -r requirements.txt`.
+    specified in configuration. Then run `pip install -r [requirements file]`.
     """
     venv = VirtualenvProxy(
         os.path.join(tmp_dir, venv_name),
@@ -140,7 +140,7 @@ def _content_to_copy(src, exclude):
 
 def _copy_dir_content(src, dst, exclude):
     """Copy the content of a directory excluding the yaml file
-    and requirements.txt exclude_req is True.
+    and requirements file.
 
     This functions is used instead of shutil.copytree() because
     the latter always creates a top level directory, while only
@@ -167,8 +167,12 @@ def _create_pyleus_jar(original_topology_spec, topology_dir, base_jar,
         - If using virtualenv, create it and install dependencies
         - Re-pack the temporary directory into the final JAR
     """
+    requirements_filename = original_topology_spec.requirements_filename
+    if not requirements_filename:
+        requirements_filename = DEFAULT_REQUIREMENTS_FILENAME
+
     venv = os.path.join(topology_dir, VIRTUALENV_NAME)
-    req = os.path.join(topology_dir, REQUIREMENTS_FILENAME)
+    req = os.path.join(topology_dir, requirements_filename)
     if not os.path.isfile(req):
         req = None
 

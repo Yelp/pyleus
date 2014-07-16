@@ -1,5 +1,5 @@
 """Sub-command for building a standalone, self-contained Pyleus topology
-JAR ready to be submitted to a Storm cluster. If an optional requirements.txt
+JAR ready to be submitted to a Storm cluster. If an optional requirements file
 is provided, Pyleus will use virtualenv to collect and provide Python
 dependencies to the running topology.
 

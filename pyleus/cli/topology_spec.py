@@ -44,6 +44,11 @@ class TopologySpec(object):
         if "logging_config" in specs:
             self.logging_config = specs["logging_config"]
 
+        if "requirements_filename" in specs:
+            self.requirements_filename = specs["requirements_filename"]
+        else:
+            self.requirements_filename = None
+
         self.topology = []
         for component in specs["topology"]:
             if "spout" in component:
