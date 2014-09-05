@@ -8,6 +8,8 @@ import os
 import sys
 import traceback
 
+import msgpack
+
 try:
     import simplejson as json
     _ = json # pyflakes
@@ -98,6 +100,10 @@ class Component(object):
 
         self._pending_commands = deque()
         self._pending_taskids = deque()
+        # This is hard coded but we should be able to configure this
+        # eventually. The same applies to the java part in topology builder
+        self.use_messagepack = True
+        self._unpacker = msgpack.Unpacker(self._input_stream)
 
     def describe(self):
         """Print to stdout a JSON descrption of the component.
@@ -164,8 +170,14 @@ class Component(object):
         """The Storm multilang protocol consists of JSON messages followed by
         a newline and "end\n".
         """
-        lines = []
 
+        if self.use_messagepack:
+            return self._unpacker.unpack()
+        else:
+            return self._read_from_json()
+
+    def _read_from_json(self):
+        lines = []
         while True:
             line = self._input_stream.readline()
             if not line:
@@ -235,8 +247,11 @@ class Component(object):
         """Serialize to JSON a message dictionary and write it to the output
         stream, followed by a newline and "end\n".
         """
-        self._output_stream.write(json.dumps(msg_dict) + '\n')
-        self._output_stream.write("end\n")
+        if self.use_messagepack:
+            msgpack.pack(msg_dict, self._output_stream)
+        else:
+            self._output_stream.write(json.dumps(msg_dict) + '\n')
+            self._output_stream.write("end\n")
         self._output_stream.flush()
 
     def _create_pidfile(self, pid_dir, pid):
