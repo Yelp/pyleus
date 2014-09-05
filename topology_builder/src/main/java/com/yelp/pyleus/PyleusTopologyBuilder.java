@@ -306,6 +306,8 @@ public class PyleusTopologyBuilder {
                 conf.setNumAckers(spec.ackers);
             }
 
+            conf.put(Config.TOPOLOGY_MULTILANG_SERIALIZER, "com.yelp.pyleus.serializer.MessageSerializer");
+
             try {
                 StormSubmitter.submitTopology(spec.name, conf, topology);
             } catch (Exception e) {
