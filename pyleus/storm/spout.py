@@ -46,7 +46,10 @@ class Spout(Component):
         except StormWentAwayError:
             log.warning("Disconnected from Storm. Exiting.")
 
-    def emit(self, values, stream=None, tup_id=None, direct_task=None):
+    def emit(
+            self, values,
+            stream=None, tup_id=None,
+            direct_task=None, need_task_ids=True):
         """Build and send an output tuple command dict; return the tasks to
         which the tuple was sent by Storm.
 
@@ -67,5 +70,13 @@ class Spout(Component):
         if direct_task is not None:
             command_dict['task'] = direct_task
 
+        # By default, Storm sends back to the component the task ids of the
+        # tasks receiving the tuple. If need_task_ids is set to False, Storm
+        # won't send the task ids for that message
+        if not need_task_ids:
+            command_dict['need_task_ids'] = False
+
         self.send_command('emit', command_dict)
-        return self.read_taskid()
+
+        if need_task_ids:
+            return self.read_taskid()
