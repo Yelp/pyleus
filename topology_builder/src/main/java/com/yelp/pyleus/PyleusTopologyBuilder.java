@@ -203,6 +203,7 @@ public class PyleusTopologyBuilder {
 
     private static void runLocally(final String topologyName, final StormTopology topology, boolean debug) {
         Config conf = new Config();
+        conf.put(Config.TOPOLOGY_MULTILANG_SERIALIZER, "com.yelp.pyleus.serializer.MessageSerializer");
         conf.setDebug(debug);
         conf.setMaxTaskParallelism(1);
 
@@ -284,6 +285,7 @@ public class PyleusTopologyBuilder {
             runLocally(spec.name, topology, debug);
         } else {
             Config conf = new Config();
+            conf.put(Config.TOPOLOGY_MULTILANG_SERIALIZER, "com.yelp.pyleus.serializer.MessageSerializer");
             conf.setDebug(false);
 
             if (spec.max_shellbolt_pending != -1) {
@@ -305,8 +307,6 @@ public class PyleusTopologyBuilder {
             if (spec.ackers != -1) {
                 conf.setNumAckers(spec.ackers);
             }
-
-            conf.put(Config.TOPOLOGY_MULTILANG_SERIALIZER, "com.yelp.pyleus.serializer.MessageSerializer");
 
             try {
                 StormSubmitter.submitTopology(spec.name, conf, topology);
