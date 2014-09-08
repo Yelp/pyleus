@@ -103,7 +103,8 @@ class Component(object):
         # This is hard coded but we should be able to configure this
         # eventually. The same applies to the java part in topology builder
         self.use_messagepack = True
-        self._unpacker = msgpack.Unpacker(self._input_stream)
+        self._unpacker = msgpack.Unpacker()
+        self.msg_generator = self._read_from_msgpack()
 
     def describe(self):
         """Print to stdout a JSON descrption of the component.
@@ -170,11 +171,20 @@ class Component(object):
         """The Storm multilang protocol consists of JSON messages followed by
         a newline and "end\n".
         """
-
         if self.use_messagepack:
-            return self._unpacker.unpack()
+            return next(self.msg_generator)
         else:
             return self._read_from_json()
+
+    def _read_from_msgpack(self):
+        while True:
+            line = os.read(self._input_stream.fileno(), 1024 ** 2)
+            if not line:
+                # Handle EOF, which usually means Storm went away
+                raise StormWentAwayError()
+            self._unpacker.feed(line)
+            for i in self._unpacker:
+                yield i
 
     def _read_from_json(self):
         lines = []

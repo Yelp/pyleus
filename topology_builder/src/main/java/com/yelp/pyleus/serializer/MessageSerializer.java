@@ -21,19 +21,22 @@ import backtype.storm.utils.Utils;
 import org.apache.log4j.Logger;
 import org.msgpack.MessagePack;
 import org.msgpack.template.Template;
+import org.msgpack.unpacker.Converter;
 
 import static org.msgpack.template.Templates.tMap;
 import static org.msgpack.template.Templates.TString;
 import static org.msgpack.template.Templates.TValue;
+import static org.msgpack.template.Templates.tList;
 
 import org.msgpack.type.Value;
 
 public class MessageSerializer implements ISerializer {
-    public static Logger LOG = Logger.getLogger(MessageSerializer.class);
+	public static Logger LOG = Logger.getLogger(MessageSerializer.class);
 	private DataOutputStream processIn;
 	private InputStream processOut;
 	private MessagePack msgPack;
 	private Template<Map<String,Value>> mapTmpl;
+	private Template<List<Value>> listTmpl;
 
 	@Override
 	public void initialize(OutputStream processIn, InputStream processOut) {
@@ -41,6 +44,7 @@ public class MessageSerializer implements ISerializer {
 		this.processOut = processOut;
 		this.msgPack = new MessagePack();
 		this.mapTmpl = tMap(TString, TValue);
+		this.listTmpl = tList(TValue);
 	}
 
 	private Map<String, Object> getMapFromContext(TopologyContext context) {
@@ -52,19 +56,19 @@ public class MessageSerializer implements ISerializer {
 
 	@Override
 	public Number connect(Map conf, TopologyContext context) throws IOException,
-			NoOutputException {
+	NoOutputException {
 		// Create the setup message for the initial handshake
 		Map<String, Object> setupmsg = new HashMap<String, Object>();
 		setupmsg.put("conf", conf);
-        setupmsg.put("pidDir", context.getPIDDir());
+		setupmsg.put("pidDir", context.getPIDDir());
 		setupmsg.put("context", getMapFromContext(context));
 		// write the message to the pipe
-        LOG.info("Writing configuration to shell component");
+		//LOG.info("Writing configuration to shell component");
 		writeMessage(setupmsg);
 
-        LOG.info("Waiting for pid from component");
+		//LOG.info("Waiting for pid from component");
 		Map<String, Value> pidmsg = readMessage();
-        LOG.info("Shell component connection established.");
+		//LOG.info("Shell component connection established.");
 		Value pid = pidmsg.get("pid");
 		return (Number) pid.asIntegerValue().getInt();
 	}
@@ -75,42 +79,67 @@ public class MessageSerializer implements ISerializer {
 		Map<String, Value> msg = readMessage();
 		ShellMsg shellMsg = new ShellMsg();
 
-		String command = msg.get("commang").asRawValue().getString();
+		String command = msg.get("command").asRawValue().getString();
 		shellMsg.setCommand(command);
 
-        Object id = msg.get("id");
-        shellMsg.setId(id);
+		Object id = null;
+		Value valueId = msg.get("id");
+		if (valueId != null) {
+			if (valueId.isIntegerValue()) {
+				id = msg.get("id").asIntegerValue().toString();
+			} else {
+				id = valueId.asRawValue().getString();
+			}
+		}
+		shellMsg.setId(id);
 
-        String log = msg.get("msg").asRawValue().getString();
-        shellMsg.setMsg(log);
+		Value log = msg.get("msg");
+		if(log != null) {
+			shellMsg.setMsg(log.asRawValue().getString());
+		}
 
-        String stream = msg.get("stream").asRawValue().getString();
-        if (stream == null)
-            stream = Utils.DEFAULT_STREAM_ID;
-        shellMsg.setStream(stream);
+		String stream = Utils.DEFAULT_STREAM_ID;
+		Value streamValue = msg.get("stream");
+		if (streamValue != null) {
+			stream = streamValue.asRawValue().getString();
+		}
+		shellMsg.setStream(stream);
 
-        Object taskObj = msg.get("task");
-        if (taskObj != null) {
-            shellMsg.setTask((Long) taskObj);
-        } else {
-            shellMsg.setTask(0);
-        }
+		Object taskObj = msg.get("task");
+		if (taskObj != null) {
+			shellMsg.setTask((Long) taskObj);
+		} else {
+			shellMsg.setTask(0);
+		}
 
-        Value need_task_ids = msg.get("need_task_ids");
-        if (need_task_ids == null || (need_task_ids).asBooleanValue().getBoolean()) {
-            shellMsg.setNeedTaskIds(true);
-        } else {
-            shellMsg.setNeedTaskIds(false);
-        }
+		Value need_task_ids = msg.get("need_task_ids");
+		if (need_task_ids == null || (need_task_ids).asBooleanValue().getBoolean()) {
+			shellMsg.setNeedTaskIds(true);
+		} else {
+			shellMsg.setNeedTaskIds(false);
+		}
 
-        shellMsg.addTuple(msg.get("tuple").asArrayValue().getElementArray());
+		Value tupleValue = msg.get("tuple");
+		if (tupleValue != null) {
+			for (Value element:tupleValue.asArrayValue()) {
+				//Converter converter = new Converter(tupleValue);
+				//List<Value> tuple = converter.read(tList(TValue));
+				//converter.close();
+				//List<Value> tuple = Arrays.asList(tupleValue.asArrayValue().getElementArray());
+				Object elementObject = element;
+				if (element.isRawValue()) {
+					elementObject = element.asRawValue().getString();
+				}
+				shellMsg.addTuple(elementObject);
+			}
+		}
 
-
-        List<Value> anchors = (Arrays.asList(msg.get("anchors").asArrayValue().getElementArray()));
-        for (Value v: anchors) {
-		shellMsg.addAnchor(v.asRawValue().getString());
-        }
-
+		Value anchorsValue = msg.get("anchors");
+		if(anchorsValue != null) {
+			for (Value v: anchorsValue.asArrayValue()) {
+				shellMsg.addAnchor(v.asRawValue().getString());
+			}
+		}
 		return shellMsg;
 	}
 
@@ -118,21 +147,20 @@ public class MessageSerializer implements ISerializer {
 	public void writeBoltMsg(BoltMsg boltMsg) throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("id", boltMsg.getId());
-        map.put("comp", boltMsg.getComp());
-        map.put("stream", boltMsg.getStream());
-        map.put("task", boltMsg.getTask());
-        map.put("tuple", boltMsg.getTuple());
-
-        writeMessage(map);
+		map.put("comp", boltMsg.getComp());
+		map.put("stream", boltMsg.getStream());
+		map.put("task", boltMsg.getTask());
+		map.put("tuple", boltMsg.getTuple());
+		writeMessage(map);
 	}
 
 	@Override
 	public void writeSpoutMsg(SpoutMsg spoutMsg) throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
-        map.put("command", spoutMsg.getCommand());
-        map.put("id", spoutMsg.getId());
+		map.put("command", spoutMsg.getCommand());
+		map.put("id", spoutMsg.getId());
 
-        writeMessage(map);
+		writeMessage(map);
 	}
 
 	@Override
