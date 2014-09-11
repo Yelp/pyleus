@@ -105,9 +105,9 @@ public class MessageSerializer implements ISerializer {
 		}
 		shellMsg.setStream(stream);
 
-		Object taskObj = msg.get("task");
-		if (taskObj != null) {
-			shellMsg.setTask((Long) taskObj);
+		Value taskValue = msg.get("task");
+		if (taskValue != null) {
+			shellMsg.setTask(taskValue.asIntegerValue().getLong());
 		} else {
 			shellMsg.setTask(0);
 		}
