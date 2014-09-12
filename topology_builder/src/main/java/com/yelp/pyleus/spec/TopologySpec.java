@@ -8,12 +8,16 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 public class TopologySpec {
+	
+	public static final Integer DEFAULT_MAX_SHELLBOLT_PENDING = 1000;
+	
     public String name;
     public List<ComponentSpec> topology;
     public Integer workers = -1;
     public Integer max_spout_pending = -1;
     public Integer message_timeout_secs = -1;
     public Integer ackers = -1;
+    public Integer max_shellbolt_pending = DEFAULT_MAX_SHELLBOLT_PENDING;
     public String logging_config;
     public String requirements_filename; // Not used in Java.
 

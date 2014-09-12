@@ -286,6 +286,8 @@ public class PyleusTopologyBuilder {
             Config conf = new Config();
             conf.setDebug(false);
 
+            conf.put(Config.TOPOLOGY_SHELLBOLT_MAX_PENDING, spec.max_shellbolt_pending);
+            
             if (spec.workers != -1) {
                 conf.setNumWorkers(spec.workers);
             }
