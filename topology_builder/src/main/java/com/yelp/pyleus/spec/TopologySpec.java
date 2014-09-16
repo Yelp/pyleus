@@ -8,8 +8,15 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 public class TopologySpec {
-	
-	public static final Integer DEFAULT_MAX_SHELLBOLT_PENDING = 1000;
+
+    // This constant sets the default size of the pending queue for python ShellBolt.
+    // If a python bolt cannot keep up with the incoming tuple stream, the pending queue will fill up
+    // until reaching this value. Higher values of max shellbolt pending increase the risk of heap
+    // overflow and do not imply better performances. We define the default value
+    // as 1/10 the storm default max spout pending (1000). Lower values are suggested when the tuple size is very high.
+    // Anyway, the pure java bolt does not buffer any tuple but simply processes a tuple at a time,
+    // which is equivalent to set this value to 1.
+    public static final Integer DEFAULT_MAX_SHELLBOLT_PENDING = 100;
 	
     public String name;
     public List<ComponentSpec> topology;

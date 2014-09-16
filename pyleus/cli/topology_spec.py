@@ -39,6 +39,8 @@ class TopologySpec(object):
             self.ackers = specs["ackers"]
         if "max_spout_pending" in specs:
             self.max_spout_pending = specs["max_spout_pending"]
+        if "max_shellbolt_pending" in specs:
+            self.max_shellbolt_pending = specs["max_shellbolt_pending"]
         if "message_timeout_secs" in specs:
             self.message_timeout_secs = specs["message_timeout_secs"]
         if "logging_config" in specs:
