@@ -12,7 +12,7 @@ public class TopologySpec {
     // This constant sets the default size of the pending queue for python ShellBolt.
     // If a python bolt cannot keep up with the incoming tuple stream, the pending queue will fill up
     // until reaching this value. Higher values of max shellbolt pending increase the risk of heap
-    // exhaustion and do not imply better performances.The default value is 1, similarly to any java bolt,
+    // exhaustion and do not imply better performances. The default value is 1, similarly to any java bolt,
     // which executes a tuple at a time. Tests and benchmarks did not show any worsening in performance
     // setting this value to 1.
     public static final Integer DEFAULT_MAX_SHELLBOLT_PENDING = 1;
