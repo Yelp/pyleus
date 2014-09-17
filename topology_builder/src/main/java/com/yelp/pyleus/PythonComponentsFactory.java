@@ -15,7 +15,7 @@ public class PythonComponentsFactory {
     public static final String MODULE_OPTION = "-m";
 
     private String[] buildCommand(final String module, final Map<String, Object> argumentsMap,
-        final String loggingConfig) {
+        final String loggingConfig, final String serializerConfig) {
 
         String[] command = new String[3];
 
@@ -37,6 +37,7 @@ public class PythonComponentsFactory {
         {
             Map<String, Object> pyleusConfig = new HashMap<String, Object>();
             pyleusConfig.put("logging_config_path", loggingConfig);
+            pyleusConfig.put("serializer", serializerConfig);
             Gson gson = new GsonBuilder().create();
             String json = gson.toJson(pyleusConfig);
             json = json.replace("\"", "\\\"");
@@ -49,15 +50,15 @@ public class PythonComponentsFactory {
     }
 
     public PythonBolt createPythonBolt(final String module, final Map<String, Object> argumentsMap,
-        final String loggingConfig) {
+        final String loggingConfig, final String serializerConfig) {
 
-        return new PythonBolt(buildCommand(module, argumentsMap, loggingConfig));
+        return new PythonBolt(buildCommand(module, argumentsMap, loggingConfig, serializerConfig));
     }
 
     public PythonSpout createPythonSpout(final String module, final Map<String, Object> argumentsMap,
-        final String loggingConfig) {
+        final String loggingConfig, final String serializerConfig) {
 
-        return new PythonSpout(buildCommand(module, argumentsMap, loggingConfig));
+        return new PythonSpout(buildCommand(module, argumentsMap, loggingConfig, serializerConfig));
     }
 
 }

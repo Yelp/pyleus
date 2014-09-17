@@ -37,6 +37,7 @@ public class PyleusTopologyBuilder {
     public static final String YAML_FILENAME = "/resources/pyleus_topology.yaml";
     public static final String KAFKA_ZK_ROOT_FMT = "/pyleus-kafka-offsets/%s";
     public static final String KAFKA_CONSUMER_ID_FMT = "pyleus-%s";
+    public static final String MSGPACK_SERIALIZER_CLASS = "com.yelp.pyleus.serializer.MessagePackSerializer";
 
     public static final PythonComponentsFactory pyFactory = new PythonComponentsFactory();
 
@@ -44,7 +45,7 @@ public class PyleusTopologyBuilder {
         final TopologySpec topologySpec) {
 
         PythonBolt bolt = pyFactory.createPythonBolt((String) spec.module,
-            (Map<String, Object>) spec.options, (String) topologySpec.logging_config);
+            (Map<String, Object>) spec.options, (String) topologySpec.logging_config, (String) topologySpec.serializer);
 
         if (spec.output_fields != null) {
             bolt.setOutputFields(spec.output_fields);
@@ -166,7 +167,7 @@ public class PyleusTopologyBuilder {
         final TopologySpec topologySpec) {
 
         PythonSpout spout = pyFactory.createPythonSpout((String) spec.module,
-            (Map<String, Object>) spec.options, (String) topologySpec.logging_config);
+            (Map<String, Object>) spec.options, (String) topologySpec.logging_config, (String) topologySpec.serializer);
 
         if (spec.output_fields != null) {
             spout.setOutputFields(spec.output_fields);
@@ -201,9 +202,18 @@ public class PyleusTopologyBuilder {
         return PyleusTopologyBuilder.class.getResourceAsStream(filename);
     }
 
-    private static void runLocally(final String topologyName, final StormTopology topology, boolean debug) {
+    private static void setSerializer(Config conf, final String serializer) {
+        if (serializer.equals(TopologySpec.MSGPACK_SERIALIZER)) {
+            conf.put(Config.TOPOLOGY_MULTILANG_SERIALIZER, MSGPACK_SERIALIZER_CLASS);
+        } else if (!serializer.equals(TopologySpec.JSON_SERIALIZER)) {
+            System.err.println(String.format("Missing serializer: %s. Known: %s, %s",
+                    serializer, TopologySpec.JSON_SERIALIZER, TopologySpec.MSGPACK_SERIALIZER));
+        }
+    }
+
+    private static void runLocally(final String topologyName, final StormTopology topology, boolean debug, final String serializer) {
         Config conf = new Config();
-        conf.put(Config.TOPOLOGY_MULTILANG_SERIALIZER, "com.yelp.pyleus.serializer.MessagePackSerializer");
+        setSerializer(conf, serializer);
         conf.setDebug(debug);
         conf.setMaxTaskParallelism(1);
 
@@ -282,11 +292,12 @@ public class PyleusTopologyBuilder {
         StormTopology topology = buildTopology(spec);
 
         if (runLocally) {
-            runLocally(spec.name, topology, debug);
+            runLocally(spec.name, topology, debug, spec.serializer);
         } else {
             Config conf = new Config();
-            conf.put(Config.TOPOLOGY_MULTILANG_SERIALIZER, "com.yelp.pyleus.serializer.MessageSerializer");
             conf.setDebug(false);
+
+            setSerializer(conf, spec.serializer);
 
             if (spec.max_shellbolt_pending != -1) {
                 conf.put(Config.TOPOLOGY_SHELLBOLT_MAX_PENDING, spec.max_shellbolt_pending);

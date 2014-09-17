@@ -25,6 +25,10 @@ PYLEUS_CONFIG_OPT = "--pyleus-config"
 
 DEFAULT_LOGGING_CONFIG_PATH = "pyleus_logging.conf"
 
+JSON_SERIALIZER = "json"
+MSGPACK_SERIALIZER = "msgpack"
+SERIALIZERS = (JSON_SERIALIZER, MSGPACK_SERIALIZER)
+
 
 log = logging.getLogger(__name__)
 
@@ -100,11 +104,6 @@ class Component(object):
 
         self._pending_commands = deque()
         self._pending_taskids = deque()
-        # This is hard coded but we should be able to configure this
-        # eventually. The same applies to the java part in topology builder
-        self.use_messagepack = True
-        self._unpacker = msgpack.Unpacker()
-        self.msg_generator = self._read_from_msgpack()
 
     def describe(self):
         """Print to stdout a JSON descrption of the component.
@@ -124,6 +123,17 @@ class Component(object):
             logging.config.fileConfig(logging_config_path)
         elif os.path.isfile(DEFAULT_LOGGING_CONFIG_PATH):
             logging.config.fileConfig(DEFAULT_LOGGING_CONFIG_PATH)
+
+    def initialize_serializer(self):
+        serializer = self.pyleus_config.get('serializer')
+        if serializer == JSON_SERIALIZER:
+            self.use_messagepack = False
+        elif serializer == MSGPACK_SERIALIZER:
+            self.use_messagepack = True
+            self._unpacker = msgpack.Unpacker()
+            self.msg_generator = self._read_from_msgpack()
+        else:
+            raise ValueError("Unknown serializer: {0}", serializer)
 
     def setup_component(self):
         """Storm component setup before execution. It will also
@@ -155,6 +165,7 @@ class Component(object):
 
         try:
             self.initialize_logging()
+            self.initialize_serializer()
             self.setup_component()
             self.run_component()
         except Exception as e:
