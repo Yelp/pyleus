@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.DataOutputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -21,7 +20,6 @@ import backtype.storm.utils.Utils;
 import org.apache.log4j.Logger;
 import org.msgpack.MessagePack;
 import org.msgpack.template.Template;
-import org.msgpack.unpacker.Converter;
 
 import static org.msgpack.template.Templates.tMap;
 import static org.msgpack.template.Templates.TString;
@@ -30,8 +28,8 @@ import static org.msgpack.template.Templates.tList;
 
 import org.msgpack.type.Value;
 
-public class MessageSerializer implements ISerializer {
-	public static Logger LOG = Logger.getLogger(MessageSerializer.class);
+public class MessagePackSerializer implements ISerializer {
+	public static Logger LOG = Logger.getLogger(MessagePackSerializer.class);
 	private DataOutputStream processIn;
 	private InputStream processOut;
 	private MessagePack msgPack;
@@ -62,13 +60,10 @@ public class MessageSerializer implements ISerializer {
 		setupmsg.put("conf", conf);
 		setupmsg.put("pidDir", context.getPIDDir());
 		setupmsg.put("context", getMapFromContext(context));
-		// write the message to the pipe
-		//LOG.info("Writing configuration to shell component");
+		// Write the message to the pipe
 		writeMessage(setupmsg);
 
-		//LOG.info("Waiting for pid from component");
 		Map<String, Value> pidmsg = readMessage();
-		//LOG.info("Shell component connection established.");
 		Value pid = pidmsg.get("pid");
 		return (Number) pid.asIntegerValue().getInt();
 	}
@@ -84,6 +79,10 @@ public class MessageSerializer implements ISerializer {
 
 		Object id = null;
 		Value valueId = msg.get("id");
+	    /* Since spouts can use both numbers and strings as ids, while bolts
+         * only use strings, the check during acking was failing. Turning
+         * everything into strings solves the problem. The issue does not
+         * exist with JSON, instead.*/
 		if (valueId != null) {
 			if (valueId.isIntegerValue()) {
 				id = msg.get("id").asIntegerValue().toString();
@@ -122,10 +121,11 @@ public class MessageSerializer implements ISerializer {
 		Value tupleValue = msg.get("tuple");
 		if (tupleValue != null) {
 			for (Value element:tupleValue.asArrayValue()) {
-				//Converter converter = new Converter(tupleValue);
-				//List<Value> tuple = converter.read(tList(TValue));
-				//converter.close();
-				//List<Value> tuple = Arrays.asList(tupleValue.asArrayValue().getElementArray());
+				/* Tuples need to be Kryo serializable, while some msgpack-java type
+                 * are not. Registering a Kryo serializer for them is not trivial at all,
+                 * given how this package works. Problematic types are ByteArray, String,
+                 * Map and List. This change is needed for ByteArrays and Strings. Nested
+                 * Lists and Maps are not supported.*/
 				Object elementObject = element;
 				if (element.isRawValue()) {
 					elementObject = element.asRawValue().getString();

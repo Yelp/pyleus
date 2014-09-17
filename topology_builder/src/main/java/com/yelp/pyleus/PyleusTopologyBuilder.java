@@ -203,7 +203,7 @@ public class PyleusTopologyBuilder {
 
     private static void runLocally(final String topologyName, final StormTopology topology, boolean debug) {
         Config conf = new Config();
-        conf.put(Config.TOPOLOGY_MULTILANG_SERIALIZER, "com.yelp.pyleus.serializer.MessageSerializer");
+        conf.put(Config.TOPOLOGY_MULTILANG_SERIALIZER, "com.yelp.pyleus.serializer.MessagePackSerializer");
         conf.setDebug(debug);
         conf.setMaxTaskParallelism(1);
 
