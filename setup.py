@@ -67,7 +67,9 @@ setup(
     author_email="plucas@yelp.com",
     description="Standard library and deployment tools for using Python "
         "with Storm",
-    packages=["pyleus", "pyleus.cli", "pyleus.cli.commands", "pyleus.storm"],
+    packages=[
+        "pyleus", "pyleus.cli", "pyleus.cli.commands",
+        "pyleus.storm", "pyleus.storm.serializers"],
     scripts=["scripts/pyleus"],
     install_requires=[
         "PyYAML >= 3.09, < 4.0",
