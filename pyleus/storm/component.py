@@ -28,7 +28,10 @@ DEFAULT_LOGGING_CONFIG_PATH = "pyleus_logging.conf"
 
 JSON_SERIALIZER = "json"
 MSGPACK_SERIALIZER = "msgpack"
-SERIALIZERS = (JSON_SERIALIZER, MSGPACK_SERIALIZER)
+SERIALIZERS = {
+    JSON_SERIALIZER: JSONSerializer,
+    MSGPACK_SERIALIZER: MsgpackSerializer,
+}
 
 
 log = logging.getLogger(__name__)
@@ -129,11 +132,8 @@ class Component(object):
 
     def initialize_serializer(self):
         serializer = self.pyleus_config.get('serializer')
-        if serializer == JSON_SERIALIZER:
-            self._serializer = JSONSerializer(
-                self._input_stream, self._output_stream)
-        elif serializer == MSGPACK_SERIALIZER:
-            self._serializer = MsgpackSerializer(
+        if serializer in SERIALIZERS:
+            self._serializer = SERIALIZERS[serializer](
                 self._input_stream, self._output_stream)
         else:
             raise ValueError("Unknown serializer: {0}", serializer)
