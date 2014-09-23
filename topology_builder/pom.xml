@@ -47,9 +47,10 @@
       <version>2.2.4</version>
     </dependency>
     <dependency>
-	<groupId>org.msgpack</groupId>
-	<artifactId>msgpack</artifactId>
-	<version>0.6.9</version></dependency>
+      <groupId>org.msgpack</groupId>
+      <artifactId>msgpack</artifactId>
+      <version>0.6.9</version>
+    </dependency>
   </dependencies>
 
   <build>

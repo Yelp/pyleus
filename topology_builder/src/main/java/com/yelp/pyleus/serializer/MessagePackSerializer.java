@@ -79,10 +79,10 @@ public class MessagePackSerializer implements ISerializer {
 
 		Object id = null;
 		Value valueId = msg.get("id");
-	    /* Since spouts can use both numbers and strings as ids, while bolts
-         * only use strings, the check during acking was failing. Turning
-         * everything into strings solves the problem. The issue does not
-         * exist with JSON, instead.*/
+		/* Since spouts can use both numbers and strings as ids, while bolts
+		 * only use strings, the check during acking was failing. Turning
+		 * everything into strings solves the problem. The issue does not
+		 * exist with JSON, instead.*/
 		if (valueId != null) {
 			if (valueId.isIntegerValue()) {
 				id = msg.get("id").asIntegerValue().toString();
@@ -122,10 +122,10 @@ public class MessagePackSerializer implements ISerializer {
 		if (tupleValue != null) {
 			for (Value element:tupleValue.asArrayValue()) {
 				/* Tuples need to be Kryo serializable, while some msgpack-java type
-                 * are not. Registering a Kryo serializer for them is not trivial at all,
-                 * given how this package works. Problematic types are ByteArray, String,
-                 * Map and List. This change is needed for ByteArrays and Strings. Nested
-                 * Lists and Maps are not supported.*/
+				 * are not. Registering a Kryo serializer for them is not trivial at all,
+				 * given how this package works. Problematic types are ByteArray, String,
+				 * Map and List. This change is needed for ByteArrays and Strings. Nested
+				 * Lists and Maps are not supported.*/
 				Object elementObject = element;
 				if (element.isRawValue()) {
 					elementObject = element.asRawValue().getString();

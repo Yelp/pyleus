@@ -205,8 +205,10 @@ public class PyleusTopologyBuilder {
     private static void setSerializer(Config conf, final String serializer) {
         if (serializer.equals(TopologySpec.MSGPACK_SERIALIZER)) {
             conf.put(Config.TOPOLOGY_MULTILANG_SERIALIZER, MSGPACK_SERIALIZER_CLASS);
-        } else if (!serializer.equals(TopologySpec.JSON_SERIALIZER)) {
-            System.err.println(String.format("Missing serializer: %s. Known: %s, %s",
+        } else if (serializer.equals(TopologySpec.JSON_SERIALIZER)) {
+            // JSON_SERIALIZER is Storm default and nothing should be done
+        } else {
+            throw new RuntimeException(String.format("Unknown serializer: %s. Known: %s, %s",
                     serializer, TopologySpec.JSON_SERIALIZER, TopologySpec.MSGPACK_SERIALIZER));
         }
     }
