@@ -27,7 +27,7 @@ public class TopologySpec {
     public Integer message_timeout_secs = -1;
     public Integer ackers = -1;
     public Integer max_shellbolt_pending = DEFAULT_MAX_SHELLBOLT_PENDING;
-    public String serializer = JSON_SERIALIZER;
+    public String serializer = MSGPACK_SERIALIZER;
     public String logging_config;
     public String requirements_filename; // Not used in Java.
 
