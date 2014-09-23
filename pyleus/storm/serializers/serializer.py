@@ -6,8 +6,6 @@ each serializer a Java counterpart need to be built.
 class Serializer(object):
 
     def __init__(self, input_stream, output_stream):
-        super(Serializer, self).__init__()
-
         self._input_stream = input_stream
         self._output_stream = output_stream
 

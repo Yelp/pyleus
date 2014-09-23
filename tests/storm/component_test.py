@@ -1,44 +1,16 @@
 import contextlib
-from cStringIO import StringIO
 import logging.config
 import os.path
 
 import mock
 
-try:
-    import simplejson as json
-    _ = json # pyflakes
-except ImportError:
-    import json
-
 from pyleus.storm import StormTuple
 from pyleus.storm.component import DEFAULT_LOGGING_CONFIG_PATH
+from pyleus.storm.serializers.serializer import Serializer
 from pyleus.testing import ComponentTestCase
 
 
 class TestComponent(ComponentTestCase):
-
-    def test__read_msg_dict(self):
-        msg_dict = {
-            'hello': "world",
-        }
-
-        self.mock_input_stream.readline.side_effect = [
-            json.dumps(msg_dict),
-            "end",
-        ]
-
-        assert self.instance._read_msg() == msg_dict
-
-    def test__read_msg_list(self):
-        msg_list = [3, 4, 5]
-
-        self.mock_input_stream.readline.side_effect = [
-            json.dumps(msg_list),
-            "end",
-        ]
-
-        assert self.instance._read_msg() == msg_list
 
     def test__msg_is_command(self):
         command_msg = dict(this_is_a_command=True)
@@ -65,8 +37,9 @@ class TestComponent(ComponentTestCase):
             command_msg,
         ]
 
-        with mock.patch.object(self.instance, '_read_msg',
-                side_effect=messages):
+        with mock.patch.object(
+                self.instance, '_serializer', autospec=Serializer):
+            self.instance._serializer.read_msg.side_effect = messages
             command = self.instance.read_command()
 
         assert command == command_msg
@@ -96,8 +69,9 @@ class TestComponent(ComponentTestCase):
             taskid_msg,
         ]
 
-        with mock.patch.object(self.instance, '_read_msg',
-                side_effect=messages):
+        with mock.patch.object(
+                self.instance, '_serializer', autospec=Serializer):
+            self.instance._serializer.read_msg.side_effect = messages
             taskid = self.instance.read_taskid()
 
         assert taskid == taskid_msg
@@ -113,7 +87,6 @@ class TestComponent(ComponentTestCase):
             another_taskid,
         ])
 
-
         assert self.instance.read_taskid() == next_taskid
         assert len(self.instance._pending_taskids) == 2
 
@@ -126,28 +99,15 @@ class TestComponent(ComponentTestCase):
             'tuple': "tuple",
         }
 
-        expected_storm_tuple = StormTuple("id", "comp", "stream", "task",
-            "tuple")
+        expected_storm_tuple = StormTuple(
+            "id", "comp", "stream", "task", "tuple")
 
-        with mock.patch.object(self.instance, 'read_command',
-                return_value=command_dict):
+        with mock.patch.object(
+                self.instance, 'read_command', return_value=command_dict):
             storm_tuple = self.instance.read_tuple()
 
         assert isinstance(storm_tuple, StormTuple)
         assert storm_tuple == expected_storm_tuple
-
-    def test__send_msg(self):
-        msg_dict = {
-            'hello': "world",
-        }
-
-        expected_output = """{"hello": "world"}\nend\n"""
-
-        with mock.patch.object(self.instance, '_output_stream',
-                StringIO()) as sio:
-            self.instance._send_msg(msg_dict)
-
-        assert sio.getvalue() == expected_output
 
     def test__create_pidfile(self):
         with mock.patch('__builtin__.open') as mock_open:
@@ -162,53 +122,60 @@ class TestComponent(ComponentTestCase):
             'pidDir': "pidDir",
         }
 
-        patch__read_msg = mock.patch.object(self.instance, '_read_msg',
-            return_value=handshake_msg)
+        patch_serializer = mock.patch.object(
+            self.instance, '_serializer', autospec=Serializer)
         patch_os_getpid = mock.patch('os.getpid', return_value=1234)
-        patch__send_msg = mock.patch.object(self.instance, '_send_msg')
-        patch__create_pidfile = mock.patch.object(self.instance,
-            '_create_pidfile')
+        patch__create_pidfile = mock.patch.object(
+            self.instance, '_create_pidfile')
 
-        patches = contextlib.nested(patch__read_msg, patch_os_getpid,
-            patch__send_msg, patch__create_pidfile)
+        patches = contextlib.nested(
+            patch_serializer, patch_os_getpid, patch__create_pidfile)
 
-        with patches as (_, _, mock__send_msg, mock__create_pidfile):
+        with patches as (mock_serializer, _, mock__create_pidfile):
+            mock_serializer.read_msg.return_value = handshake_msg
             conf, context = self.instance._init_component()
 
-        mock__send_msg.assert_called_once_with({'pid': 1234})
+        mock_serializer.send_msg.assert_called_once_with({'pid': 1234})
         mock__create_pidfile.assert_called_once_with("pidDir", 1234)
 
         assert conf == {"foo": "bar"}
         assert context == "context"
 
     def test_send_command_with_opts(self):
-        with mock.patch.object(self.instance, '_send_msg') as mock__send_msg:
+        with mock.patch.object(
+                self.instance, '_serializer', autospec=Serializer):
+            mock_send_msg = self.instance._serializer.send_msg
             self.instance.send_command('test', {'option': "foo"})
 
-        mock__send_msg.assert_called_once_with({
+        mock_send_msg.assert_called_once_with({
             'command': "test",
             'option': "foo",
         })
 
     def test_send_command_with_no_opts(self):
-        with mock.patch.object(self.instance, '_send_msg') as mock__send_msg:
+        with mock.patch.object(
+                self.instance, '_serializer', autospec=Serializer):
+            mock_send_msg = self.instance._serializer.send_msg
             self.instance.send_command('test')
 
-        mock__send_msg.assert_called_once_with({
+        mock_send_msg.assert_called_once_with({
             'command': "test",
         })
 
     def test_send_command_clobber_command(self):
-        with mock.patch.object(self.instance, '_send_msg') as mock__send_msg:
+        with mock.patch.object(
+                self.instance, '_serializer', autospec=Serializer):
+            mock_send_msg = self.instance._serializer.send_msg
             self.instance.send_command('test', {'command': "joe"})
 
-        mock__send_msg.assert_called_once_with({
+        mock_send_msg.assert_called_once_with({
             'command': "test",
         })
 
     @mock.patch.object(logging.config, 'fileConfig')
     def test_initialize_logging(self, fileConfig):
-        pyleus_config = {'logging_config_path': mock.sentinel.logging_config_path}
+        pyleus_config = {
+            'logging_config_path': mock.sentinel.logging_config_path}
         with mock.patch.object(self.instance, 'pyleus_config', pyleus_config):
             self.instance.initialize_logging()
 
