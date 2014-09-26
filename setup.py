@@ -73,7 +73,7 @@ setup(
     scripts=["scripts/pyleus"],
     install_requires=[
         "PyYAML >= 3.09, < 4.0",
-        "msgpack-python"
+        "msgpack-python",
     ] + extra_install_requires,
     data_files=[(BASE_JAR_INSTALL_DIR, [BASE_JAR_SRC])],
     cmdclass={
