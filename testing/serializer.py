@@ -1,14 +1,12 @@
-from __future__ import absolute_import
-
 import mock
 import pytest
 
-from pyleus.storm.component import Component
+from pyleus.storm.serializers.serializer import Serializer
 
 
-class ComponentTestCase(object):
+class SerializerTestCase(object):
 
-    INSTANCE_CLS = Component
+    INSTANCE_CLS = Serializer
 
     @pytest.fixture(autouse=True)
     def instance_fixture(self):

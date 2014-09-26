@@ -8,7 +8,7 @@ except ImportError:
     import json
 
 from pyleus.storm.serializers.json_serializer import JSONSerializer
-from pyleus.testing import SerializerTestCase
+from testing.serializer import SerializerTestCase
 
 
 class TestJSONSerializer(SerializerTestCase):

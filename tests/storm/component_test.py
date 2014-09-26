@@ -144,33 +144,30 @@ class TestComponent(ComponentTestCase):
     def test_send_command_with_opts(self):
         with mock.patch.object(
                 self.instance, '_serializer', autospec=Serializer):
-            mock_send_msg = self.instance._serializer.send_msg
             self.instance.send_command('test', {'option': "foo"})
 
-        mock_send_msg.assert_called_once_with({
-            'command': "test",
-            'option': "foo",
-        })
+            self.instance._serializer.send_msg.assert_called_once_with({
+                'command': "test",
+                'option': "foo",
+            })
 
     def test_send_command_with_no_opts(self):
         with mock.patch.object(
                 self.instance, '_serializer', autospec=Serializer):
-            mock_send_msg = self.instance._serializer.send_msg
             self.instance.send_command('test')
 
-        mock_send_msg.assert_called_once_with({
-            'command': "test",
-        })
+            self.instance._serializer.send_msg.assert_called_once_with({
+                'command': "test",
+            })
 
     def test_send_command_clobber_command(self):
         with mock.patch.object(
                 self.instance, '_serializer', autospec=Serializer):
-            mock_send_msg = self.instance._serializer.send_msg
             self.instance.send_command('test', {'command': "joe"})
 
-        mock_send_msg.assert_called_once_with({
-            'command': "test",
-        })
+            self.instance._serializer.send_msg.assert_called_once_with({
+                'command': "test",
+            })
 
     @mock.patch.object(logging.config, 'fileConfig')
     def test_initialize_logging(self, fileConfig):

@@ -5,7 +5,7 @@ import os
 import msgpack
 
 from pyleus.storm.serializers.msgpack_serializer import MsgpackSerializer
-from pyleus.testing import SerializerTestCase
+from testing.serializer import SerializerTestCase
 
 
 class TestMsgpackSerializer(SerializerTestCase):
