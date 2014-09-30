@@ -157,7 +157,6 @@ public class MessagePackSerializer implements ISerializer {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("command", spoutMsg.getCommand());
         map.put("id", spoutMsg.getId());
-
         writeMessage(map);
     }
 
