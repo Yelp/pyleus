@@ -31,11 +31,11 @@ API Documentation
 .. toctree::
    :maxdepth: 2
 
-   bolt
    configuration
    exception
    json_fields_bolt
-   spout
+   storm/bolt
+   storm/spout
    testing
    utils
 
