@@ -6,7 +6,23 @@
 Welcome to Pyleus's documentation!
 ==================================
 
-Contents:
+Pyleus Command Line
+===================
+
+Run ``pyleus --help`` for all options
+
+.. code-block:: none
+
+    $ pyleus build
+    $ pyleus submit
+
+Basic Usage
+===========
+
+See examples in :py:mod:`pyleus.storm.bolt` and :py:mod:`pyleus.storm.spout`
+
+
+See `Trac page`_ for details.
 
 
 API Documentation
@@ -16,7 +32,12 @@ API Documentation
    :maxdepth: 2
 
    bolt
+   configuration
+   exception
+   json_fields_bolt
    spout
+   testing
+   utils
 
 Indices and tables
 ==================
@@ -25,3 +46,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. _Trac page: https://trac.yelpcorp.com/wiki/Pyleus
