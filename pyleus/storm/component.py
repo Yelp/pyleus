@@ -15,13 +15,23 @@ except ImportError:
     import json
 
 from pyleus.storm import DEFAULT_STREAM
-from pyleus.storm import StormTuple, StormWentAwayError
+from pyleus.storm import StormTuple
+from pyleus.storm.serializers.msgpack_serializer import MsgpackSerializer
+from pyleus.storm.serializers.json_serializer import JSONSerializer
+
 
 DESCRIBE_OPT = "--describe"
 COMPONENT_OPTIONS_OPT = "--options"
 PYLEUS_CONFIG_OPT = "--pyleus-config"
 
 DEFAULT_LOGGING_CONFIG_PATH = "pyleus_logging.conf"
+
+JSON_SERIALIZER = "json"
+MSGPACK_SERIALIZER = "msgpack"
+SERIALIZERS = {
+    JSON_SERIALIZER: JSONSerializer,
+    MSGPACK_SERIALIZER: MsgpackSerializer,
+}
 
 
 log = logging.getLogger(__name__)
@@ -99,6 +109,8 @@ class Component(object):
         self._pending_commands = deque()
         self._pending_taskids = deque()
 
+        self._serializer = None
+
     def describe(self):
         """Print to stdout a JSON descrption of the component.
 
@@ -117,6 +129,14 @@ class Component(object):
             logging.config.fileConfig(logging_config_path)
         elif os.path.isfile(DEFAULT_LOGGING_CONFIG_PATH):
             logging.config.fileConfig(DEFAULT_LOGGING_CONFIG_PATH)
+
+    def initialize_serializer(self):
+        serializer = self.pyleus_config.get('serializer')
+        if serializer in SERIALIZERS:
+            self._serializer = SERIALIZERS[serializer](
+                self._input_stream, self._output_stream)
+        else:
+            raise ValueError("Unknown serializer: {0}", serializer)
 
     def setup_component(self):
         """Storm component setup before execution. It will also
@@ -148,6 +168,7 @@ class Component(object):
 
         try:
             self.initialize_logging()
+            self.initialize_serializer()
             self.setup_component()
             self.run_component()
         except Exception as e:
@@ -159,28 +180,6 @@ class Component(object):
         Spout subclasses.
         """
         raise NotImplementedError
-
-    def _read_msg(self):
-        """The Storm multilang protocol consists of JSON messages followed by
-        a newline and "end\n".
-        """
-        lines = []
-
-        while True:
-            line = self._input_stream.readline()
-            if not line:
-                # Handle EOF, which usually means Storm went away
-                raise StormWentAwayError()
-
-            line = line.strip()
-
-            if line == "end":
-                break
-
-            lines.append(line)
-
-        msg_str = '\n'.join(lines)
-        return json.loads(msg_str)
 
     def _msg_is_command(self, msg):
         """Storm differentiates between commands and taskids by whether the
@@ -202,11 +201,11 @@ class Component(object):
         if self._pending_commands:
             return self._pending_commands.popleft()
 
-        msg = self._read_msg()
+        msg = self._serializer.read_msg()
 
         while self._msg_is_taskid(msg):
             self._pending_taskids.append(msg)
-            msg = self._read_msg()
+            msg = self._serializer.read_msg()
 
         return msg
 
@@ -217,11 +216,11 @@ class Component(object):
         if self._pending_taskids:
             return self._pending_taskids.popleft()
 
-        msg = self._read_msg()
+        msg = self._serializer.read_msg()
 
         while self._msg_is_command(msg):
             self._pending_commands.append(msg)
-            msg = self._read_msg()
+            msg = self._serializer.read_msg()
 
         return msg
 
@@ -231,14 +230,6 @@ class Component(object):
         return StormTuple(
             cmd['id'], cmd['comp'], cmd['stream'], cmd['task'], cmd['tuple'])
 
-    def _send_msg(self, msg_dict):
-        """Serialize to JSON a message dictionary and write it to the output
-        stream, followed by a newline and "end\n".
-        """
-        self._output_stream.write(json.dumps(msg_dict) + '\n')
-        self._output_stream.write("end\n")
-        self._output_stream.flush()
-
     def _create_pidfile(self, pid_dir, pid):
         open(os.path.join(pid_dir, str(pid)), 'a').close()
 
@@ -246,10 +237,10 @@ class Component(object):
         """Receive the setup_info dict from the Storm task and report back with
         our pid; also touch a pidfile in the pidDir specified in setup_info.
         """
-        setup_info = self._read_msg()
+        setup_info = self._serializer.read_msg()
 
         pid = os.getpid()
-        self._send_msg({'pid': pid})
+        self._serializer.send_msg({'pid': pid})
         self._create_pidfile(setup_info['pidDir'], pid)
 
         return StormConfig(setup_info['conf']), setup_info['context']
@@ -261,7 +252,7 @@ class Component(object):
         else:
             command_dict = dict(command=command)
 
-        self._send_msg(command_dict)
+        self._serializer.send_msg(command_dict)
 
     def log(self, msg):
         self.send_command('log', {
