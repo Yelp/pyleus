@@ -1,6 +1,5 @@
 package com.yelp.pyleus.serializer;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -67,7 +66,6 @@ public class MessagePackSerializer implements ISerializer {
 		Value pid = pidmsg.get("pid");
 		return (Number) pid.asIntegerValue().getInt();
 	}
-
 
 	@Override
 	public ShellMsg readShellMsg() throws IOException, NoOutputException {

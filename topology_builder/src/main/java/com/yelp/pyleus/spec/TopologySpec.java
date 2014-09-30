@@ -16,7 +16,7 @@ public class TopologySpec {
     // which executes a tuple at a time. Tests and benchmarks did not show any worsening in performance
     // setting this value to 1.
     public static final Integer DEFAULT_MAX_SHELLBOLT_PENDING = 1;
-	
+
     public static final String JSON_SERIALIZER = "json";
     public static final String MSGPACK_SERIALIZER = "msgpack";
 
