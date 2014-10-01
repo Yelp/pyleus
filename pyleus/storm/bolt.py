@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import logging
-import traceback
 
 from pyleus.storm import is_tick, StormWentAwayError
 from pyleus.storm.component import Component
@@ -31,11 +30,8 @@ class Bolt(Component):
             while True:
                 tup = self.read_tuple()
                 self._process_tuple(tup)
-        except StormWentAwayError as e:
+        except StormWentAwayError:
             log.warning("Disconnected from Storm. Exiting.")
-        except Exception as e:
-            log.exception("Exception in Bolt.run")
-            self.error(traceback.format_exc(e))
 
     def ack(self, tup):
         self.send_command('ack', {
@@ -47,7 +43,10 @@ class Bolt(Component):
             'id': tup.id,
         })
 
-    def emit(self, values, stream=None, anchors=None, direct_task=None):
+    def emit(
+            self, values,
+            stream=None, anchors=None,
+            direct_task=None, need_task_ids=True):
         """Build and send an output tuple command dict; return the tasks to
         which the tuple was sent by Storm.
         """
@@ -67,8 +66,16 @@ class Bolt(Component):
         if direct_task is not None:
             command_dict['task'] = direct_task
 
+        # By default, Storm sends back to the component the task ids of the
+        # tasks receiving the tuple. If need_task_ids is set to False, Storm
+        # won't send the task ids for that message
+        if not need_task_ids:
+            command_dict['need_task_ids'] = False
+
         self.send_command('emit', command_dict)
-        return self.read_taskid()
+
+        if need_task_ids:
+            return self.read_taskid()
 
 
 class SimpleBolt(Bolt):

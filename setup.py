@@ -67,10 +67,13 @@ setup(
     author_email="plucas@yelp.com",
     description="Standard library and deployment tools for using Python "
         "with Storm",
-    packages=["pyleus", "pyleus.cli", "pyleus.cli.commands", "pyleus.storm"],
+    packages=[
+        "pyleus", "pyleus.cli", "pyleus.cli.commands",
+        "pyleus.storm", "pyleus.storm.serializers"],
     scripts=["scripts/pyleus"],
     install_requires=[
         "PyYAML >= 3.09, < 4.0",
+        "msgpack-python",
     ] + extra_install_requires,
     data_files=[(BASE_JAR_INSTALL_DIR, [BASE_JAR_SRC])],
     cmdclass={

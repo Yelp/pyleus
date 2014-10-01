@@ -10,6 +10,7 @@ import copy
 
 from pyleus.exception import InvalidTopologyError
 from pyleus.storm import DEFAULT_STREAM
+from pyleus.storm.component import SERIALIZERS
 
 
 def _as_set(obj):
@@ -39,10 +40,24 @@ class TopologySpec(object):
             self.ackers = specs["ackers"]
         if "max_spout_pending" in specs:
             self.max_spout_pending = specs["max_spout_pending"]
+        if "max_shellbolt_pending" in specs:
+            self.max_shellbolt_pending = specs["max_shellbolt_pending"]
         if "message_timeout_secs" in specs:
             self.message_timeout_secs = specs["message_timeout_secs"]
         if "logging_config" in specs:
             self.logging_config = specs["logging_config"]
+        if "serializer" in specs:
+            if specs["serializer"] in SERIALIZERS:
+                self.serializer = specs["serializer"]
+            else:
+                raise InvalidTopologyError(
+                    "Unknown serializer. Allowed: {0}. Found: {1}"
+                    .format(SERIALIZERS, specs["serializer"]))
+
+        if "requirements_filename" in specs:
+            self.requirements_filename = specs["requirements_filename"]
+        else:
+            self.requirements_filename = None
 
         self.topology = []
         for component in specs["topology"]:

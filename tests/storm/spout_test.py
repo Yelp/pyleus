@@ -32,6 +32,19 @@ class TestSpout(ComponentTestCase):
         mock_read_taskid.assert_called_once_with()
         mock_send_command.assert_called_once_with('emit', expected_command_dict)
 
+    @contextlib.contextmanager
+    def _test_emit_no_taskid_helper(self, expected_command_dict):
+        patches = contextlib.nested(
+            mock.patch.object(self.instance, 'read_taskid'),
+            mock.patch.object(self.instance, 'send_command'),
+        )
+
+        with patches as (mock_read_taskid, mock_send_command):
+            yield mock_send_command
+
+        assert mock_read_taskid.call_count == 0
+        mock_send_command.assert_called_once_with('emit', expected_command_dict)
+
     def test_emit_simple(self):
         expected_command_dict = {
             'tuple': (1, 2, 3),
@@ -39,6 +52,15 @@ class TestSpout(ComponentTestCase):
 
         with self._test_emit_helper(expected_command_dict):
             self.instance.emit((1, 2, 3))
+
+    def test_emit_simple_no_taskid(self):
+        expected_command_dict = {
+            'tuple': (1, 2, 3),
+            'need_task_ids': False,
+        }
+
+        with self._test_emit_no_taskid_helper(expected_command_dict):
+            self.instance.emit((1, 2, 3), need_task_ids=False)
 
     def test_emit_with_list(self):
         expected_command_dict = {
