@@ -11,6 +11,8 @@
 
 name: top_urls
 
+serializer: json
+
 topology:
     - spout:
         name: requests-generator-A 
