@@ -224,12 +224,6 @@ public class PyleusTopologyBuilder {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
-                    cluster.killTopology(topologyName);
-                } catch (Exception e) {
-                    System.err.println(e.toString());
-                }
-
-                try {
                     cluster.shutdown();
                 } catch (Exception e) {
                     System.err.println(e.toString());
