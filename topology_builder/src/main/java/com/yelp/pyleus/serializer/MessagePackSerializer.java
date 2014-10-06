@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.DataOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -124,7 +125,7 @@ public class MessagePackSerializer implements ISerializer {
                  * given how this package works. Problematic types are ByteArray, String,
                  * Map and List. This change is needed for ByteArrays and Strings. Nested
                  * Lists and Maps are not supported.*/
-                shellMsg.addTuple(this.convertMsgpackType(element));
+                shellMsg.addTuple(value2JavaType(element));
             }
         }
 
@@ -137,20 +138,40 @@ public class MessagePackSerializer implements ISerializer {
         return shellMsg;
     }
 
-    private Object convertMsgpackType(Value element) {
+    private Object value2JavaType(Value element) {
         if (element.isRawValue()) {
             return element.asRawValue().getString();
-        } else if (element.isBooleanValue()) {
-            return element.asBooleanValue().getBoolean();
-        } else if (element.isFloatValue()) {
-            return element.asFloatValue().getFloat();
-        } else if (element.isIntegerValue()) {
-            return element.asIntegerValue().getInt();
-        } else if (element.isNilValue()) {
-            return null;
-        } else {
-            return element;
         }
+        if (element.isBooleanValue()) {
+            return element.asBooleanValue().getBoolean();
+        }
+        if (element.isFloatValue()) {
+            return element.asFloatValue().getFloat();
+        }
+        if (element.isIntegerValue()) {
+            return element.asIntegerValue().getInt();
+        }
+        if (element.isNilValue()) {
+            return null;
+        }
+        if (element.isMapValue()) {
+    		Map<Object,Object> elementMap = new HashMap<Object,Object>();
+    		for (Map.Entry<Value, Value> v:element.asMapValue().entrySet()) {
+    			elementMap.put(
+    					value2JavaType(v.getKey()),
+    					value2JavaType(v.getValue())
+    			);
+    		}
+    		return elementMap;
+    	}
+        if (element.isArrayValue()) {
+    		List<Object> elementList = new ArrayList<Object>();
+    		for (Value e:element.asArrayValue().getElementArray()) {
+    			elementList.add(value2JavaType(e));
+    		}
+    		return elementList;
+    	}
+        return element;
     }
 
     @Override
