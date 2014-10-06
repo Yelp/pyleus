@@ -124,12 +124,9 @@ public class MessagePackSerializer implements ISerializer {
                  * given how this package works. Problematic types are ByteArray, String,
                  * Map and List. This change is needed for ByteArrays and Strings. Nested
                  * Lists and Maps are not supported.*/
-                Object elementObject = element;
-                if (element.isRawValue()) {
-                    elementObject = element.asRawValue().getString();
-                }
-                shellMsg.addTuple(elementObject);
+                shellMsg.addTuple(this.convertMsgpackType(element));
             }
+        } else {
         }
 
         Value anchorsValue = msg.get("anchors");
@@ -139,6 +136,22 @@ public class MessagePackSerializer implements ISerializer {
             }
         }
         return shellMsg;
+    }
+
+    private Object convertMsgpackType(Value element) {
+        if (element.isRawValue()) {
+            return element.asRawValue().getString();
+        } else if (element.isBooleanValue()) {
+            return element.asBooleanValue().getBoolean();
+        } else if (element.isFloatValue()) {
+            return element.asFloatValue().getFloat();
+        } else if (element.isIntegerValue()) {
+            return element.asIntegerValue().getInt();
+        } else if (element.isNilValue()) {
+            return null;
+        } else {
+            return element;
+        }
     }
 
     @Override
