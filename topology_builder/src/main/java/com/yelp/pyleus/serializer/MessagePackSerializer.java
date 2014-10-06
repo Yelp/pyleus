@@ -126,7 +126,6 @@ public class MessagePackSerializer implements ISerializer {
                  * Lists and Maps are not supported.*/
                 shellMsg.addTuple(this.convertMsgpackType(element));
             }
-        } else {
         }
 
         Value anchorsValue = msg.get("anchors");
