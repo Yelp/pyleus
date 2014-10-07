@@ -18,7 +18,7 @@ class Bolt(Component):
         Process the incoming tuple.
 
         :param tup: pyleus tuple representing the message to be processed
-        :type tup: ``dict``
+        :type tup: :class:`~pyleus.storm.StormTuple`
 
         .. note:: Implement in subclass.
         """
@@ -43,13 +43,35 @@ class Bolt(Component):
             log.warning("Disconnected from Storm. Exiting.")
 
     def ack(self, tup):
-        """Ack a tuple."""
+        """Ack a tuple.
+
+        :param tup: tuple to ack
+        :type tup: :class:`~pyleus.storm.StormTuple`
+
+        .. note::
+           All tuples need to be acked or failed, independently whether
+           you are using Storm reliability features or not. If you are directly
+           using :class:`~.Bolt` instead of :class::`~.SimpleBolt`, you must
+           call this method or your topology will eventually run out of memory
+           or hang.
+        """
         self.send_command('ack', {
             'id': tup.id,
         })
 
     def fail(self, tup):
-        """Fail a tuple."""
+        """Fail a tuple.
+
+        :param tup: tuple to fail
+        :type tup: :class:`~pyleus.storm.StormTuple`
+
+        .. note::
+           All tuples need to be acked or failed, independently whether
+           you are using Storm reliability features or not. If you are directly
+           using :class:`~.Bolt` instead of :class::`~.SimpleBolt`, you must
+           call this method or your topology will eventually run out of memory
+           or hang.
+        """
         self.send_command('fail', {
             'id': tup.id,
         })
