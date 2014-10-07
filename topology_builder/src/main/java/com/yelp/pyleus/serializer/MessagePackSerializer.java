@@ -20,6 +20,7 @@ import backtype.storm.utils.Utils;
 import org.apache.log4j.Logger;
 import org.msgpack.MessagePack;
 import org.msgpack.template.Template;
+import org.msgpack.type.ValueType;
 
 import static org.msgpack.template.Templates.tMap;
 import static org.msgpack.template.Templates.TString;
@@ -125,7 +126,7 @@ public class MessagePackSerializer implements ISerializer {
                  * given how this package works. Problematic types are ByteArray, String,
                  * Map and List. This change is needed for ByteArrays and Strings. Nested
                  * Lists and Maps are not supported.*/
-                shellMsg.addTuple(value2JavaType(element));
+                shellMsg.addTuple(valueToJavaType(element));
             }
         }
 
@@ -138,40 +139,35 @@ public class MessagePackSerializer implements ISerializer {
         return shellMsg;
     }
 
-    private Object value2JavaType(Value element) {
-        if (element.isRawValue()) {
-            return element.asRawValue().getString();
+    private Object valueToJavaType(Value element) {
+        switch (element.getType()) {
+            case RAW:
+                return element.asRawValue().getString();
+            case INTEGER:
+                return element.asIntegerValue().getInt();
+            case FLOAT:
+                return element.asFloatValue().getFloat();
+            case BOOLEAN:
+                return element.asBooleanValue().getBoolean();
+            case NIL:
+                return null;
+            case ARRAY:
+                List<Object> elementList = new ArrayList<Object>();
+                for (Value e:element.asArrayValue().getElementArray()) {
+                    elementList.add(valueToJavaType(e));
+                }
+                return elementList;
+            case MAP:
+                Map<Object,Object> elementMap = new HashMap<Object,Object>();
+                for (Map.Entry<Value, Value> v:element.asMapValue().entrySet()) {
+                    elementMap.put(
+                            valueToJavaType(v.getKey()),
+                            valueToJavaType(v.getValue()));
+                }
+                return elementMap;
+            default:
+                return element;
         }
-        if (element.isBooleanValue()) {
-            return element.asBooleanValue().getBoolean();
-        }
-        if (element.isFloatValue()) {
-            return element.asFloatValue().getFloat();
-        }
-        if (element.isIntegerValue()) {
-            return element.asIntegerValue().getInt();
-        }
-        if (element.isNilValue()) {
-            return null;
-        }
-        if (element.isMapValue()) {
-    		Map<Object,Object> elementMap = new HashMap<Object,Object>();
-    		for (Map.Entry<Value, Value> v:element.asMapValue().entrySet()) {
-    			elementMap.put(
-    					value2JavaType(v.getKey()),
-    					value2JavaType(v.getValue())
-    			);
-    		}
-    		return elementMap;
-    	}
-        if (element.isArrayValue()) {
-    		List<Object> elementList = new ArrayList<Object>();
-    		for (Value e:element.asArrayValue().getElementArray()) {
-    			elementList.add(value2JavaType(e));
-    		}
-    		return elementList;
-    	}
-        return element;
     }
 
     @Override
