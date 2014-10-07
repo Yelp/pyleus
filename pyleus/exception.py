@@ -1,5 +1,4 @@
-"""Pyleus specific exceptions
-"""
+"""Pyleus specific exceptions."""
 from __future__ import absolute_import
 
 
@@ -43,5 +42,5 @@ class StormError(PyleusError):
 
 
 def command_error_fmt(cmd_name, exception):
-    """Formats error message given command and exception."""
+    """Format error message given command and exception."""
     return "pyleus {0}: error: {1}".format(cmd_name, str(exception))
