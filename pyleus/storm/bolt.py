@@ -9,15 +9,23 @@ log = logging.getLogger(__name__)
 
 
 class Bolt(Component):
+    """Bolt component class."""
 
     COMPONENT_TYPE = "bolt"
 
     def process_tuple(self, tup):
-        """Implement in subclass"""
+        """
+        Process the incoming tuple.
+
+        :param tup: pyleus tuple representing the message to be processed
+        :type tup: ``dict``
+
+        .. note:: Implement in subclass.
+        """
         pass
 
     def _process_tuple(self, tup):
-        """Implement in bolt middleware
+        """.. note: Implement in bolt middleware subclass.
 
         Bolt middleware classes such as SimpleBolt should override this to
         inject functionality around tuple processing without changing the
@@ -26,6 +34,7 @@ class Bolt(Component):
         return self.process_tuple(tup)
 
     def run_component(self):
+        """Bolt main loop."""
         try:
             while True:
                 tup = self.read_tuple()
@@ -34,11 +43,13 @@ class Bolt(Component):
             log.warning("Disconnected from Storm. Exiting.")
 
     def ack(self, tup):
+        """Ack a tuple."""
         self.send_command('ack', {
             'id': tup.id,
         })
 
     def fail(self, tup):
+        """Fail a tuple."""
         self.send_command('fail', {
             'id': tup.id,
         })
@@ -47,8 +58,32 @@ class Bolt(Component):
             self, values,
             stream=None, anchors=None,
             direct_task=None, need_task_ids=True):
-        """Build and send an output tuple command dict; return the tasks to
-        which the tuple was sent by Storm.
+        """Build and send an output tuple command dict and return the ids of
+        the tasks to which the tuple was sent by Storm.
+
+        :param values: pyleus tuple values to be emitted
+        :type values: ``tuple`` or ``list``
+        :param stream:
+         output stream the message is going to belong to, default ``DEFAULT``
+        :type stream: ``str``
+        :param anchors:
+         list of pyleus tuples the message should be anchored to, default
+         ``None``
+        :type anchors: ``list`` of pyleus tuples
+        :param direct_task: task message will be sent to, default None
+        :type direct_task: ``int``
+        :param need_task_ids:
+         whether emit should return the ids of the task the message has been
+         sent to, default ``True``
+        :type need_task_ids: ``bool``
+
+        .. note::
+           Setting ``need_task_ids`` to ``False`` really helps in achieving
+           better performances. You should always do that if your application
+           does not leverage task ids.
+
+        .. warning::
+           ``direct_task`` is not yet supported.
         """
         assert isinstance(values, list) or isinstance(values, tuple)
 
@@ -86,10 +121,11 @@ class SimpleBolt(Bolt):
     """
 
     def process_tick(self):
-        """Implement in subclass"""
+        """.. note:: Implement in subclass."""
         pass
 
     def _process_tuple(self, tup):
+        """SimpleBolt middleware level tuple processing."""
         if is_tick(tup):
             self.process_tick()
         else:

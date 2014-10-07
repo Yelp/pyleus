@@ -96,7 +96,7 @@ def _validate_config_file(config_file):
 def update_configuration(config, update_dict):
     """Update configuration with new values passed as dictionary.
 
-    :return: new configuration namedtuple"""
+    :return: new configuration ``namedtuple``"""
     tmp = config._asdict()
     tmp.update(update_dict)
     return Configuration(**tmp)
@@ -109,7 +109,7 @@ def load_configuration(cmd_line_file):
     If a file is specified from command line, it is considered
     the most specific.
 
-    :return: configuration namedtuple
+    :return: configuration ``namedtuple``
     """
     config_files_hierarchy = [expand_path(c) for c in CONFIG_FILES_PATH]
 

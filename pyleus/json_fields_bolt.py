@@ -23,10 +23,10 @@ class JSONFieldsBolt(SimpleBolt):
         json_dict.
 
         :param json_dict: JSON object representing the input tuple value
-        :type json_dict: dict
+        :type json_dict: ``dict``
 
-        :return: a list of values, or None to emit nothing.
-        :rtype: list or None
+        :return: a list of values, or ``None`` to emit nothing.
+        :rtype: ``list`` or ``None``
         """
         raise NotImplementedError()
 

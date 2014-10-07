@@ -83,10 +83,10 @@ class StormConfig(dict):
         in Storm configuration.
 
         :return: tick tuple frequency for the component
-        :rtype: float
+        :rtype: ``float`` or ``None``
 
         .. note::
-           bolts not specifying tick tuple frequency default to None,
+           bolts not specifying tick tuple frequency default to ``None``,
            while spouts are not supposed to use tick tuples at all.
         """
         return self.get("topology.tick.tuple.freq.secs")
@@ -205,7 +205,7 @@ class Component(object):
 
     def _msg_is_command(self, msg):
         """Storm differentiates between commands and taskids by whether the
-        message is a dict or list.
+        message is a ``dict`` or ``list``.
         """
         return isinstance(msg, dict)
 
