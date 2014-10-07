@@ -36,6 +36,7 @@ API Documentation
    json_fields_bolt
    storm/bolt
    storm/spout
+   storm/component
    testing
    utils
 
