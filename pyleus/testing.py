@@ -1,3 +1,4 @@
+"""Helper functions and classes for testing."""
 from __future__ import absolute_import
 
 import mock
@@ -7,6 +8,7 @@ from pyleus.storm.component import Component
 
 
 class ComponentTestCase(object):
+    """Base class to inherit for testing pyleus components."""
 
     INSTANCE_CLS = Component
 
