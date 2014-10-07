@@ -34,6 +34,7 @@ API Documentation
    configuration
    exception
    json_fields_bolt
+   storm/storm
    storm/bolt
    storm/spout
    storm/component

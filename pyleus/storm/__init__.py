@@ -5,6 +5,13 @@ from collections import namedtuple
 DEFAULT_STREAM = "default"
 
 StormTuple = namedtuple('StormTuple', "id comp stream task values")
+"""Namedtuple representing a pyleus tuple.
+
+* **id**\(``str`` or ``long``): tuple identifier
+* **comp**\(``str``): name of the emitting component
+* **stream**\(``str``): name of the input stream the tuple belongs to
+* **values**\(``tuple``): values contained by the tuple
+"""
 
 
 def is_tick(tup):
@@ -15,6 +22,8 @@ def is_tick(tup):
 
 
 class StormWentAwayError(Exception):
+    """Raised when the connection between the component and Storm terminates.
+    """
 
     def __init__(self):
         message = "Got EOF while reading from Storm"
