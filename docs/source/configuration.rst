@@ -1,6 +1,7 @@
+.. _configuration:
 
-Configuration
-=============
+pyleus.configuration
+====================
 
 
 .. automodule:: pyleus.configuration

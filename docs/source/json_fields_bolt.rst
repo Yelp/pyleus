@@ -1,6 +1,7 @@
+.. _json_fields_bolt:
 
-Json Fields Bolt
-================
+pyleus.json_fields_bolt
+=======================
 
 .. automodule:: pyleus.json_fields_bolt
    :members:

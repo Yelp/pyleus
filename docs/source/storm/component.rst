@@ -1,6 +1,7 @@
+.. _component:
 
-Component
-=========
+pyleus.storm.component
+======================
 
 .. automodule:: pyleus.storm.component
    :members:

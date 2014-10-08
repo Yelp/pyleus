@@ -1,6 +1,7 @@
+.. _spout:
 
-Spout
-=====
+pyleus.storm.spout
+==================
 
 .. automodule:: pyleus.storm.spout
    :members:

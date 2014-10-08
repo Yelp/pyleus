@@ -1,6 +1,7 @@
+.. _bolt:
 
-Bolt
-=====
+pyleus.storm.bolt
+=================
 
 .. automodule:: pyleus.storm.bolt
    :members:

@@ -1,6 +1,7 @@
+.. _exception:
 
-Exception
-=========
+pyleus.exception
+================
 
 .. automodule:: pyleus.exception
    :members:

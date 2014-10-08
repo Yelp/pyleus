@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Pyleus's documentation!
+Welcome to pyleus's documentation!
 ==================================
 
 Pyleus Command Line
@@ -31,15 +31,11 @@ API Documentation
 .. toctree::
    :maxdepth: 2
 
-   configuration
-   exception
-   json_fields_bolt
    storm/storm
-   storm/bolt
-   storm/spout
-   storm/component
+   json_fields_bolt
+   configuration
    testing
-   utils
+   exception
 
 Indices and tables
 ==================
