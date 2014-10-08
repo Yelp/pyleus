@@ -1,3 +1,6 @@
+"""Module containing the base class for all pyleus components and a wrapper
+class around Storm configurations.
+"""
 from __future__ import absolute_import
 
 import argparse
@@ -20,6 +23,7 @@ from pyleus.storm.serializers.msgpack_serializer import MsgpackSerializer
 from pyleus.storm.serializers.json_serializer import JSONSerializer
 
 
+# Please keeep in sync with java TopologyBuilder
 DESCRIBE_OPT = "--describe"
 COMPONENT_OPTIONS_OPT = "--options"
 PYLEUS_CONFIG_OPT = "--pyleus-config"
@@ -165,8 +169,8 @@ class Component(object):
         self.initialize()
 
     def initialize(self):
-        """Called after component has been launched, but before processing
-        any tuples.
+        """Called after component has been launched, but before processing any
+        tuples. You can use this method to setup your component.
 
         .. note:: Implement in subclass.
         """

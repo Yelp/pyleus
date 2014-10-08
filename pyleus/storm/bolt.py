@@ -1,3 +1,7 @@
+"""Module containing the implementation of the Bolt component and a subclassed
+SimpleBolt component which takes care of acking/failing tuples and exposing a
+nicer API for handling tick tuples.
+"""
 from __future__ import absolute_import
 
 import logging
@@ -136,7 +140,7 @@ class Bolt(Component):
 
 
 class SimpleBolt(Bolt):
-    """A Bolt that automatically acks tuples.
+    """A Bolt that automatically acks/fails tuples.
 
     Implement process_tick() in a subclass to handle tick tuples with a nicer
     API.

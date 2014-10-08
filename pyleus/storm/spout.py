@@ -1,3 +1,5 @@
+"""Module containing the implementation of the Spout component.
+"""
 from __future__ import absolute_import
 
 import logging
