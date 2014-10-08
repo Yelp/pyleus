@@ -30,7 +30,7 @@ class JSONFieldsBolt(SimpleBolt):
         :return: a list of values, or ``None`` to emit nothing.
         :rtype: ``list`` or ``None``
 
-        .. note: Implement in subclass.
+        .. note:: Implement in subclass.
         """
         raise NotImplementedError()
 

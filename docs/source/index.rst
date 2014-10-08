@@ -33,9 +33,9 @@ API Documentation
 
    storm/storm
    json_fields_bolt
-   configuration
    testing
    exception
+   configuration
 
 Indices and tables
 ==================

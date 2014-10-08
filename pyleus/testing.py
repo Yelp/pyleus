@@ -14,7 +14,7 @@ class ComponentTestCase(object):
 
     @pytest.fixture(autouse=True)
     def instance_fixture(self):
-        """Give access to a mock pyleus component through self.instance."""
+        """Give access to a mock pyleus component through ``self.instance.``"""
         self.mock_input_stream = mock.Mock()
         self.mock_output_stream = mock.Mock()
         self.instance = self.INSTANCE_CLS(

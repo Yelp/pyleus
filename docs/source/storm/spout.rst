@@ -5,5 +5,4 @@ pyleus.storm.spout
 
 .. automodule:: pyleus.storm.spout
    :members:
-   :undoc-members:
-
+   :exclude-members: run_component

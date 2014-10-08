@@ -5,5 +5,5 @@ pyleus.storm.bolt
 
 .. automodule:: pyleus.storm.bolt
    :members:
-   :undoc-members:
+   :exclude-members: run_component
 

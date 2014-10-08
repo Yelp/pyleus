@@ -13,13 +13,14 @@ log = logging.getLogger(__name__)
 
 
 class Bolt(Component):
-    """Bolt component class."""
+    """Bolt component class. Inherit from
+    :class:`~pyleus.storm.component.Component`.
+    """
 
     COMPONENT_TYPE = "bolt"
 
     def process_tuple(self, tup):
-        """
-        Process the incoming tuple.
+        """Process the incoming tuple.
 
         :param tup: pyleus tuple representing the message to be processed
         :type tup: :class:`~pyleus.storm.StormTuple`
@@ -29,11 +30,11 @@ class Bolt(Component):
         pass
 
     def _process_tuple(self, tup):
-        """.. note: Implement in bolt middleware subclass.
+        """Bolt middleware classes such as SimpleBolt should override this to
+        inject functionality around tuple processing without changing the API
+        for downstream bolt implementations.
 
-        Bolt middleware classes such as SimpleBolt should override this to
-        inject functionality around tuple processing without changing the
-        API for downstream bolt implementations.
+        .. note: Implement in Bolt middleware subclass.
         """
         return self.process_tuple(tup)
 
@@ -147,7 +148,9 @@ class SimpleBolt(Bolt):
     """
 
     def process_tick(self):
-        """.. note:: Implement in subclass."""
+        """Code to be executed when a tick tuple reaches the component.
+
+        .. note:: Implement in subclass."""
         pass
 
     def _process_tuple(self, tup):

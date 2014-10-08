@@ -11,7 +11,9 @@ log = logging.getLogger(__name__)
 
 
 class Spout(Component):
-    """Spout component class"""
+    """Spout component class. Inherit from
+    :class:`~pyleus.storm.component.Component`.
+    """
 
     COMPONENT_TYPE = "spout"
 

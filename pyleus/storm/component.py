@@ -75,7 +75,10 @@ def _expand_output_fields(obj):
 
 
 class StormConfig(dict):
-    """Add some convenience properites to a conf dict from Storm."""
+    """Add some convenience properites to a configuration ``dict`` from Storm.
+    You can access Storm configuration dictionary within a component through
+    ``self.conf``.
+    """
 
     def __init__(self, conf):
         super(StormConfig, self).__init__()
@@ -90,7 +93,7 @@ class StormConfig(dict):
         :rtype: ``float`` or ``None``
 
         .. note::
-           bolts not specifying tick tuple frequency default to ``None``,
+           Bolts not specifying tick tuple frequency default to ``None``,
            while spouts are not supposed to use tick tuples at all.
         """
         return self.get("topology.tick.tuple.freq.secs")
@@ -100,11 +103,32 @@ class Component(object):
     """Base class for all pyleus components."""
 
     COMPONENT_TYPE = None # One of "bolt", "spout"
+
+    #: ``list`` or ``dict`` of output fields for the component.
+    #:
+    #: .. note:: Specify in subclass.
+    #:
+    #: .. seealso:: :ref:`OUTPUT_FIELDS_PAGE`
     OUTPUT_FIELDS = None
+
+    #: ``list`` of user-defined options for the component.
+    #:
+    #: .. note:: Specify in subclass.
     OPTIONS = None
 
     # Populated in Component.run()
+
+    #: ``dict`` containing options passed to component in the yaml definition
+    #: file.
     options = None
+
+    #: :class:`~.StormConfig` containing the Storm configuration for the
+    #: component.
+    conf = None
+
+    #: ``dict`` containing the Storm context for the component.
+    context = None
+
     pyleus_config = None
 
     def __init__(self, input_stream=None, output_stream=None):
