@@ -8,6 +8,7 @@ from pyleus.cli.topologies import kill_topology
 
 
 class KillSubCommand(SubCommand):
+    """Kill subcommand class."""
 
     NAME = "kill"
     DESCRIPTION = "Kill a topology running on a Storm cluster"

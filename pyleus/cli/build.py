@@ -74,6 +74,7 @@ def _validate_venv(topology_dir, venv):
         raise InvalidTopologyError("Topology directory must not contain a "
                                    "file named {0}".format(venv))
 
+
 def _remove_pyleus_base_jar(venv):
     """Remove the Pyleus base jar from the virtualenv since it's redundant and
     takes up space. See PYLEUS-74.

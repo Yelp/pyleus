@@ -18,7 +18,8 @@ from pyleus.utils import search_storm_cmd_path
 def _ensure_storm_path_in_configs(configs):
     """Ensure that the storm executable path is in the configuration.
     If not present, search for it and update the config.
-    raises: ConfigurationError if unable to locate storm path
+
+    :raise: ConfigurationError if unable to locate storm path
     """
 
     if configs.storm_cmd_path is not None:
@@ -34,6 +35,7 @@ def _ensure_storm_path_in_configs(configs):
 
 
 class SubCommand(object):
+    """Base class for pyleus subcommands."""
 
     # Override these in subclass
     NAME = None
@@ -51,7 +53,7 @@ class SubCommand(object):
 
     def run(self, configs):
         """Callback associated to the sub-command.
-        Implement the sub-command logic here
+        Implement the sub-command logic here.
         """
         raise NotImplementedError
 
@@ -59,9 +61,8 @@ class SubCommand(object):
         """During the top-level command definition, it needs to be called
         in order to register the sub-command.
 
-        Args:
-            subparsers: the result value of the
-                top_level_parser.add_subparsers() method
+        :param subparsers:
+         the result value of the top_level_parser.add_subparsers() method
         """
         parser = subparsers.add_parser(
             self.NAME,
@@ -106,4 +107,5 @@ class SubCommand(object):
             self.error(e)
 
     def error(self, message):
+        """Exit and print error message."""
         sys.exit(command_error_fmt(self.NAME, message))

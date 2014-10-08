@@ -11,6 +11,7 @@ from pyleus.cli.topologies import is_jar
 
 
 class RunSubCommand(SubCommand):
+    """Run subcommand class."""
 
     # Override these in subclass
     NAME = None
@@ -23,8 +24,9 @@ class RunSubCommand(SubCommand):
         pass
 
     def add_arguments(self, parser):
-        parser.add_argument("topology_jar", metavar="TOPOLOGY_JAR", help="Path "
-            "to a Pyleus topology jar.")
+        parser.add_argument(
+            "topology_jar", metavar="TOPOLOGY_JAR",
+            help="Path to a Pyleus topology jar.")
         self.add_specific_arguments(parser)
 
     def run_topology(jar_path, configs):
