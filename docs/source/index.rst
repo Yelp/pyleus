@@ -24,18 +24,21 @@ See examples in :py:mod:`pyleus.storm.bolt` and :py:mod:`pyleus.storm.spout`
 
 See `Trac page`_ for details.
 
+Documentation
+=============
+
+.. toctree::
+   :maxdepth: 2
+
+   configuration
 
 API Documentation
 =================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
-   storm/storm
-   json_fields_bolt
-   testing
-   exception
-   configuration
+   api
 
 Indices and tables
 ==================
