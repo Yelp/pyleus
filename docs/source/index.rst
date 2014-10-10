@@ -26,9 +26,6 @@ Build an example:
 
 .. code-block:: none
 
-   $ virtualenv myvenv
-   $ source myvenv/bin/activate
-   $ pip install pyleus
    $ git clone https://github.com/Yelp/pyleus.git
    $ pyleus build pyleus/examples/exclamation_topology/pyleus_topology.yaml
 

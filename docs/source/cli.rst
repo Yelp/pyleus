@@ -26,7 +26,7 @@ Command Line
 
   Hit ``C-C`` to stop local execution.
 
-  The ``debug`` option will print evry tuple flowing in the topology.
+  The ``debug`` option will print evry tuple flowing through the topology.
 
 * Submit a topology to a Storm cluster:
 
