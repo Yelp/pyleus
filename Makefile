@@ -9,13 +9,14 @@ bdist_wheel:
 	python setup.py bdist_wheel
 
 test:
-	tox -c tox-yelp.ini
+	tox -c tox.ini
 
 topology_builder:
 	make -C topology_builder/
 
 clean:
 	rm -rf build/ dist/ pyleus.egg-info/ .tox/
+	find . -name '*.pyc' -delete
 	make -C topology_builder/ clean
 	rm -rf docs/build/*
 
