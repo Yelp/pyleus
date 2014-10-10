@@ -7,6 +7,13 @@ of increasing precedence. The latter configuration overrides the previous one.
 #. ~/.config/pyleus.conf
 #. ~/.pyleus.conf
 
+You can always specify a configuration file when running any pyleus CLI command
+as following:
+
+``$ pyleus -c /path/to/config_file CMD``
+
+This will override previous configurations.
+
 Configuration file example
 --------------------------
 The following file contains all options you can configure for all pyleus

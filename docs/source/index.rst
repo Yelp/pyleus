@@ -6,23 +6,45 @@
 Pyleus |version|
 ================
 
-Pyleus Command Line
-===================
+Pyleus is a Python 2.6+ layer built on top of `Apache Storm`_ making possible to write, build and manage pure Python Storm topologies in a pythonic way.
 
-Run ``pyleus --help`` for all options
+Quick Install
+=============
+
+Install in a virtualenv:
 
 .. code-block:: none
 
-    $ pyleus build
-    $ pyleus submit
+   $ virtualenv my_venv
+   $ source my_venv/bin/activate
+   $ pip install pyleus
 
-Basic Usage
+Quick Start
 ===========
 
-See examples in :py:mod:`pyleus.storm.bolt` and :py:mod:`pyleus.storm.spout`
+Build an example:
 
+.. code-block:: none
 
-See `Trac page`_ for details.
+   $ virtualenv myvenv
+   $ source myvenv/bin/activate
+   $ pip install pyleus
+   $ git clone https://github.com/Yelp/pyleus.git
+   $ pyleus build pyleus/examples/exclamation_topology/pyleus_topology.yaml
+
+Run the example locally:
+
+.. code-block:: none
+
+   $ pyleus local exclamation_topology.jar
+
+When you are done, hit ``C-C``.
+
+Run the example on a Storm cluster:
+
+.. code-block:: none
+
+   $ pylues submit -s STORM_CLUSTER_IP exclamation_topology.jar
 
 Documentation
 =============
@@ -30,6 +52,9 @@ Documentation
 .. toctree::
    :maxdepth: 2
 
+   tutorial
+   install
+   cli
    configuration
 
 API Documentation
@@ -47,4 +72,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. _Trac page: https://trac.yelpcorp.com/wiki/Pyleus
+.. _Apache Storm: https://storm.incubator.apache.org/
