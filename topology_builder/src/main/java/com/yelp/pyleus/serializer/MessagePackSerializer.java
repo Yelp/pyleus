@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.DataOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import backtype.storm.utils.Utils;
 import org.apache.log4j.Logger;
 import org.msgpack.MessagePack;
 import org.msgpack.template.Template;
+import org.msgpack.type.ValueType;
 
 import static org.msgpack.template.Templates.tMap;
 import static org.msgpack.template.Templates.TString;
@@ -124,11 +126,7 @@ public class MessagePackSerializer implements ISerializer {
                  * given how this package works. Problematic types are ByteArray, String,
                  * Map and List. This change is needed for ByteArrays and Strings. Nested
                  * Lists and Maps are not supported.*/
-                Object elementObject = element;
-                if (element.isRawValue()) {
-                    elementObject = element.asRawValue().getString();
-                }
-                shellMsg.addTuple(elementObject);
+                shellMsg.addTuple(valueToJavaType(element));
             }
         }
 
@@ -139,6 +137,37 @@ public class MessagePackSerializer implements ISerializer {
             }
         }
         return shellMsg;
+    }
+
+    private Object valueToJavaType(Value element) {
+        switch (element.getType()) {
+            case RAW:
+                return element.asRawValue().getString();
+            case INTEGER:
+                return element.asIntegerValue().getInt();
+            case FLOAT:
+                return element.asFloatValue().getFloat();
+            case BOOLEAN:
+                return element.asBooleanValue().getBoolean();
+            case NIL:
+                return null;
+            case ARRAY:
+                List<Object> elementList = new ArrayList<Object>();
+                for (Value e:element.asArrayValue().getElementArray()) {
+                    elementList.add(valueToJavaType(e));
+                }
+                return elementList;
+            case MAP:
+                Map<Object,Object> elementMap = new HashMap<Object,Object>();
+                for (Map.Entry<Value, Value> v:element.asMapValue().entrySet()) {
+                    elementMap.put(
+                            valueToJavaType(v.getKey()),
+                            valueToJavaType(v.getValue()));
+                }
+                return elementMap;
+            default:
+                return element;
+        }
     }
 
     @Override
