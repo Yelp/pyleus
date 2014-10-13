@@ -9,7 +9,7 @@ Pyleus |version|
 Pyleus is a Python 2.6+ layer built on top of `Apache Storm`_ making possible to write, build and manage pure Python Storm topologies in a pythonic way.
 
 Quick Install
-=============
+-------------
 
 Install in a virtualenv:
 
@@ -20,7 +20,7 @@ Install in a virtualenv:
    $ pip install pyleus
 
 Quick Start
-===========
+-----------
 
 Build an example:
 
@@ -44,7 +44,7 @@ Run the example on a Storm cluster:
    $ pylues submit -s STORM_CLUSTER_IP exclamation_topology.jar
 
 Documentation
-=============
+-------------
 
 .. toctree::
    :maxdepth: 2
@@ -55,7 +55,7 @@ Documentation
    configuration
 
 API Documentation
-=================
+-----------------
 
 .. toctree::
    :maxdepth: 4
@@ -63,7 +63,7 @@ API Documentation
    api
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
