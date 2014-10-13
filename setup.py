@@ -67,6 +67,17 @@ setup(
     author_email="plucas@yelp.com",
     description="Standard library and deployment tools for using Python "
         "with Storm",
+    classifiers=[
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Operating System :: OS Independent",
+        "License :: OSI Approved :: Apache Software License",
+        "Intended Audience :: Developers",
+        "Topic :: Software Development :: Libraries",
+        "Topic :: System :: Distributed Computing",
+        "Development Status :: 4 - Beta",
+    ],
     packages=[
         "pyleus", "pyleus.cli", "pyleus.cli.commands",
         "pyleus.storm", "pyleus.storm.serializers"],
