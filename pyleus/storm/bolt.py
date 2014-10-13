@@ -56,7 +56,7 @@ class Bolt(Component):
         .. note::
            All tuples need to be acked or failed, independently whether
            you are using Storm reliability features or not. If you are directly
-           using :class:`~.Bolt` instead of :class::`~.SimpleBolt`, you must
+           using :class:`~.Bolt` instead of :class:`~.SimpleBolt`, you must
            call this method or your topology will eventually run out of memory
            or hang.
         """
@@ -73,7 +73,7 @@ class Bolt(Component):
         .. note::
            All tuples need to be acked or failed, independently whether
            you are using Storm reliability features or not. If you are directly
-           using :class:`~.Bolt` instead of :class::`~.SimpleBolt`, you must
+           using :class:`~.Bolt` instead of :class:`~.SimpleBolt`, you must
            call this method or your topology will eventually run out of memory
            or hang.
         """
@@ -104,12 +104,12 @@ class Bolt(Component):
          sent to, default ``True``
         :type need_task_ids: ``bool``
 
-        .. note::
+        .. tip::
            Setting ``need_task_ids`` to ``False`` really helps in achieving
            better performances. You should always do that if your application
            does not leverage task ids.
 
-        .. warning::
+        .. danger::
            ``direct_task`` is not yet supported.
         """
         assert isinstance(values, list) or isinstance(values, tuple)

@@ -101,12 +101,12 @@ class Spout(Component):
            run at least one Storm **acker** (see :ref:`TODO ACKERS PAGE`),
            otherwise your topology will hang.
 
-        .. note::
+        .. tip::
            Setting ``need_task_ids`` to ``False`` really helps in achieving
            better performances. You should always do that if your application
            does not leverage task ids.
 
-        .. warning::
+        .. danger::
            ``direct_task`` is not yet supported.
 
         """

@@ -57,6 +57,6 @@ Command Line
   .. seealso:: :ref:`configuration`
 
 
-.. note::
+.. tip::
 
    Try ``pyleus -h`` for a list of all the available commands or ``pyleus CMD -h`` for any command-specific help.
