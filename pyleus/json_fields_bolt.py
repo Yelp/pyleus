@@ -1,5 +1,4 @@
-"""JSON-specialized Bolt component.
-"""
+"""JSON-specialized Bolt component."""
 from __future__ import absolute_import
 
 import logging

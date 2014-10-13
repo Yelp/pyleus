@@ -1,4 +1,4 @@
-"""Configuration defaults and load functions.
+"""Configuration defaults and loading functions.
 
 Pyleus will look for configuration files in the following file paths in order
 of increasing precedence. The latter configuration overrides the previous one.
@@ -33,7 +33,6 @@ invocations.
 
    # list of packages to always include in your topologies
    include_packages: simplejson
-
 """
 from __future__ import absolute_import
 
@@ -84,7 +83,7 @@ DEFAULTS = Configuration(
 
 
 def _validate_config_file(config_file):
-    """Ensure that config_file exists and is a file"""
+    """Ensure that config_file exists and is a file."""
     if not os.path.exists(config_file):
         raise ConfigurationError("Specified configuration file not"
                                  " found: {0}".format(config_file))
@@ -96,7 +95,8 @@ def _validate_config_file(config_file):
 def update_configuration(config, update_dict):
     """Update configuration with new values passed as dictionary.
 
-    :return: new configuration ``namedtuple``"""
+    :return: new configuration ``namedtuple``
+    """
     tmp = config._asdict()
     tmp.update(update_dict)
     return Configuration(**tmp)

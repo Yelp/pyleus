@@ -10,10 +10,7 @@ class PyleusError(Exception):
 
 
 class ConfigurationError(PyleusError):
-    """Raised when a required configuration value missing or misformed. You can
-    usually specify these values as command line options or in pyleus config
-    file.
-    """
+    """Raised when a required configuration value is missing or malformed."""
     pass
 
 
