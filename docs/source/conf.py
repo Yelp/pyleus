@@ -45,7 +45,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'pyleus'
-copyright = u'2014, Yelp tools-infra'
+copyright = u'2013-2014 Yelp'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -180,7 +180,7 @@ htmlhelp_basename = 'pyleusdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'pyleus.tex', u'Pyleus Documentation',
-   u'Yelp tools-infra', 'manual'),
+   u'Yelp', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

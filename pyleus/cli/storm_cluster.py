@@ -18,7 +18,7 @@ STORM_JAR_JVM_OPTS = "STORM_JAR_JVM_OPTS"
 
 
 def _watch_over_storm(storm_pid):
-    """ Ensure that if the pyleus process is killed, also the storm process
+    """Ensure that if the pyleus process is killed, also the storm process
     will terminate.
     """
     def _kill_storm_handler(signum, frame):
