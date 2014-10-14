@@ -70,3 +70,9 @@ You can implement the :meth:`~pyleus.storm.component.Component.initialize` metho
        def initialize(self):
            with open(self.options['filename'], 'r') as f:
                self.lines = f.readlines()
+
+.. seealso::
+
+   You can find several examples on `GitHub`.
+
+.. _examples: https://github.com/Yelp/pyleus/tree/master/examples

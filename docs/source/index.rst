@@ -55,6 +55,7 @@ Documentation
    reliability
    options
    parallelism
+   tick
    logging
    install
    cli
