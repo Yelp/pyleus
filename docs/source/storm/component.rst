@@ -6,7 +6,7 @@ pyleus.storm.component
 .. automodule:: pyleus.storm.component
 
     .. autoclass:: Component
-        :members: initialize, OUTPUT_FIELDS, OPTIONS, options, conf, context
+        :members: initialize, OUTPUT_FIELDS, OPTIONS, options, conf, context, run
         :undoc-members:
 
     .. autoclass:: StormConfig

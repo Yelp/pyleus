@@ -73,11 +73,13 @@ This is the code implementing ``dummy_spout.py``:
    if __name__ == '__main__':
        DummySpout().run()
 
-Every :class:`~pyleus.storm.spout.Spout` must inherit from :class:`~pyleus.storm.spout.Spout` and declare its ``OUTPUT_FIELDS`` as a ``tuple``, a ``list`` or a ``namedtuple``. The same goes for ``emit`` **first argument**.
+Every :class:`~pyleus.storm.spout.Spout` must inherit from :class:`~pyleus.storm.spout.Spout` and declare its :attr:`~pyleus.storm.component.Component.OUTPUT_FIELDS` as a ``tuple``, a ``list`` or a ``namedtuple``. The same goes for ``emit`` **first argument**.
 
-Spouts also must define the method ``next_tuple``, that will be called within the component main loop in order to generate a stream of new tuples.
+Spouts also must define the method :meth:`~pylues.storm.spout.Spout.next_tuple`, that will be called within the component main loop in order to generate a stream of new tuples.
 
-.. seealso:: If you want to enable tuple tracking and leverage Storm reliability features, please read :ref:`TODO_RELIABILITY`.
+.. note:: Forgetting to call the :meth:`~pyleus.storm.component.Component.run` method will prevent the topology from running.
+
+.. seealso:: If you want to enable tuple tracking and leverage Storm reliability features, please read :ref:`reliability`.
 
 .. seealso:: For complete API documentation, see :ref:`spout`.
 
@@ -106,7 +108,7 @@ Every :class:`~pyleus.storm.bolt.Bolt` must inherit from :class:`~pyleus.storm.b
 
 .. note::
 
-   Please note that :class:`~pyleus.storm.bolt.SimpleBolt` will **NOT** automatically anchor your tuples. See :ref:`TODO_REALIBILITY` for more info on anchoring.
+   Please note that :class:`~pyleus.storm.bolt.SimpleBolt` will **NOT** automatically anchor your tuples. See :ref:`reliability` for more info on anchoring.
 
 .. note::
 
@@ -116,7 +118,7 @@ Every :class:`~pyleus.storm.bolt.Bolt` must inherit from :class:`~pyleus.storm.b
 
 .. warning::
 
-   Do **NOT** print. I'm gonna say it again: Do. Not. Print. Or, at least, do not print until you want to crash your topology. The mechanism Storm uses to communicate with Python is based on stdin/stdout communication, so you are not allowed to use them. Use logging instead (see :ref:`TODO_LOGGING`).
+   Do **NOT** print. I'm gonna say it again: Do. Not. Print. Or, at least, do not print until you want to crash your topology. The mechanism Storm uses to communicate with Python is based on stdin/stdout communication, so you are not allowed to use them. Use logging instead (see :ref:`logging`).
 
 Run your topology
 -----------------

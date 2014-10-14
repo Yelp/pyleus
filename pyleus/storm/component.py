@@ -201,7 +201,17 @@ class Component(object):
         pass
 
     def run(self):
-        """Entry point for the component running logic."""
+        """Entry point for the component running logic.
+
+        Forgetting to call it as following will prevent the topology from
+        running.
+
+        :Example:
+         .. code-block:: python
+
+            if __name__ == '__main__':
+                MyComponent().run()
+        """
         parser = argparse.ArgumentParser(add_help=False)
         parser.add_argument(DESCRIBE_OPT, action="store_true", default=False)
         parser.add_argument(COMPONENT_OPTIONS_OPT, default=None)

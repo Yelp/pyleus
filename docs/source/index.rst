@@ -1,12 +1,11 @@
-.. Pyleus documentation master file, created by
-   sphinx-quickstart on Tue Sep 30 08:01:12 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Pyleus |version|
-================
+Pyleus v\ |version|
+===================
 
 Pyleus is a Python 2.6+ layer built on top of `Apache Storm`_ making possible to write, build and manage pure Python Storm topologies in a pythonic way.
+
+.. warning::
+
+   Pyleus is **NOT** compatible with Python 3 (yet).
 
 Quick Install
 -------------
@@ -50,6 +49,8 @@ Documentation
    :maxdepth: 2
 
    tutorial
+   reliability
+   logging
    install
    cli
    configuration

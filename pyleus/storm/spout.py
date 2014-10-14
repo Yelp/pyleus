@@ -1,5 +1,4 @@
-"""Module containing the implementation of the Spout component.
-"""
+"""Module containing the implementation of the Spout component."""
 from __future__ import absolute_import
 
 import logging
@@ -19,6 +18,7 @@ class Spout(Component):
 
     def next_tuple(self):
         """Emit the next tuple into the topology.
+
         .. note:: Implement in subclass.
         """
         pass
@@ -29,7 +29,7 @@ class Spout(Component):
         :param tup_id: tuple identifier
         :type tup_id: ``str`` or ``long``
 
-        .. note: Implement in subclass. Default behaviour is ``pass``
+        .. note:: Implement in subclass. Default behaviour is ``pass``.
         """
         pass
 
@@ -39,7 +39,7 @@ class Spout(Component):
         :param tup_id: tuple identifier
         :type tup_id: ``str`` or ``long``
 
-        .. note: Implement in subclass. Default behaviour is ``pass``
+        .. note:: Implement in subclass. Default behaviour is ``pass``.
         """
         pass
 
@@ -98,7 +98,7 @@ class Spout(Component):
         .. note::
            Omitting ``tup_id`` will disable reliability tracking for that
            tuple. If you provide a value for ``tup_id``, then you also need to
-           run at least one Storm **acker** (see :ref:`TODO ACKERS PAGE`),
+           run at least one Storm **acker** (see :ref:`reliability`),
            otherwise your topology will hang.
 
         .. tip::
