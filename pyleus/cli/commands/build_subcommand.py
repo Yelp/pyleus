@@ -18,6 +18,7 @@ from pyleus.configuration import DEFAULTS
 
 
 class BuildSubCommand(SubCommand):
+    """Build subcommand class."""
 
     NAME = "build"
     DESCRIPTION = "Build a Storm jar from a Pyleus topology file"
@@ -25,15 +26,15 @@ class BuildSubCommand(SubCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "topology_path", metavar="TOPOLOGY_PATH", nargs="?",
-            default=DEFAULTS.topology_path, help="Path to Pyleus topology file "
-            "Default: %(default)s")
+            default=DEFAULTS.topology_path,
+            help="Path to Pyleus topology file. Default: %(default)s")
         parser.add_argument(
             "-o", "--output", dest="output_jar", help="Path of the jar to be "
             "written. Default: <topology_name>.jar")
         parser.add_argument(
             "-s", "--system-site-packages", dest="system_site_packages",
-            action="store_true", help="Do not install packages already present "
-            "on your system.")
+            action="store_true",
+            help="Do not install packages already present on your system.")
 
     def run(self, configs):
         build_topology_jar(configs)

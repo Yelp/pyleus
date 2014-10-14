@@ -1,3 +1,4 @@
+"""JSON-specialized Bolt component."""
 from __future__ import absolute_import
 
 import logging
@@ -14,16 +15,30 @@ log = logging.getLogger(__name__)
 
 
 class JSONFieldsBolt(SimpleBolt):
+    """JSON-specialized SimpleBolt abstracting JSON-parsing
+    and tuple processing from the actual application logic.
+    """
 
     def extract_fields(self, json_dict):
         """Implement in a subclass to extract the desired fields from
-        json_dict
+        json_dict.
 
-        Return a list of values, or None to emit nothing.
+        :param json_dict: JSON object representing the input tuple value
+        :type json_dict: ``dict``
+
+        :return: a list of values, or ``None`` to emit nothing.
+        :rtype: ``list`` or ``None``
+
+        .. note:: Implement in subclass.
         """
         raise NotImplementedError()
 
     def process_tuple(self, tup):
+        """Extract JSON representation of incoming tuple value and emit based
+        on the result of :meth:`~.extract_fields`.
+
+        .. note:: emitted tuples are automatically anchored.
+        """
         line, = tup.values
         json_dict = json.loads(line)
 

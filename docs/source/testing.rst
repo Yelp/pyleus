@@ -1,6 +1,5 @@
-
-Testing
-=======
+pyleus.testing
+==============
 
 .. automodule:: pyleus.testing
    :members:

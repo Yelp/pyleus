@@ -1,4 +1,38 @@
-"""Pyleus configuration module
+"""Configuration defaults and loading functions.
+
+Pyleus will look for configuration files in the following file paths in order
+of increasing precedence. The latter configuration overrides the previous one.
+
+#. /etc/pyleus.conf
+#. ~/.config/pyleus.conf
+#. ~/.pyleus.conf
+
+Configuration file example
+--------------------------
+The following file contains all options you can configure for all pyleus
+invocations.
+
+.. code-block:: ini
+
+   [storm]
+   # path to Storm executable (pyleus will automatically look in PATH)
+   storm_cmd_path: /usr/share/storm/bin/storm
+
+   # optional: use -s option of pyleus CLI instead
+   storm_cluster_ip: 10.11.12.13
+
+   # java options to pass to Storm CLI
+   jvm_opts: -Djava.io.tmpdir=/nail/tmp
+
+   [build]
+   # pypi server to use during the build of your topologies
+   pypi_index_url: http://pypi.ninjacorp.com/simple/
+
+   # always use system-site-packages for pyleus virtualenvs (default: false)
+   system_site_packages: true
+
+   # list of packages to always include in your topologies
+   include_packages: simplejson
 """
 from __future__ import absolute_import
 
@@ -12,6 +46,7 @@ from pyleus.exception import ConfigurationError
 
 
 # Configuration files paths in order of increasing precedence
+# Please keep in sync with module docstring
 CONFIG_FILES_PATH = [
     "/etc/pyleus.conf",
     "~/.config/pyleus.conf",
@@ -24,6 +59,7 @@ Configuration = collections.namedtuple(
      pypi_index_url storm_cluster_ip storm_cmd_path system_site_packages \
      topology_path topology_jar topology_name verbose wait_time jvm_opts"
 )
+"""Namedtuple containing all pyleus configuration values."""
 
 
 DEFAULTS = Configuration(
@@ -47,7 +83,7 @@ DEFAULTS = Configuration(
 
 
 def _validate_config_file(config_file):
-    """Ensure that config_file exists and is a file"""
+    """Ensure that config_file exists and is a file."""
     if not os.path.exists(config_file):
         raise ConfigurationError("Specified configuration file not"
                                  " found: {0}".format(config_file))
@@ -58,7 +94,9 @@ def _validate_config_file(config_file):
 
 def update_configuration(config, update_dict):
     """Update configuration with new values passed as dictionary.
-    returns: new configuration namedtuple"""
+
+    :return: new configuration ``namedtuple``
+    """
     tmp = config._asdict()
     tmp.update(update_dict)
     return Configuration(**tmp)
@@ -71,8 +109,7 @@ def load_configuration(cmd_line_file):
     If a file is specified from command line, it is considered
     the most specific.
 
-    Returns:
-    Configuration named tuple
+    :return: configuration ``namedtuple``
     """
     config_files_hierarchy = [expand_path(c) for c in CONFIG_FILES_PATH]
 

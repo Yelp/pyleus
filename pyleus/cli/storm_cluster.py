@@ -18,8 +18,8 @@ STORM_JAR_JVM_OPTS = "STORM_JAR_JVM_OPTS"
 
 
 def _watch_over_storm(storm_pid):
-    """ Ensure that if the pyleus process is killed, also the storm process
-    will terminate
+    """Ensure that if the pyleus process is killed, also the storm process
+    will terminate.
     """
     def _kill_storm_handler(signum, frame):
         # Killing the storm process is enough for killing all python
@@ -31,7 +31,7 @@ def _watch_over_storm(storm_pid):
 
 
 def _get_storm_cmd_env(jvm_opts):
-    """Return a copy of os.environ containing JVM options from the user
+    """Return a copy of os.environ containing JVM options from the user.
 
     If no JVM options were specified, return None to defer to the default
     behavior of subprocess.Popen.
@@ -49,7 +49,7 @@ class StormCluster(object):
     All the requests are basically translated into Storm commands.
     """
     def __init__(self, storm_cmd_path, nimbus_ip, verbose, jvm_opts):
-        """Create the cluster object"""
+        """Create the cluster object."""
 
         self.storm_cmd_path = storm_cmd_path
 
@@ -64,7 +64,7 @@ class StormCluster(object):
         self.jvm_opts = jvm_opts
 
     def _exec_storm_cmd(self, cmd, verbose=None):
-        """Interface to any storm command"""
+        """Interface to any Storm command."""
         out_stream = None
         if verbose is None:
             verbose = self.verbose
@@ -88,20 +88,20 @@ class StormCluster(object):
         return out_data
 
     def submit(self, jar_path):
-        """Submit the pyleus topology jar to the Storm cluster"""
+        """Submit the pyleus topology jar to the Storm cluster."""
         cmd = ["jar", jar_path, TOPOLOGY_BUILDER_CLASS]
 
         self._exec_storm_cmd(cmd)
 
     def list(self):
-        """List the topologies running on the Storm cluster"""
+        """List the topologies running on the Storm cluster."""
         cmd = ["list"]
 
         # No point in calling it without output
         self._exec_storm_cmd(cmd, True)
 
     def kill(self, topology_name, wait_time):
-        """Kill a topology running on the Storm cluster"""
+        """Kill a topology running on the Storm cluster."""
 
         cmd = ["kill", topology_name]
 
@@ -117,7 +117,7 @@ class LocalStormCluster(object):
     """
 
     def run(self, storm_cmd_path, jar_path, debug, jvm_opts):
-        """Run locally a pyleus topology jar
+        """Run locally a pyleus topology jar.
 
         Note: In order to trigger the local mode for the selcted topology,
         PyleusTopologyBuilder needs to be called with the option <--local>.

@@ -1,3 +1,7 @@
+"""Module containing the implementation of the Bolt component and a subclassed
+SimpleBolt component which takes care of acking/failing tuples and exposing a
+nicer API for handling tick tuples.
+"""
 from __future__ import absolute_import
 
 import logging
@@ -9,23 +13,33 @@ log = logging.getLogger(__name__)
 
 
 class Bolt(Component):
+    """Bolt component class. Inherit from
+    :class:`~pyleus.storm.component.Component`.
+    """
 
     COMPONENT_TYPE = "bolt"
 
     def process_tuple(self, tup):
-        """Implement in subclass"""
+        """Process the incoming tuple.
+
+        :param tup: pyleus tuple representing the message to be processed
+        :type tup: :class:`~pyleus.storm.StormTuple`
+
+        .. note:: Implement in subclass.
+        """
         pass
 
     def _process_tuple(self, tup):
-        """Implement in bolt middleware
+        """Bolt middleware classes such as SimpleBolt should override this to
+        inject functionality around tuple processing without changing the API
+        for downstream bolt implementations.
 
-        Bolt middleware classes such as SimpleBolt should override this to
-        inject functionality around tuple processing without changing the
-        API for downstream bolt implementations.
+        .. note: Implement in Bolt middleware subclass.
         """
         return self.process_tuple(tup)
 
     def run_component(self):
+        """Bolt main loop."""
         try:
             while True:
                 tup = self.read_tuple()
@@ -34,11 +48,35 @@ class Bolt(Component):
             log.warning("Disconnected from Storm. Exiting.")
 
     def ack(self, tup):
+        """Ack a tuple.
+
+        :param tup: tuple to ack
+        :type tup: :class:`~pyleus.storm.StormTuple`
+
+        .. note::
+           All tuples need to be acked or failed, independently whether
+           you are using Storm reliability features or not. If you are directly
+           using :class:`~.Bolt` instead of :class::`~.SimpleBolt`, you must
+           call this method or your topology will eventually run out of memory
+           or hang.
+        """
         self.send_command('ack', {
             'id': tup.id,
         })
 
     def fail(self, tup):
+        """Fail a tuple.
+
+        :param tup: tuple to fail
+        :type tup: :class:`~pyleus.storm.StormTuple`
+
+        .. note::
+           All tuples need to be acked or failed, independently whether
+           you are using Storm reliability features or not. If you are directly
+           using :class:`~.Bolt` instead of :class::`~.SimpleBolt`, you must
+           call this method or your topology will eventually run out of memory
+           or hang.
+        """
         self.send_command('fail', {
             'id': tup.id,
         })
@@ -47,8 +85,32 @@ class Bolt(Component):
             self, values,
             stream=None, anchors=None,
             direct_task=None, need_task_ids=True):
-        """Build and send an output tuple command dict; return the tasks to
-        which the tuple was sent by Storm.
+        """Build and send an output tuple command dict and return the ids of
+        the tasks to which the tuple was sent by Storm.
+
+        :param values: pyleus tuple values to be emitted
+        :type values: ``tuple`` or ``list``
+        :param stream:
+         output stream the message is going to belong to, default ``DEFAULT``
+        :type stream: ``str``
+        :param anchors:
+         list of pyleus tuples the message should be anchored to, default
+         ``None``
+        :type anchors: ``list`` of pyleus tuples
+        :param direct_task: task message will be sent to, default None
+        :type direct_task: ``int``
+        :param need_task_ids:
+         whether emit should return the ids of the task the message has been
+         sent to, default ``True``
+        :type need_task_ids: ``bool``
+
+        .. note::
+           Setting ``need_task_ids`` to ``False`` really helps in achieving
+           better performances. You should always do that if your application
+           does not leverage task ids.
+
+        .. warning::
+           ``direct_task`` is not yet supported.
         """
         assert isinstance(values, list) or isinstance(values, tuple)
 
@@ -79,17 +141,20 @@ class Bolt(Component):
 
 
 class SimpleBolt(Bolt):
-    """A Bolt that automatically acks tuples.
+    """A Bolt that automatically acks/fails tuples.
 
     Implement process_tick() in a subclass to handle tick tuples with a nicer
     API.
     """
 
     def process_tick(self):
-        """Implement in subclass"""
+        """Code to be executed when a tick tuple reaches the component.
+
+        .. note:: Implement in subclass."""
         pass
 
     def _process_tuple(self, tup):
+        """SimpleBolt middleware level tuple processing."""
         if is_tick(tup):
             self.process_tick()
         else:

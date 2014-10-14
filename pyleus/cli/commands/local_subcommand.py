@@ -10,6 +10,7 @@ from pyleus.cli.commands.run_subcommand import RunSubCommand
 
 
 class LocalSubCommand(RunSubCommand):
+    """Local subcommand class."""
 
     NAME = "local"
     DESCRIPTION = "Run a Pyleus topology locally"

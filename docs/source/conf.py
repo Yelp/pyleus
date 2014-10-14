@@ -44,8 +44,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Pyleus'
-copyright = u'2014, Yelp tools-infra'
+project = u'pyleus'
+copyright = u'2013-2014 Yelp'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -165,7 +165,7 @@ html_static_path = ['_static']
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Pyleusdoc'
+htmlhelp_basename = 'pyleusdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -179,8 +179,8 @@ htmlhelp_basename = 'Pyleusdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Pyleus.tex', u'Pyleus Documentation',
-   u'Yelp tools-infra', 'manual'),
+  ('index', 'pyleus.tex', u'Pyleus Documentation',
+   u'Yelp', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

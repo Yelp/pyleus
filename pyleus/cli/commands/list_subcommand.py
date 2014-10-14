@@ -8,7 +8,7 @@ from pyleus.cli.topologies import list_topologies
 
 
 class ListSubCommand(SubCommand):
-    """List subcommand class"""
+    """List subcommand class."""
 
     NAME = "list"
     DESCRIPTION = "List all topologies running on a Storm cluster"

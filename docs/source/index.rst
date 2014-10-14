@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Pyleus's documentation!
-==================================
+Pyleus |version|
+================
 
 Pyleus Command Line
 ===================
@@ -24,20 +24,21 @@ See examples in :py:mod:`pyleus.storm.bolt` and :py:mod:`pyleus.storm.spout`
 
 See `Trac page`_ for details.
 
-
-API Documentation
-=================
+Documentation
+=============
 
 .. toctree::
    :maxdepth: 2
 
    configuration
-   exception
-   json_fields_bolt
-   storm/bolt
-   storm/spout
-   testing
-   utils
+
+API Documentation
+=================
+
+.. toctree::
+   :maxdepth: 4
+
+   api
 
 Indices and tables
 ==================

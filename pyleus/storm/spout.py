@@ -1,3 +1,5 @@
+"""Module containing the implementation of the Spout component.
+"""
 from __future__ import absolute_import
 
 import logging
@@ -9,22 +11,40 @@ log = logging.getLogger(__name__)
 
 
 class Spout(Component):
+    """Spout component class. Inherit from
+    :class:`~pyleus.storm.component.Component`.
+    """
 
     COMPONENT_TYPE = "spout"
 
     def next_tuple(self):
-        """Implement in subclass"""
+        """Emit the next tuple into the topology.
+        .. note:: Implement in subclass.
+        """
         pass
 
     def ack(self, tup_id):
-        """Implement in subclass"""
+        """Ack a tuple to the source.
+
+        :param tup_id: tuple identifier
+        :type tup_id: ``str`` or ``long``
+
+        .. note: Implement in subclass. Default behaviour is ``pass``
+        """
         pass
 
     def fail(self, tup_id):
-        """Implement in subclass"""
+        """Fail a tuple to the source.
+
+        :param tup_id: tuple identifier
+        :type tup_id: ``str`` or ``long``
+
+        .. note: Implement in subclass. Default behaviour is ``pass``
+        """
         pass
 
     def _handle_command(self, msg):
+        """Switch on the type of command."""
         command = msg['command']
 
         if command == 'next':
@@ -35,9 +55,11 @@ class Spout(Component):
             self.fail(msg['id'])
 
     def _sync(self):
+        """Send a sync message."""
         self.send_command('sync')
 
     def run_component(self):
+        """Spout main loop."""
         try:
             while True:
                 msg = self.read_command()
@@ -50,10 +72,43 @@ class Spout(Component):
             self, values,
             stream=None, tup_id=None,
             direct_task=None, need_task_ids=True):
-        """Build and send an output tuple command dict; return the tasks to
-        which the tuple was sent by Storm.
+        """Build and send an output tuple command dict and return the ids of
+        the tasks to which the tuple was sent by Storm.
 
-        tup_id should be JSON-serializable.
+        :param values: pyleus tuple values to be emitted
+        :type values: ``tuple`` or ``list``
+        :param stream:
+         output stream the message is going to belong to, default ``DEFAULT``
+        :type stream: ``str``
+        :param tup_id:
+         identifier that will be used by Storm for tracking the tuple for
+         reliability purpose. It will be passed as argument to both
+         :meth:`~.ack` and :meth:`~.fail` when the tuple terminates its
+         lifecycle. Default ``None``
+        :type tup_id: ``str`` or ``long``
+        :param direct_task: task message will be sent to, default None
+        :type direct_task: ``int``
+        :param need_task_ids:
+         whether emit should return the ids of the task the message has been
+         sent to, default ``True``
+        :type need_task_ids: ``bool``
+
+        .. note:: ``tup_id`` should be JSON-serializable.
+
+        .. note::
+           Omitting ``tup_id`` will disable reliability tracking for that
+           tuple. If you provide a value for ``tup_id``, then you also need to
+           run at least one Storm **acker** (see :ref:`TODO ACKERS PAGE`),
+           otherwise your topology will hang.
+
+        .. note::
+           Setting ``need_task_ids`` to ``False`` really helps in achieving
+           better performances. You should always do that if your application
+           does not leverage task ids.
+
+        .. warning::
+           ``direct_task`` is not yet supported.
+
         """
         assert isinstance(values, list) or isinstance(values, tuple)
 

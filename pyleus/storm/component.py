@@ -1,3 +1,6 @@
+"""Module containing the base class for all pyleus components and a wrapper
+class around Storm configurations.
+"""
 from __future__ import absolute_import
 
 import argparse
@@ -20,6 +23,7 @@ from pyleus.storm.serializers.msgpack_serializer import MsgpackSerializer
 from pyleus.storm.serializers.json_serializer import JSONSerializer
 
 
+# Please keeep in sync with java TopologyBuilder
 DESCRIBE_OPT = "--describe"
 COMPONENT_OPTIONS_OPT = "--options"
 PYLEUS_CONFIG_OPT = "--pyleus-config"
@@ -44,6 +48,9 @@ def _is_namedtuple(obj):
 
 
 def _serialize(obj):
+    """Given a list, a tuple or a namedtuple, return it as a list. In case of
+    None, simply return None.
+    """
     if obj is None:
         return None
     # obj is a namedtuple "class"
@@ -54,6 +61,9 @@ def _serialize(obj):
 
 
 def _expand_output_fields(obj):
+    """Expand all allowed notations for defining OUTPUT_FIELDS into the
+    extended one.
+    """
     # if single-stream notation
     if not isinstance(obj, dict):
         return {DEFAULT_STREAM: _serialize(obj)}
@@ -65,7 +75,10 @@ def _expand_output_fields(obj):
 
 
 class StormConfig(dict):
-    """Add some convenience properites to a conf dict from Storm."""
+    """Add some convenience properites to a configuration ``dict`` from Storm.
+    You can access Storm configuration dictionary within a component through
+    ``self.conf``.
+    """
 
     def __init__(self, conf):
         super(StormConfig, self).__init__()
@@ -73,22 +86,49 @@ class StormConfig(dict):
 
     @property
     def tick_tuple_freq(self):
-        """Return the tick tuple frequency for the component.
+        """Helper property to access the value of tick tuple frequency stored
+        in Storm configuration.
 
-        Note: bolts that not specify a tick tuple frequency default to null,
-        while for spouts are not supposed to use tick tuples.
+        :return: tick tuple frequency for the component
+        :rtype: ``float`` or ``None``
+
+        .. note::
+           Bolts not specifying tick tuple frequency default to ``None``,
+           while spouts are not supposed to use tick tuples at all.
         """
         return self.get("topology.tick.tuple.freq.secs")
 
 
 class Component(object):
+    """Base class for all pyleus components."""
 
     COMPONENT_TYPE = None # One of "bolt", "spout"
+
+    #: ``list`` or ``dict`` of output fields for the component.
+    #:
+    #: .. note:: Specify in subclass.
+    #:
+    #: .. seealso:: :ref:`OUTPUT_FIELDS_PAGE`
     OUTPUT_FIELDS = None
+
+    #: ``list`` of user-defined options for the component.
+    #:
+    #: .. note:: Specify in subclass.
     OPTIONS = None
 
     # Populated in Component.run()
+
+    #: ``dict`` containing options passed to component in the yaml definition
+    #: file.
     options = None
+
+    #: :class:`~.StormConfig` containing the Storm configuration for the
+    #: component.
+    conf = None
+
+    #: ``dict`` containing the Storm context for the component.
+    context = None
+
     pyleus_config = None
 
     def __init__(self, input_stream=None, output_stream=None):
@@ -112,9 +152,9 @@ class Component(object):
         self._serializer = None
 
     def describe(self):
-        """Print to stdout a JSON descrption of the component.
+        """Print to stdout a JSON description of the component.
 
-        The java code will use the JSON descrption for topology
+        The java TopologyBuilder will use the JSON descrption for topology
         cofiguration and validation.
         """
 
@@ -124,6 +164,9 @@ class Component(object):
             "options": _serialize(self.OPTIONS)})
 
     def initialize_logging(self):
+        """Load logging configuration file from command line configuration (if
+        provided) and initialize logging for the component.
+        """
         logging_config_path = self.pyleus_config.get('logging_config_path')
         if logging_config_path:
             logging.config.fileConfig(logging_config_path)
@@ -131,6 +174,10 @@ class Component(object):
             logging.config.fileConfig(DEFAULT_LOGGING_CONFIG_PATH)
 
     def initialize_serializer(self):
+        """Load serializer type from command line configuration and instantiate
+        the associated
+        :class:`~pyleus.storm.serializers.serializer.Serializer`.
+        """
         serializer = self.pyleus_config.get('serializer')
         if serializer in SERIALIZERS:
             self._serializer = SERIALIZERS[serializer](
@@ -146,12 +193,15 @@ class Component(object):
         self.initialize()
 
     def initialize(self):
-        """Called after component has been launched, but before processing
-        any tuples. Implement in subclass.
+        """Called after component has been launched, but before processing any
+        tuples. You can use this method to setup your component.
+
+        .. note:: Implement in subclass.
         """
         pass
 
     def run(self):
+        """Entry point for the component running logic."""
         parser = argparse.ArgumentParser(add_help=False)
         parser.add_argument(DESCRIBE_OPT, action="store_true", default=False)
         parser.add_argument(COMPONENT_OPTIONS_OPT, default=None)
@@ -176,19 +226,19 @@ class Component(object):
             self.error(traceback.format_exc(e))
 
     def run_component(self):
-        """Run the main loop of the component. Implemented in the Bolt and
+        """Run the main loop of the component. Implemented in Bolt and
         Spout subclasses.
         """
         raise NotImplementedError
 
     def _msg_is_command(self, msg):
         """Storm differentiates between commands and taskids by whether the
-        message is a dict or list.
+        message is a ``dict`` or ``list``.
         """
         return isinstance(msg, dict)
 
     def _msg_is_taskid(self, msg):
-        """See _msg_is_command()"""
+        """..seealso::  :meth:`~._msg_is_command`"""
         return isinstance(msg, list)
 
     def read_command(self):
@@ -210,8 +260,8 @@ class Component(object):
         return msg
 
     def read_taskid(self):
-        """Like read_command(), but returns the next taskid and queues any
-        commands received while reading the input stream.
+        """Like :meth:`~.read_command`, but returns the next taskid and queues
+        any commands received while reading the input stream.
         """
         if self._pending_taskids:
             return self._pending_taskids.popleft()
@@ -225,12 +275,15 @@ class Component(object):
         return msg
 
     def read_tuple(self):
-        """Read and parse a command into a StormTuple object"""
+        """Read and parse a command into a StormTuple object."""
         cmd = self.read_command()
         return StormTuple(
             cmd['id'], cmd['comp'], cmd['stream'], cmd['task'], cmd['tuple'])
 
     def _create_pidfile(self, pid_dir, pid):
+        """Create a file based on pid used by Storm to watch over the Python
+        process.
+        """
         open(os.path.join(pid_dir, str(pid)), 'a').close()
 
     def _init_component(self):
@@ -246,6 +299,9 @@ class Component(object):
         return StormConfig(setup_info['conf']), setup_info['context']
 
     def send_command(self, command, opts_dict=None):
+        """Merge command with options and send the message through
+        :class:`~pyleus.storm.serializers.serializer.Serializer`
+        """
         if opts_dict is not None:
             command_dict = dict(opts_dict)
             command_dict['command'] = command
@@ -255,11 +311,13 @@ class Component(object):
         self._serializer.send_msg(command_dict)
 
     def log(self, msg):
+        """Send a log message."""
         self.send_command('log', {
             'msg': msg,
         })
 
     def error(self, msg):
+        """Send an error message."""
         self.send_command('error', {
             'msg': msg,
         })

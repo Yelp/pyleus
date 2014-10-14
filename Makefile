@@ -18,7 +18,7 @@ clean:
 	rm -rf build/ dist/ pyleus.egg-info/ .tox/
 	find . -name '*.pyc' -delete
 	make -C topology_builder/ clean
-	rm -rf docs/build/*
+	rm -rf docs/build/
 
 docs:
 	tox -e docs

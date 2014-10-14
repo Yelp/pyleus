@@ -10,7 +10,7 @@ def expand_path(path):
 
 
 def search_storm_cmd_path():
-    """Search for the storm command in PATH"""
+    """Search for the storm command in PATH."""
     def is_exe(fpath):
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 

@@ -22,7 +22,7 @@ def _as_list(obj):
 
 
 class TopologySpec(object):
-    """Topology level specification class"""
+    """Topology level specification class."""
 
     def __init__(self, specs):
         """Convert the specs dictionary coming from the yaml file into
@@ -84,7 +84,7 @@ class TopologySpec(object):
                 component.verify_groupings(topology_out_fields)
 
     def asdict(self):
-        """Return a copy of the object as a dictionary"""
+        """Return a copy of the object as a dictionary."""
         dict_object = copy.deepcopy(self.__dict__)
         dict_object["topology"] = [
             component.asdict() for component in self.topology]
@@ -92,7 +92,7 @@ class TopologySpec(object):
 
 
 class ComponentSpec(object):
-    """Base class for Storm component specifications"""
+    """Base class for Storm component specifications."""
 
     COMPONENT = "component"
 
@@ -168,7 +168,7 @@ class ComponentSpec(object):
 
 
 class BoltSpec(ComponentSpec):
-    """Bolt specifications class"""
+    """Bolt specifications class."""
 
     COMPONENT = "bolt"
 
@@ -177,7 +177,7 @@ class BoltSpec(ComponentSpec):
         "local_or_shuffle_grouping", "none_grouping", "all_grouping"]
 
     def __init__(self, specs):
-        """Bolt specific initialization. Bolts may have a grouping section"""
+        """Bolt specific initialization. Bolts may have a grouping section."""
         super(BoltSpec, self).__init__(specs)
 
         if "module" not in specs:
@@ -294,7 +294,7 @@ class BoltSpec(ComponentSpec):
 
 
 class SpoutSpec(ComponentSpec):
-    """Spout specifications class"""
+    """Spout specifications class."""
 
     COMPONENT = "spout"
 

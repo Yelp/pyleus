@@ -11,6 +11,7 @@ from pyleus.cli.commands.run_subcommand import RunSubCommand
 
 
 class SubmitSubCommand(RunSubCommand):
+    """Submit subcommand class."""
 
     NAME = "submit"
     DESCRIPTION = "Submit a Pyleus topology to a Storm cluster"
