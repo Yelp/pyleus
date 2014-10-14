@@ -53,6 +53,7 @@ Documentation
 
    tutorial
    reliability
+   options
    parallelism
    logging
    install

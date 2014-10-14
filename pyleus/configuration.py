@@ -29,7 +29,7 @@ invocations.
    nimbus_ip: 10.11.12.13
 
    # java options to pass to Storm CLI
-   jvm_opts: -Djava.io.tmpdir=/nail/tmp
+   jvm_opts: -Djava.io.tmpdir=/home/myuser/tmp
 
    [build]
    # pypi server to use during the build of your topologies
