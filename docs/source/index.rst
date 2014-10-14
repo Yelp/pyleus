@@ -50,6 +50,7 @@ Documentation
 
    tutorial
    reliability
+   parallelism
    logging
    install
    cli
