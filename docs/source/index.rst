@@ -40,7 +40,7 @@ Run the example on a Storm cluster:
 
 .. code-block:: none
 
-   $ pylues submit -s STORM_CLUSTER_IP exclamation_topology.jar
+   $ pylues submit -n NIMBUS_IP exclamation_topology.jar
 
 Documentation
 -------------

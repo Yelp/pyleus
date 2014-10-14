@@ -25,8 +25,8 @@ invocations.
    # path to Storm executable (pyleus will automatically look in PATH)
    storm_cmd_path: /usr/share/storm/bin/storm
 
-   # optional: use -s option of pyleus CLI instead
-   storm_cluster_ip: 10.11.12.13
+   # optional: use -n option of pyleus CLI instead
+   nimbus_ip: 10.11.12.13
 
    # java options to pass to Storm CLI
    jvm_opts: -Djava.io.tmpdir=/nail/tmp
