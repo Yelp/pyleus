@@ -46,7 +46,7 @@ Command Line
 
      pyleus kill [-n NIMBUS_IP] TOPOLOGY_NAME [-w WAIT_TIME]
 
-  Option ``--wait-time`` overrides the duration in seconds Storm waits between deactivation and shutdown. Storm default is 30 seconds.
+  Option ``--wait-time`` overrides the duration in seconds Storm waits between deactivation and shutdown. Storm's default is 30 seconds.
 
 * You can specify a configuration file any time using option:
 

@@ -39,7 +39,7 @@ invocations.
    system_site_packages: true
 
    # list of packages to always include in your topologies
-   include_packages: simplejson
+   include_packages: foo bar<4.0 baz==0.1
 """
 from __future__ import absolute_import
 
