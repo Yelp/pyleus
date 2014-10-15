@@ -50,7 +50,7 @@ Or, submit to a Storm cluster with:
 
    $ pyleus submit -n NIMBUS_IP exclamation_topology.jar
 
-The `examples`_ directory contains several annotated Pyleus topologies that try to cover a many Pyleus features as possible.
+The `examples`_ directory contains several annotated Pyleus topologies that try to cover as many Pyleus features as possible.
 
 Pyleus command line interface
 -----------------------------
@@ -177,14 +177,14 @@ Run the topology on your local machine for debugging:
 .. code-block:: shell
 
    pyleus build my_first_topology/pyleus_topology.yaml
-   pyleus local my_first_topology.yaml --debug
+   pyleus local --debug my_first_topology.jar
 
 When you are done, hit ``C-C``.
 
 Configuration File
 ^^^^^^^^^^^^^^^^^^
 
-You can set default values for many configuration options by placing a ``.pyleus.conf`` configuration file in your home directory:
+You can set default values for many configuration options by placing a ``.pyleus.conf`` file in your home directory::
 
 .. code-block:: none
 
