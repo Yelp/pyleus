@@ -5,6 +5,9 @@ Pyleus is a Python 2.6+ framework for developing and launching `Apache Storm`_ t
 
 Please visit our `wiki`_.
 
+.. image:: https://travis-ci.org/Yelp/pyleus.svg?branch=develop
+    :target: https://travis-ci.org/Yelp/pyleus
+
 About
 -----
 
