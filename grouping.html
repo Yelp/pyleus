@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Outuput streams and groupings &mdash; pyleus 0.1.23 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="pyleus 0.1.23 documentation" href="index.html"/>
+        <link rel="next" title="Component runtime customization" href="options.html"/>
+        <link rel="prev" title="Guaranteeing message processing" href="reliability.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> pyleus</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Write your first topology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#organize-your-files">Organize your files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#define-the-topology-layout">Define the topology layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#write-your-first-spout">Write your first spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#write-your-first-bolt">Write your first bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#run-your-topology">Run your topology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">Guaranteeing message processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#track-tuples-in-your-spout">Track tuples in your Spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#anchor-tuples-in-your-bolt">Anchor tuples in your Bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#tune-your-topology">Tune your topology</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Outuput streams and groupings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#single-output-streams">Single output streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multiple-output-streams">Multiple output streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#available-stream-groupings">Available stream groupings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Component runtime customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="options.html#pass-options-to-components">Pass options to components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#access-component-configuration-and-context">Access component configuration and context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#setup-component-at-startup">Setup component at startup</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="parallelism.html">Tune topology parallelism</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tick.html">Timing using tick tuples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tick.html#configure-tick-tuples-interval-for-a-component">Configure tick tuples interval for a component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tick.html#simplebolt-tick-tuple-api">SimpleBolt tick tuple API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="logging.html#topology-level-configuration">Topology level configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file-example">Configuration file example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="storm/storm.html">pyleus.storm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/component.html">pyleus.storm.component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/spout.html">pyleus.storm.spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/bolt.html">pyleus.storm.bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json_fields_bolt.html">pyleus.json_fields_bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">pyleus.testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exception.html">pyleus.exception</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">pyleus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Outuput streams and groupings</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/grouping.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="outuput-streams-and-groupings">
+<span id="groupings"></span><h1>Outuput streams and groupings<a class="headerlink" href="#outuput-streams-and-groupings" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="single-output-streams">
+<h2>Single output streams<a class="headerlink" href="#single-output-streams" title="Permalink to this headline">¶</a></h2>
+<p>You can define a component with a single output stream just assigning a <code class="docutils literal"><span class="pre">list</span></code> or a <code class="docutils literal"><span class="pre">tuple</span></code> to the class attribute <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.OUTPUT_FIELDS" title="pyleus.storm.component.Component.OUTPUT_FIELDS"><code class="xref py py-attr docutils literal"><span class="pre">OUTPUT_FIELDS</span></code></a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">CountingBolt</span><span class="p">(</span><span class="n">Bolt</span><span class="p">):</span>
+
+    <span class="n">OUTPUT_FIELDS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;word&#39;</span><span class="p">,</span> <span class="s">&#39;counter&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Pyleus also accepts <code class="docutils literal"><span class="pre">namedtuple</span></code> for output fields schema declaration:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Record</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;Record&#39;</span><span class="p">,</span> <span class="s">&#39;year month day value&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">SampleBolt</span><span class="p">(</span><span class="n">Bolt</span><span class="p">):</span>
+
+   <span class="n">OUTPUT_FIELDS</span> <span class="o">=</span> <span class="n">Record</span>
+</pre></div>
+</div>
+<p>This allows you to import your schema in the downstream component and to build code that is more resilient to schema changes (at the price of building nametuples from incoming tuple values). You can find some examples of this technique in the <a class="reference external" href="https://github.com/Yelp/pyleus/tree/master/examples">examples</a> folder.</p>
+<p>When you define a single output stream, all emitted tuples will go to the <code class="docutils literal"><span class="pre">default</span></code> stream and you are then allowed to use the short definition syntax for groupings:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">bolt</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-first-bolt</span>
+    <span class="l-Scalar-Plain">module</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my_topology.my_first_bolt</span>
+    <span class="l-Scalar-Plain">groupings</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">shuffle_grouping</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-spout</span>
+
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">bolt</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-second-bolt</span>
+    <span class="l-Scalar-Plain">module</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my_topology.my_second_bolt</span>
+    <span class="l-Scalar-Plain">groupings</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">fields_grouping</span><span class="p-Indicator">:</span>
+            <span class="l-Scalar-Plain">component</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-first-bolt</span>
+            <span class="l-Scalar-Plain">fields</span><span class="p-Indicator">:</span>
+                <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">year</span>
+                <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">month</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Please note that, while spouts <strong>must</strong> define at least an output stream, bolts do not have to.</p>
+</div>
+</div>
+<div class="section" id="multiple-output-streams">
+<h2>Multiple output streams<a class="headerlink" href="#multiple-output-streams" title="Permalink to this headline">¶</a></h2>
+<p>Storm allows components to define an arbitrary numbers of output streams. For doing that in Pyleus, you need to define your output streams in a <code class="docutils literal"><span class="pre">dict</span></code> as the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MultipleBolt</span><span class="p">(</span><span class="n">Bolt</span><span class="p">):</span>
+
+    <span class="n">OUTPUT_FIELDS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&quot;stream-id&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">,</span> <span class="s">&quot;value&quot;</span><span class="p">],</span>
+        <span class="s">&quot;stream-date&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;year&quot;</span><span class="p">,</span> <span class="s">&quot;month&quot;</span><span class="p">,</span> <span class="s">&quot;day&quot;</span><span class="p">,</span> <span class="s">&quot;value&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>As a consequence you need to use the complete definition syntax for groupings in the topology YAML file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">bolt</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-first-bolt</span>
+    <span class="l-Scalar-Plain">module</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my_topology.my_first_bolt</span>
+    <span class="l-Scalar-Plain">groupings</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">shuffle_grouping</span><span class="p-Indicator">:</span>
+            <span class="l-Scalar-Plain">component</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-first-spout</span>
+            <span class="l-Scalar-Plain">stream</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">stream-A</span>
+
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">bolt</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-second-bolt</span>
+    <span class="l-Scalar-Plain">module</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my_topology.my_second_bolt</span>
+    <span class="l-Scalar-Plain">groupings</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">fields_grouping</span><span class="p-Indicator">:</span>
+            <span class="l-Scalar-Plain">component</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-first-bolt</span>
+            <span class="l-Scalar-Plain">stream</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">stream-date</span>
+            <span class="l-Scalar-Plain">fields</span><span class="p-Indicator">:</span>
+                <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">year</span>
+                <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">month</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">See <a class="reference external" href="https://github.com/Yelp/pyleus/tree/master/examples/micro">GitHub</a> for an example topology declaring multiple output streams.</p>
+</div>
+</div>
+<div class="section" id="available-stream-groupings">
+<h2>Available stream groupings<a class="headerlink" href="#available-stream-groupings" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Shuffle grouping:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">shuffle_grouping</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">component</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-component</span>
+    <span class="l-Scalar-Plain">stream</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-stream</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Local or shuffle grouping:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">local_or_shuffle_grouping</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">component</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-component</span>
+    <span class="l-Scalar-Plain">stream</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-stream</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Global grouping:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">global_grouping</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">component</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-component</span>
+    <span class="l-Scalar-Plain">stream</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-stream</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">All grouping:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">all_grouping</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">component</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-component</span>
+    <span class="l-Scalar-Plain">stream</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-stream</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">None grouping:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">none_grouping</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">component</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-component</span>
+    <span class="l-Scalar-Plain">stream</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-stream</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Fields grouping:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">fields_grouping</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">component</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-component</span>
+    <span class="l-Scalar-Plain">stream</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">a-stream</span>
+    <span class="l-Scalar-Plain">fields</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">a-field</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">another-field</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition danger">
+<p class="first admonition-title">Danger</p>
+<p class="last">Storm <strong>direct grouping</strong> is not yet supported.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">For a complete reference of Storm groupings see <a class="reference external" href="https://storm.apache.org/documentation/Concepts.html">Apache Storm Documentation</a>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="options.html" class="btn btn-neutral float-right" title="Component runtime customization"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="reliability.html" class="btn btn-neutral" title="Guaranteeing message processing"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013–2014 Yelp.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.23',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

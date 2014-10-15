@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Write your first topology &mdash; pyleus 0.1.23 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="pyleus 0.1.23 documentation" href="index.html"/>
+        <link rel="next" title="Guaranteeing message processing" href="reliability.html"/>
+        <link rel="prev" title="Pyleus v0.1.23" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> pyleus</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Write your first topology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#organize-your-files">Organize your files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#define-the-topology-layout">Define the topology layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#write-your-first-spout">Write your first spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#write-your-first-bolt">Write your first bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-your-topology">Run your topology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">Guaranteeing message processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#track-tuples-in-your-spout">Track tuples in your Spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#anchor-tuples-in-your-bolt">Anchor tuples in your Bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#tune-your-topology">Tune your topology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="grouping.html">Outuput streams and groupings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="grouping.html#single-output-streams">Single output streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grouping.html#multiple-output-streams">Multiple output streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grouping.html#available-stream-groupings">Available stream groupings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Component runtime customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="options.html#pass-options-to-components">Pass options to components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#access-component-configuration-and-context">Access component configuration and context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#setup-component-at-startup">Setup component at startup</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="parallelism.html">Tune topology parallelism</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tick.html">Timing using tick tuples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tick.html#configure-tick-tuples-interval-for-a-component">Configure tick tuples interval for a component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tick.html#simplebolt-tick-tuple-api">SimpleBolt tick tuple API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="logging.html#topology-level-configuration">Topology level configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file-example">Configuration file example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="storm/storm.html">pyleus.storm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/component.html">pyleus.storm.component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/spout.html">pyleus.storm.spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/bolt.html">pyleus.storm.bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json_fields_bolt.html">pyleus.json_fields_bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">pyleus.testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exception.html">pyleus.exception</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">pyleus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Write your first topology</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/tutorial.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="write-your-first-topology">
+<span id="tutorial"></span><h1>Write your first topology<a class="headerlink" href="#write-your-first-topology" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="organize-your-files">
+<h2>Organize your files<a class="headerlink" href="#organize-your-files" title="Permalink to this headline">¶</a></h2>
+<p>This is an example of the directory tree of a simple topology:</p>
+<div class="highlight-none"><div class="highlight"><pre>my_first_topology
+|-- my_first_topology
+|   |-- __init__.py
+|   |-- dummy_bolt.py
+|   |-- dummy_spout.py
+|-- pyleus_topology.yaml
+|-- requirements.txt
+</pre></div>
+</div>
+<p>When building your topology, the jar file generated from the <code class="docutils literal"><span class="pre">pyleus</span> <span class="pre">build</span></code> command will be named <cite>my_first_topology.jar</cite>, as the directory containing the YAML topology definition file.</p>
+<p>File <code class="docutils literal"><span class="pre">requirements.txt</span></code> should list all the dependencies of the topology to be included in the jar. In this case, this file is empty.</p>
+<blockquote>
+<div><div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">If you want to specify a different path for your requirements file, please see <em class="xref std std-ref">TODO_REQUIREMENTS_IN_YAML</em>. If you want to install some dependencies for all yuor topologies, see <a class="reference internal" href="configuration.html#configuration"><em>Configuration</em></a> instead.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="define-the-topology-layout">
+<h2>Define the topology layout<a class="headerlink" href="#define-the-topology-layout" title="Permalink to this headline">¶</a></h2>
+<p>A simple <code class="docutils literal"><span class="pre">pyleus_topology.yaml</span></code> should look like the following:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># This is a very meaningful paragraph</span>
+<span class="c1"># describing my_first_topology</span>
+
+<span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my_first_topology</span>
+
+<span class="l-Scalar-Plain">topology</span><span class="p-Indicator">:</span>
+
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">spout</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-first-spout</span>
+        <span class="l-Scalar-Plain">module</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my_first_topology.dummy_spout</span>
+
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">bolt</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-first-bolt</span>
+        <span class="l-Scalar-Plain">module</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my_first_topology.dummy_bolt</span>
+        <span class="l-Scalar-Plain">groupings</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">shuffle_grouping</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-first-spout</span>
+</pre></div>
+</div>
+<p>This define a topology where a single bolt subscribe to the output stream of a single spout. As simple as it is.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Components names do NOT need to match modules names. This is because the same module may be reused more than once in the same topology, perhaps with different input streams or options.</p>
+</div>
+</div>
+<div class="section" id="write-your-first-spout">
+<h2>Write your first spout<a class="headerlink" href="#write-your-first-spout" title="Permalink to this headline">¶</a></h2>
+<p>This is the code implementing <code class="docutils literal"><span class="pre">dummy_spout.py</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyleus.storm</span> <span class="kn">import</span> <span class="n">Spout</span>
+
+<span class="k">class</span> <span class="nc">DummySpout</span><span class="p">(</span><span class="n">Spout</span><span class="p">):</span>
+
+    <span class="n">OUTPUT_FIELDS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;sentence&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">next_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="s">&quot;This is a sentence.&quot;</span><span class="p">,</span> <span class="s">&quot;spout&quot;</span><span class="p">,))</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">DummySpout</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Every <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout" title="pyleus.storm.spout.Spout"><code class="xref py py-class docutils literal"><span class="pre">Spout</span></code></a> must inherit from <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout" title="pyleus.storm.spout.Spout"><code class="xref py py-class docutils literal"><span class="pre">Spout</span></code></a> and declare its <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.OUTPUT_FIELDS" title="pyleus.storm.component.Component.OUTPUT_FIELDS"><code class="xref py py-attr docutils literal"><span class="pre">OUTPUT_FIELDS</span></code></a> as a <code class="docutils literal"><span class="pre">tuple</span></code>, a <code class="docutils literal"><span class="pre">list</span></code> or a <code class="docutils literal"><span class="pre">namedtuple</span></code>. The same goes for <code class="docutils literal"><span class="pre">emit</span></code> <strong>first argument</strong>.</p>
+<p>Spouts also must define the method <code class="xref py py-meth docutils literal"><span class="pre">next_tuple()</span></code>, that will be called within the component main loop in order to generate a stream of new tuples.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Forgetting to call the <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.run" title="pyleus.storm.component.Component.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method will prevent the topology from running.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">If you want to enable tuple tracking and leverage Storm reliability features, please read <a class="reference internal" href="reliability.html#reliability"><em>Guaranteeing message processing</em></a>.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">For complete API documentation, see <a class="reference internal" href="storm/spout.html#spout"><em>pyleus.storm.spout</em></a>.</p>
+</div>
+</div>
+<div class="section" id="write-your-first-bolt">
+<h2>Write your first bolt<a class="headerlink" href="#write-your-first-bolt" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s now look at <code class="docutils literal"><span class="pre">dummy_bolt.py</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyleus.storm</span> <span class="kn">import</span> <span class="n">SimpleBolt</span>
+
+<span class="k">class</span> <span class="nc">DummyBolt</span><span class="p">(</span><span class="n">SimpleBolt</span><span class="p">):</span>
+
+<span class="n">OUTPUT_FIELDS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;sentence&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">process_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tup</span><span class="p">):</span>
+        <span class="n">sentence</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">tup</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">new_sentence</span> <span class="o">=</span> <span class="s">&quot;{0} says, </span><span class="se">\&quot;</span><span class="s">{1}</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">new_sentence</span><span class="p">,),</span> <span class="n">anchors</span><span class="o">=</span><span class="p">[</span><span class="n">tup</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">DummyBolt</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Every <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><code class="xref py py-class docutils literal"><span class="pre">Bolt</span></code></a> must inherit from <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><code class="xref py py-class docutils literal"><span class="pre">Bolt</span></code></a> or <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><code class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></code></a>, which is a bolt automatically acking/failing tuples and offering a nicer API to leverage tick tuples. The <code class="docutils literal"><span class="pre">process_tuple</span></code> method will be called whenever a new tuple reaches the bolt.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Please note that <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><code class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></code></a> will <strong>NOT</strong> automatically anchor your tuples. See <a class="reference internal" href="reliability.html#reliability"><em>Guaranteeing message processing</em></a> for more info on anchoring.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Even if you want to define only one output field, please declare it as an element either of a <code class="docutils literal"><span class="pre">list</span></code> or of a <code class="docutils literal"><span class="pre">tuple</span></code>, as showed in the above example. Using just a <code class="docutils literal"><span class="pre">string</span></code> is not allowed.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">For complete API documentation, see <a class="reference internal" href="storm/bolt.html#bolt"><em>pyleus.storm.bolt</em></a>.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Do <strong>NOT</strong> print. I&#8217;m gonna say it again: Do. Not. Print. Or, at least, do not print until you want to crash your topology. The mechanism Storm uses to communicate with Python is based on stdin/stdout communication, so you are not allowed to use them. Use logging instead (see <a class="reference internal" href="logging.html#logging"><em>Logging</em></a>).</p>
+</div>
+</div>
+<div class="section" id="run-your-topology">
+<h2>Run your topology<a class="headerlink" href="#run-your-topology" title="Permalink to this headline">¶</a></h2>
+<p>Run your topology on your local machine for debugging:</p>
+<div class="highlight-none"><div class="highlight"><pre>pyleus build my_first_topology/pyleus_topology.yaml
+pyleus local my_first_topology.yaml -d
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">-debug</span></code> option will print all tuples flowing through the topology.</p>
+<p>When you are done, hit <code class="docutils literal"><span class="pre">C-C</span></code>.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="reliability.html" class="btn btn-neutral float-right" title="Guaranteeing message processing"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Pyleus v0.1.23"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013–2014 Yelp.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.23',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

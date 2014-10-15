@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyleus.storm.spout &mdash; pyleus 0.1.23 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="pyleus 0.1.23 documentation" href="../../../index.html"/>
+        <link rel="up" title="pyleus.storm" href="../storm.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> pyleus</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Write your first topology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#organize-your-files">Organize your files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#define-the-topology-layout">Define the topology layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#write-your-first-spout">Write your first spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#write-your-first-bolt">Write your first bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#run-your-topology">Run your topology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reliability.html">Guaranteeing message processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../reliability.html#track-tuples-in-your-spout">Track tuples in your Spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reliability.html#anchor-tuples-in-your-bolt">Anchor tuples in your Bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reliability.html#tune-your-topology">Tune your topology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../grouping.html">Outuput streams and groupings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../grouping.html#single-output-streams">Single output streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../grouping.html#multiple-output-streams">Multiple output streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../grouping.html#available-stream-groupings">Available stream groupings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../options.html">Component runtime customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../options.html#pass-options-to-components">Pass options to components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../options.html#access-component-configuration-and-context">Access component configuration and context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../options.html#setup-component-at-startup">Setup component at startup</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../parallelism.html">Tune topology parallelism</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tick.html">Timing using tick tuples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tick.html#configure-tick-tuples-interval-for-a-component">Configure tick tuples interval for a component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tick.html#simplebolt-tick-tuple-api">SimpleBolt tick tuple API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../logging.html">Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../logging.html#topology-level-configuration">Topology level configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration.html#configuration-file-example">Configuration file example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../storm/storm.html">pyleus.storm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../storm/component.html">pyleus.storm.component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../storm/spout.html">pyleus.storm.spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../storm/bolt.html">pyleus.storm.bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../json_fields_bolt.html">pyleus.json_fields_bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../testing.html">pyleus.testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../exception.html">pyleus.exception</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">pyleus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../storm.html">pyleus.storm</a> &raquo;</li>
+      
+    <li>pyleus.storm.spout</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pyleus.storm.spout</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Module containing the implementation of the Spout component.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">pyleus.storm</span> <span class="kn">import</span> <span class="n">StormWentAwayError</span>
+<span class="kn">from</span> <span class="nn">pyleus.storm.component</span> <span class="kn">import</span> <span class="n">Component</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Spout"><a class="viewcode-back" href="../../../storm/spout.html#pyleus.storm.spout.Spout">[docs]</a><span class="k">class</span> <span class="nc">Spout</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Spout component class. Inherit from</span>
+<span class="sd">    :class:`~pyleus.storm.component.Component`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">COMPONENT_TYPE</span> <span class="o">=</span> <span class="s">&quot;spout&quot;</span>
+
+<div class="viewcode-block" id="Spout.next_tuple"><a class="viewcode-back" href="../../../storm/spout.html#pyleus.storm.spout.Spout.next_tuple">[docs]</a>    <span class="k">def</span> <span class="nf">next_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Emit the next tuple into the topology.</span>
+
+<span class="sd">        .. note:: Implement in subclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Spout.ack"><a class="viewcode-back" href="../../../storm/spout.html#pyleus.storm.spout.Spout.ack">[docs]</a>    <span class="k">def</span> <span class="nf">ack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tup_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ack a tuple to the source.</span>
+
+<span class="sd">        :param tup_id: tuple identifier</span>
+<span class="sd">        :type tup_id: ``str`` or ``long``</span>
+
+<span class="sd">        .. note:: Implement in subclass. Default behaviour is ``pass``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Spout.fail"><a class="viewcode-back" href="../../../storm/spout.html#pyleus.storm.spout.Spout.fail">[docs]</a>    <span class="k">def</span> <span class="nf">fail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tup_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fail a tuple to the source.</span>
+
+<span class="sd">        :param tup_id: tuple identifier</span>
+<span class="sd">        :type tup_id: ``str`` or ``long``</span>
+
+<span class="sd">        .. note:: Implement in subclass. Default behaviour is ``pass``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+    <span class="k">def</span> <span class="nf">_handle_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Switch on the type of command.&quot;&quot;&quot;</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="s">&#39;command&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s">&#39;next&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_tuple</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s">&#39;ack&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ack</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s">&#39;fail&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_sync</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send a sync message.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="s">&#39;sync&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run_component</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Spout main loop.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_command</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_handle_command</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">StormWentAwayError</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Disconnected from Storm. Exiting.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Spout.emit"><a class="viewcode-back" href="../../../storm/spout.html#pyleus.storm.spout.Spout.emit">[docs]</a>    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span>
+            <span class="n">stream</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tup_id</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">direct_task</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">need_task_ids</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Build and send an output tuple command dict and return the ids of</span>
+<span class="sd">        the tasks to which the tuple was sent by Storm.</span>
+
+<span class="sd">        :param values: pyleus tuple values to be emitted</span>
+<span class="sd">        :type values: ``tuple`` or ``list``</span>
+<span class="sd">        :param stream:</span>
+<span class="sd">         output stream the message is going to belong to, default ``DEFAULT``</span>
+<span class="sd">        :type stream: ``str``</span>
+<span class="sd">        :param tup_id:</span>
+<span class="sd">         identifier that will be used by Storm for tracking the tuple for</span>
+<span class="sd">         reliability purpose. It will be passed as argument to both</span>
+<span class="sd">         :meth:`~.ack` and :meth:`~.fail` when the tuple terminates its</span>
+<span class="sd">         lifecycle. Default ``None``</span>
+<span class="sd">        :type tup_id: ``str`` or ``long``</span>
+<span class="sd">        :param direct_task: task message will be sent to, default None</span>
+<span class="sd">        :type direct_task: ``int``</span>
+<span class="sd">        :param need_task_ids:</span>
+<span class="sd">         whether emit should return the ids of the task the message has been</span>
+<span class="sd">         sent to, default ``True``</span>
+<span class="sd">        :type need_task_ids: ``bool``</span>
+
+<span class="sd">        .. note:: ``tup_id`` should be JSON-serializable.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">           Omitting ``tup_id`` will disable reliability tracking for that</span>
+<span class="sd">           tuple. If you provide a value for ``tup_id``, then you also need to</span>
+<span class="sd">           run at least one Storm **acker** (see :ref:`reliability`),</span>
+<span class="sd">           otherwise your topology will hang.</span>
+
+<span class="sd">        .. tip::</span>
+<span class="sd">           Setting ``need_task_ids`` to ``False`` really helps in achieving</span>
+<span class="sd">           better performances. You should always do that if your application</span>
+<span class="sd">           does not leverage task ids.</span>
+
+<span class="sd">        .. danger::</span>
+<span class="sd">           ``direct_task`` is not yet supported.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+
+        <span class="n">command_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;tuple&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">command_dict</span><span class="p">[</span><span class="s">&#39;stream&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stream</span>
+
+        <span class="k">if</span> <span class="n">tup_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">command_dict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tup_id</span>
+
+        <span class="k">if</span> <span class="n">direct_task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">command_dict</span><span class="p">[</span><span class="s">&#39;task&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">direct_task</span>
+
+        <span class="c"># By default, Storm sends back to the component the task ids of the</span>
+        <span class="c"># tasks receiving the tuple. If need_task_ids is set to False, Storm</span>
+        <span class="c"># won&#39;t send the task ids for that message</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">need_task_ids</span><span class="p">:</span>
+            <span class="n">command_dict</span><span class="p">[</span><span class="s">&#39;need_task_ids&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="s">&#39;emit&#39;</span><span class="p">,</span> <span class="n">command_dict</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">need_task_ids</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_taskid</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013–2014 Yelp.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.23',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

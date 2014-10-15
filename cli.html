@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Command Line &mdash; pyleus 0.1.23 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="pyleus 0.1.23 documentation" href="index.html"/>
+        <link rel="next" title="Configuration" href="configuration.html"/>
+        <link rel="prev" title="Install" href="install.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> pyleus</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Write your first topology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#organize-your-files">Organize your files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#define-the-topology-layout">Define the topology layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#write-your-first-spout">Write your first spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#write-your-first-bolt">Write your first bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#run-your-topology">Run your topology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">Guaranteeing message processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#track-tuples-in-your-spout">Track tuples in your Spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#anchor-tuples-in-your-bolt">Anchor tuples in your Bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#tune-your-topology">Tune your topology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="grouping.html">Outuput streams and groupings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="grouping.html#single-output-streams">Single output streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grouping.html#multiple-output-streams">Multiple output streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grouping.html#available-stream-groupings">Available stream groupings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Component runtime customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="options.html#pass-options-to-components">Pass options to components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#access-component-configuration-and-context">Access component configuration and context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#setup-component-at-startup">Setup component at startup</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="parallelism.html">Tune topology parallelism</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tick.html">Timing using tick tuples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tick.html#configure-tick-tuples-interval-for-a-component">Configure tick tuples interval for a component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tick.html#simplebolt-tick-tuple-api">SimpleBolt tick tuple API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="logging.html#topology-level-configuration">Topology level configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Command Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file-example">Configuration file example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="storm/storm.html">pyleus.storm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/component.html">pyleus.storm.component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/spout.html">pyleus.storm.spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/bolt.html">pyleus.storm.bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json_fields_bolt.html">pyleus.json_fields_bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">pyleus.testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exception.html">pyleus.exception</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">pyleus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Command Line</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/cli.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="command-line">
+<span id="cli"></span><h1>Command Line<a class="headerlink" href="#command-line" title="Permalink to this headline">¶</a></h1>
+<ul>
+<li><p class="first">Build a topology:</p>
+<div class="highlight-none"><div class="highlight"><pre>pyleus build /path/to/pyleus_topology.yaml [-o OUTPUT_JAR]
+</pre></div>
+</div>
+<p>This command will generate a topology jar file ready to be executed by Storm.</p>
+<p>The output jar will be named as the directory containing the YAML definition file passed as argument.
+Option <code class="docutils literal"><span class="pre">--output</span></code> allows to specify the output jar path.</p>
+<p>If a <code class="docutils literal"><span class="pre">requirements.txt</span></code> file is present in the same directory of the YAML topology definition file, all dependencies listed in the file will be included in the jar.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">If you want to specify a different path for your requirements file, please see <em class="xref std std-ref">TODO_REQUIREMENTS_IN_YAML</em>. If you want to install some dependencies for all yuor topologies, see <a class="reference internal" href="configuration.html#configuration"><em>Configuration</em></a> instead.</p>
+</div>
+</li>
+<li><p class="first">Run a topology locally:</p>
+<div class="highlight-none"><div class="highlight"><pre>pyleus local /path/to/topology.jar [--debug]
+</pre></div>
+</div>
+<p>Hit <code class="docutils literal"><span class="pre">C-C</span></code> to stop local execution.</p>
+<p>The <code class="docutils literal"><span class="pre">debug</span></code> option will print evry tuple flowing through the topology.</p>
+</li>
+<li><p class="first">Submit a topology to a Storm cluster:</p>
+<div class="highlight-none"><div class="highlight"><pre>pyleus submit [-n NIMBUS_IP] /path/to/pyleus_topology.yaml
+</pre></div>
+</div>
+</li>
+<li><p class="first">List all topologies running on a Storm cluster:</p>
+<div class="highlight-none"><div class="highlight"><pre>pyleus list [-n NIMBUS_IP]
+</pre></div>
+</div>
+</li>
+<li><p class="first">Kill a topology running on a Storm cluster:</p>
+<div class="highlight-none"><div class="highlight"><pre>pyleus kill [-n NIMBUS_IP] TOPOLOGY_NAME [-w WAIT_TIME]
+</pre></div>
+</div>
+<p>Option <code class="docutils literal"><span class="pre">--wait-time</span></code> overrides the duration in seconds Storm waits between deactivation and shutdown. Storm&#8217;s default is 30 seconds.</p>
+</li>
+<li><p class="first">You can specify a configuration file any time using option:</p>
+<div class="highlight-none"><div class="highlight"><pre>pyleus -c path/to/config_file CMD
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="configuration.html#configuration"><em>Configuration</em></a></p>
+</div>
+</li>
+</ul>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Try <code class="docutils literal"><span class="pre">pyleus</span> <span class="pre">-h</span></code> for a list of all the available commands or <code class="docutils literal"><span class="pre">pyleus</span> <span class="pre">CMD</span> <span class="pre">-h</span></code> for any command-specific help.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="install.html" class="btn btn-neutral" title="Install"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013–2014 Yelp.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.23',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
