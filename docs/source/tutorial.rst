@@ -68,7 +68,7 @@ This is the code implementing ``dummy_spout.py``:
        OUTPUT_FIELDS = ['sentence', 'name']
 
        def next_tuple(self):
-           self.emit(("I am a stupid ", "spout",))
+           self.emit(("This is a sentence.", "spout",))
 
    if __name__ == '__main__':
        DummySpout().run()
@@ -97,8 +97,8 @@ Let's now look at ``dummy_bolt.py``:
    OUTPUT_FIELDS = ['sentence']
 
        def process_tuple(self, tup):
-           sentence, _ = tup.values
-           new_sentence = sentence + "bolt"
+           sentence, name = tup.values
+           new_sentence = "{0} says, \"{1}\"".format(name, sentence)
            self.emit((new_sentence,), anchors=[tup])
 
    if __name__ == '__main__':
