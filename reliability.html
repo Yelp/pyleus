@@ -152,11 +152,11 @@
 <p>You can find more info about Storm reliability features in the <a class="reference external" href="https://storm.apache.org/documentation/Guaranteeing-message-processing.html">Apache Storm Documentation</a>.</p>
 <div class="section" id="track-tuples-in-your-spout">
 <h2>Track tuples in your Spout<a class="headerlink" href="#track-tuples-in-your-spout" title="Permalink to this headline">¶</a></h2>
-<p>In order to make Storm track your tuples, you need to pass a <em>tuple identifier</em> as <code class="docutils literal"><span class="pre">tup_id</span></code> when emitting each tuple:</p>
+<p>In order to make Storm track your tuples, you need to pass a <em>tuple identifier</em> as <tt class="docutils literal"><span class="pre">tup_id</span></tt> when emitting each tuple:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">value</span><span class="p">,),</span> <span class="n">tup_id</span><span class="o">=</span><span class="n">a_unique_id</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In addition, you should also implement methods <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout.ack" title="pyleus.storm.spout.Spout.ack"><code class="xref py py-meth docutils literal"><span class="pre">ack()</span></code></a> and <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout.fail" title="pyleus.storm.spout.Spout.fail"><code class="xref py py-meth docutils literal"><span class="pre">fail()</span></code></a>, in order to ack back to your input source whether your tuple has been fully processed or not and to re-emit it, if that is the case.</p>
+<p>In addition, you should also implement methods <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout.ack" title="pyleus.storm.spout.Spout.ack"><tt class="xref py py-meth docutils literal"><span class="pre">ack()</span></tt></a> and <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout.fail" title="pyleus.storm.spout.Spout.fail"><tt class="xref py py-meth docutils literal"><span class="pre">fail()</span></tt></a>, in order to ack back to your input source whether your tuple has been fully processed or not and to re-emit it, if that is the case.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last">For complete API documentation, see <a class="reference internal" href="storm/spout.html#spout"><em>pyleus.storm.spout</em></a>.</p>
@@ -164,14 +164,14 @@
 </div>
 <div class="section" id="anchor-tuples-in-your-bolt">
 <h2>Anchor tuples in your Bolt<a class="headerlink" href="#anchor-tuples-in-your-bolt" title="Permalink to this headline">¶</a></h2>
-<p>At the <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><code class="xref py py-class docutils literal"><span class="pre">Bolt</span></code></a> level, if you want to extend tracking to newly emitted tuples, you should specify as <code class="docutils literal"><span class="pre">anchors</span></code> a <code class="docutils literal"><span class="pre">list</span></code> containing all the parent tuples for the tuple you are emitting:</p>
+<p>At the <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><tt class="xref py py-class docutils literal"><span class="pre">Bolt</span></tt></a> level, if you want to extend tracking to newly emitted tuples, you should specify as <tt class="docutils literal"><span class="pre">anchors</span></tt> a <tt class="docutils literal"><span class="pre">list</span></tt> containing all the parent tuples for the tuple you are emitting:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">word</span><span class="p">,),</span> <span class="n">anchors</span><span class="o">=</span><span class="p">[</span><span class="n">parent_tuple</span><span class="p">])</span>
 </pre></div>
 </div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">All tuples need to be acked or failed, independently whether you are using Storm reliability features or not.
-If you are directly using <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><code class="xref py py-class docutils literal"><span class="pre">Bolt</span></code></a> instead of <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><code class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></code></a>, you must call this method or your topology will eventually run out of memory or hang.</p>
+If you are directly using <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><tt class="xref py py-class docutils literal"><span class="pre">Bolt</span></tt></a> instead of <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><tt class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></tt></a>, you must call this method or your topology will eventually run out of memory or hang.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -180,9 +180,9 @@ If you are directly using <a class="reference internal" href="storm/bolt.html#py
 </div>
 <div class="section" id="tune-your-topology">
 <h2>Tune your topology<a class="headerlink" href="#tune-your-topology" title="Permalink to this headline">¶</a></h2>
-<p>If you are using Storm reliability features, you also need to run <strong>at least one</strong> Storm acker, otherwise your topology will hang. You can specify the number of ackers for your topology in the topology definition YAML file using the <code class="docutils literal"><span class="pre">ackers</span></code> option.</p>
-<p>We strongly encourage you to tune the maximum number of tuples that can be pending on a spout task at any given time, too. You can do that using the topology level option <code class="docutils literal"><span class="pre">max_spout_pending</span></code>.</p>
-<p>Finally, you may also want to specify the maximum amount of time given to the topology to fully process a message emitted by a spout before failing it. This can be done with option <code class="docutils literal"><span class="pre">message_timeout_secs</span></code>.</p>
+<p>If you are using Storm reliability features, you also need to run <strong>at least one</strong> Storm acker, otherwise your topology will hang. You can specify the number of ackers for your topology in the topology definition YAML file using the <tt class="docutils literal"><span class="pre">ackers</span></tt> option.</p>
+<p>We strongly encourage you to tune the maximum number of tuples that can be pending on a spout task at any given time, too. You can do that using the topology level option <tt class="docutils literal"><span class="pre">max_spout_pending</span></tt>.</p>
+<p>Finally, you may also want to specify the maximum amount of time given to the topology to fully process a message emitted by a spout before failing it. This can be done with option <tt class="docutils literal"><span class="pre">message_timeout_secs</span></tt>.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">reliable_topology</span>
 
 <span class="l-Scalar-Plain">ackers</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">3</span>

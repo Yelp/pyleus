@@ -161,8 +161,8 @@
 |-- requirements.txt
 </pre></div>
 </div>
-<p>When building your topology, the jar file generated from the <code class="docutils literal"><span class="pre">pyleus</span> <span class="pre">build</span></code> command will be named <cite>my_first_topology.jar</cite>, as the directory containing the YAML topology definition file.</p>
-<p>File <code class="docutils literal"><span class="pre">requirements.txt</span></code> should list all the dependencies of the topology to be included in the jar. In this case, this file is empty.</p>
+<p>When building your topology, the jar file generated from the <tt class="docutils literal"><span class="pre">pyleus</span> <span class="pre">build</span></tt> command will be named <cite>my_first_topology.jar</cite>, as the directory containing the YAML topology definition file.</p>
+<p>File <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> should list all the dependencies of the topology to be included in the jar. In this case, this file is empty.</p>
 <blockquote>
 <div><div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -172,7 +172,7 @@
 </div>
 <div class="section" id="define-the-topology-layout">
 <h2>Define the topology layout<a class="headerlink" href="#define-the-topology-layout" title="Permalink to this headline">¶</a></h2>
-<p>A simple <code class="docutils literal"><span class="pre">pyleus_topology.yaml</span></code> should look like the following:</p>
+<p>A simple <tt class="docutils literal"><span class="pre">pyleus_topology.yaml</span></tt> should look like the following:</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># This is a very meaningful paragraph</span>
 <span class="c1"># describing my_first_topology</span>
 
@@ -199,7 +199,7 @@
 </div>
 <div class="section" id="write-your-first-spout">
 <h2>Write your first spout<a class="headerlink" href="#write-your-first-spout" title="Permalink to this headline">¶</a></h2>
-<p>This is the code implementing <code class="docutils literal"><span class="pre">dummy_spout.py</span></code>:</p>
+<p>This is the code implementing <tt class="docutils literal"><span class="pre">dummy_spout.py</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyleus.storm</span> <span class="kn">import</span> <span class="n">Spout</span>
 
 <span class="k">class</span> <span class="nc">DummySpout</span><span class="p">(</span><span class="n">Spout</span><span class="p">):</span>
@@ -213,11 +213,11 @@
     <span class="n">DummySpout</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Every <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout" title="pyleus.storm.spout.Spout"><code class="xref py py-class docutils literal"><span class="pre">Spout</span></code></a> must inherit from <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout" title="pyleus.storm.spout.Spout"><code class="xref py py-class docutils literal"><span class="pre">Spout</span></code></a> and declare its <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.OUTPUT_FIELDS" title="pyleus.storm.component.Component.OUTPUT_FIELDS"><code class="xref py py-attr docutils literal"><span class="pre">OUTPUT_FIELDS</span></code></a> as a <code class="docutils literal"><span class="pre">tuple</span></code>, a <code class="docutils literal"><span class="pre">list</span></code> or a <code class="docutils literal"><span class="pre">namedtuple</span></code>. The same goes for <code class="docutils literal"><span class="pre">emit</span></code> <strong>first argument</strong>.</p>
-<p>Spouts also must define the method <code class="xref py py-meth docutils literal"><span class="pre">next_tuple()</span></code>, that will be called within the component main loop in order to generate a stream of new tuples.</p>
+<p>Every <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout" title="pyleus.storm.spout.Spout"><tt class="xref py py-class docutils literal"><span class="pre">Spout</span></tt></a> must inherit from <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout" title="pyleus.storm.spout.Spout"><tt class="xref py py-class docutils literal"><span class="pre">Spout</span></tt></a> and declare its <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.OUTPUT_FIELDS" title="pyleus.storm.component.Component.OUTPUT_FIELDS"><tt class="xref py py-attr docutils literal"><span class="pre">OUTPUT_FIELDS</span></tt></a> as a <tt class="docutils literal"><span class="pre">tuple</span></tt>, a <tt class="docutils literal"><span class="pre">list</span></tt> or a <tt class="docutils literal"><span class="pre">namedtuple</span></tt>. The same goes for <tt class="docutils literal"><span class="pre">emit</span></tt> <strong>first argument</strong>.</p>
+<p>Spouts also must define the method <tt class="xref py py-meth docutils literal"><span class="pre">next_tuple()</span></tt>, that will be called within the component main loop in order to generate a stream of new tuples.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Forgetting to call the <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.run" title="pyleus.storm.component.Component.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method will prevent the topology from running.</p>
+<p class="last">Forgetting to call the <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.run" title="pyleus.storm.component.Component.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> method will prevent the topology from running.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -230,7 +230,7 @@
 </div>
 <div class="section" id="write-your-first-bolt">
 <h2>Write your first bolt<a class="headerlink" href="#write-your-first-bolt" title="Permalink to this headline">¶</a></h2>
-<p>Let&#8217;s now look at <code class="docutils literal"><span class="pre">dummy_bolt.py</span></code>:</p>
+<p>Let&#8217;s now look at <tt class="docutils literal"><span class="pre">dummy_bolt.py</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyleus.storm</span> <span class="kn">import</span> <span class="n">SimpleBolt</span>
 
 <span class="k">class</span> <span class="nc">DummyBolt</span><span class="p">(</span><span class="n">SimpleBolt</span><span class="p">):</span>
@@ -246,14 +246,14 @@
     <span class="n">DummyBolt</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Every <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><code class="xref py py-class docutils literal"><span class="pre">Bolt</span></code></a> must inherit from <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><code class="xref py py-class docutils literal"><span class="pre">Bolt</span></code></a> or <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><code class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></code></a>, which is a bolt automatically acking/failing tuples and offering a nicer API to leverage tick tuples. The <code class="docutils literal"><span class="pre">process_tuple</span></code> method will be called whenever a new tuple reaches the bolt.</p>
+<p>Every <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><tt class="xref py py-class docutils literal"><span class="pre">Bolt</span></tt></a> must inherit from <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><tt class="xref py py-class docutils literal"><span class="pre">Bolt</span></tt></a> or <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><tt class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></tt></a>, which is a bolt automatically acking/failing tuples and offering a nicer API to leverage tick tuples. The <tt class="docutils literal"><span class="pre">process_tuple</span></tt> method will be called whenever a new tuple reaches the bolt.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Please note that <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><code class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></code></a> will <strong>NOT</strong> automatically anchor your tuples. See <a class="reference internal" href="reliability.html#reliability"><em>Guaranteeing message processing</em></a> for more info on anchoring.</p>
+<p class="last">Please note that <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><tt class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></tt></a> will <strong>NOT</strong> automatically anchor your tuples. See <a class="reference internal" href="reliability.html#reliability"><em>Guaranteeing message processing</em></a> for more info on anchoring.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Even if you want to define only one output field, please declare it as an element either of a <code class="docutils literal"><span class="pre">list</span></code> or of a <code class="docutils literal"><span class="pre">tuple</span></code>, as showed in the above example. Using just a <code class="docutils literal"><span class="pre">string</span></code> is not allowed.</p>
+<p class="last">Even if you want to define only one output field, please declare it as an element either of a <tt class="docutils literal"><span class="pre">list</span></tt> or of a <tt class="docutils literal"><span class="pre">tuple</span></tt>, as showed in the above example. Using just a <tt class="docutils literal"><span class="pre">string</span></tt> is not allowed.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -271,8 +271,8 @@
 pyleus local my_first_topology.yaml -d
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">-debug</span></code> option will print all tuples flowing through the topology.</p>
-<p>When you are done, hit <code class="docutils literal"><span class="pre">C-C</span></code>.</p>
+<p>The <tt class="docutils literal"><span class="pre">-debug</span></tt> option will print all tuples flowing through the topology.</p>
+<p>When you are done, hit <tt class="docutils literal"><span class="pre">C-C</span></tt>.</p>
 </div>
 </div>
 

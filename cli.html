@@ -156,8 +156,8 @@
 </div>
 <p>This command will generate a topology jar file ready to be executed by Storm.</p>
 <p>The output jar will be named as the directory containing the YAML definition file passed as argument.
-Option <code class="docutils literal"><span class="pre">--output</span></code> allows to specify the output jar path.</p>
-<p>If a <code class="docutils literal"><span class="pre">requirements.txt</span></code> file is present in the same directory of the YAML topology definition file, all dependencies listed in the file will be included in the jar.</p>
+Option <tt class="docutils literal"><span class="pre">--output</span></tt> allows to specify the output jar path.</p>
+<p>If a <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> file is present in the same directory of the YAML topology definition file, all dependencies listed in the file will be included in the jar.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last">If you want to specify a different path for your requirements file, please see <em class="xref std std-ref">TODO_REQUIREMENTS_IN_YAML</em>. If you want to install some dependencies for all yuor topologies, see <a class="reference internal" href="configuration.html#configuration"><em>Configuration</em></a> instead.</p>
@@ -167,8 +167,8 @@ Option <code class="docutils literal"><span class="pre">--output</span></code> a
 <div class="highlight-none"><div class="highlight"><pre>pyleus local /path/to/topology.jar [--debug]
 </pre></div>
 </div>
-<p>Hit <code class="docutils literal"><span class="pre">C-C</span></code> to stop local execution.</p>
-<p>The <code class="docutils literal"><span class="pre">debug</span></code> option will print evry tuple flowing through the topology.</p>
+<p>Hit <tt class="docutils literal"><span class="pre">C-C</span></tt> to stop local execution.</p>
+<p>The <tt class="docutils literal"><span class="pre">debug</span></tt> option will print evry tuple flowing through the topology.</p>
 </li>
 <li><p class="first">Submit a topology to a Storm cluster:</p>
 <div class="highlight-none"><div class="highlight"><pre>pyleus submit [-n NIMBUS_IP] /path/to/pyleus_topology.yaml
@@ -184,7 +184,7 @@ Option <code class="docutils literal"><span class="pre">--output</span></code> a
 <div class="highlight-none"><div class="highlight"><pre>pyleus kill [-n NIMBUS_IP] TOPOLOGY_NAME [-w WAIT_TIME]
 </pre></div>
 </div>
-<p>Option <code class="docutils literal"><span class="pre">--wait-time</span></code> overrides the duration in seconds Storm waits between deactivation and shutdown. Storm&#8217;s default is 30 seconds.</p>
+<p>Option <tt class="docutils literal"><span class="pre">--wait-time</span></tt> overrides the duration in seconds Storm waits between deactivation and shutdown. Storm&#8217;s default is 30 seconds.</p>
 </li>
 <li><p class="first">You can specify a configuration file any time using option:</p>
 <div class="highlight-none"><div class="highlight"><pre>pyleus -c path/to/config_file CMD
@@ -198,7 +198,7 @@ Option <code class="docutils literal"><span class="pre">--output</span></code> a
 </ul>
 <div class="admonition tip">
 <p class="first admonition-title">Tip</p>
-<p class="last">Try <code class="docutils literal"><span class="pre">pyleus</span> <span class="pre">-h</span></code> for a list of all the available commands or <code class="docutils literal"><span class="pre">pyleus</span> <span class="pre">CMD</span> <span class="pre">-h</span></code> for any command-specific help.</p>
+<p class="last">Try <tt class="docutils literal"><span class="pre">pyleus</span> <span class="pre">-h</span></tt> for a list of all the available commands or <tt class="docutils literal"><span class="pre">pyleus</span> <span class="pre">CMD</span> <span class="pre">-h</span></tt> for any command-specific help.</p>
 </div>
 </div>
 

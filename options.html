@@ -170,7 +170,7 @@
      <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="s">&quot;I am a stupid &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&#39;word&#39;</span><span class="p">],))</span>
 </pre></div>
 </div>
-<p>You can access options at any time through the <code class="docutils literal"><span class="pre">self.options</span></code> dictionary.</p>
+<p>You can access options at any time through the <tt class="docutils literal"><span class="pre">self.options</span></tt> dictionary.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>You do not need to specify in the YAML all options declared in the component, but accessing not specified options will raise an error.</p>
@@ -179,12 +179,12 @@
 </div>
 <div class="section" id="access-component-configuration-and-context">
 <h2>Access component configuration and context<a class="headerlink" href="#access-component-configuration-and-context" title="Permalink to this headline">¶</a></h2>
-<p>It is worth noting that you have access to a copy of Storm configuration and context for each component. You can access them at any time through <code class="docutils literal"><span class="pre">self.conf</span></code> and <code class="docutils literal"><span class="pre">self.context</span></code> dictionaries like in the following example:</p>
+<p>It is worth noting that you have access to a copy of Storm configuration and context for each component. You can access them at any time through <tt class="docutils literal"><span class="pre">self.conf</span></tt> and <tt class="docutils literal"><span class="pre">self.context</span></tt> dictionaries like in the following example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">topology_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;storm.id&#39;</span><span class="p">]</span>
 <span class="n">taskid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s">&#39;taskid&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>While the content of <code class="docutils literal"><span class="pre">self.conf</span></code> is rather easy to imagine, <code class="docutils literal"><span class="pre">self.context</span></code> contains information like the following:</p>
+<p>While the content of <tt class="docutils literal"><span class="pre">self.conf</span></tt> is rather easy to imagine, <tt class="docutils literal"><span class="pre">self.context</span></tt> contains information like the following:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;task-&gt;component&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s">&#39;__acker&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s">&#39;my-spout&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s">&#39;my-bolt&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s">&#39;another-bolt&#39;</span><span class="p">},</span> <span class="s">&#39;taskid&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
 </pre></div>
 </div>
@@ -192,7 +192,7 @@
 <div class="section" id="setup-component-at-startup">
 <h2>Setup component at startup<a class="headerlink" href="#setup-component-at-startup" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes it could be useful to perform some setup actions <em>before</em> your component starts receiving tuples, but <em>after</em> Storm configuration and context have been loaded and options have been parsed.</p>
-<p>You can implement the <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.initialize" title="pyleus.storm.component.Component.initialize"><code class="xref py py-meth docutils literal"><span class="pre">initialize()</span></code></a> method, like in the example below, to achieve the same behavior:</p>
+<p>You can implement the <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.initialize" title="pyleus.storm.component.Component.initialize"><tt class="xref py py-meth docutils literal"><span class="pre">initialize()</span></tt></a> method, like in the example below, to achieve the same behavior:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">FileSpout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
     <span class="n">OPTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;filename&#39;</span><span class="p">]</span>

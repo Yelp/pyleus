@@ -155,23 +155,23 @@
 <p>Package containing pyleus implementation of major Storm entities.</p>
 <dl class="exception">
 <dt id="pyleus.storm.StormWentAwayError">
-<em class="property">exception </em><code class="descclassname">pyleus.storm.</code><code class="descname">StormWentAwayError</code><a class="reference internal" href="../_modules/pyleus/storm.html#StormWentAwayError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.StormWentAwayError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><tt class="descclassname">pyleus.storm.</tt><tt class="descname">StormWentAwayError</tt><a class="reference internal" href="../_modules/pyleus/storm.html#StormWentAwayError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.StormWentAwayError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raised when the connection between the component and Storm terminates.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pyleus.storm.is_tick">
-<code class="descclassname">pyleus.storm.</code><code class="descname">is_tick</code><span class="sig-paren">(</span><em>tup</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm.html#is_tick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.is_tick" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">pyleus.storm.</tt><tt class="descname">is_tick</tt><big>(</big><em>tup</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm.html#is_tick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.is_tick" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tell whether the tuple is a tick tuple or not.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup</strong> (<a class="reference internal" href="#pyleus.storm.StormTuple" title="pyleus.storm.StormTuple"><code class="xref py py-class docutils literal"><span class="pre">StormTuple</span></code></a>) &#8211; tuple to investigate</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup</strong> (<a class="reference internal" href="#pyleus.storm.StormTuple" title="pyleus.storm.StormTuple"><tt class="xref py py-class docutils literal"><span class="pre">StormTuple</span></tt></a>) &#8211; tuple to investigate</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if the tuple is a tick tuple, <code class="docutils literal"><span class="pre">False</span></code> otherwise</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">True</span></tt> if the tuple is a tick tuple, <tt class="docutils literal"><span class="pre">False</span></tt> otherwise</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal"><span class="pre">bool</span></code></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="docutils literal"><span class="pre">bool</span></tt></td>
 </tr>
 </tbody>
 </table>
@@ -179,13 +179,13 @@
 
 <dl class="class">
 <dt id="pyleus.storm.StormTuple">
-<em class="property">class </em><code class="descclassname">pyleus.storm.</code><code class="descname">StormTuple</code><a class="headerlink" href="#pyleus.storm.StormTuple" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pyleus.storm.</tt><tt class="descname">StormTuple</tt><a class="headerlink" href="#pyleus.storm.StormTuple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Namedtuple representing a Storm tuple.</p>
 <ul class="simple">
-<li><strong>id</strong>(<code class="docutils literal"><span class="pre">str</span></code> or <code class="docutils literal"><span class="pre">long</span></code>): tuple identifier</li>
-<li><strong>comp</strong>(<code class="docutils literal"><span class="pre">str</span></code>): name of the emitting component</li>
-<li><strong>stream</strong>(<code class="docutils literal"><span class="pre">str</span></code>): name of the input stream the tuple belongs to</li>
-<li><strong>values</strong>(<code class="docutils literal"><span class="pre">tuple</span></code>): values contained by the tuple</li>
+<li><strong>id</strong>(<tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">long</span></tt>): tuple identifier</li>
+<li><strong>comp</strong>(<tt class="docutils literal"><span class="pre">str</span></tt>): name of the emitting component</li>
+<li><strong>stream</strong>(<tt class="docutils literal"><span class="pre">str</span></tt>): name of the input stream the tuple belongs to</li>
+<li><strong>values</strong>(<tt class="docutils literal"><span class="pre">tuple</span></tt>): values contained by the tuple</li>
 </ul>
 </dd></dl>
 

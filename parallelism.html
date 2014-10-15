@@ -155,9 +155,9 @@
 <p class="last">For a deep dive into Storm parallelism, refer to <a class="reference external" href="https://storm.apache.org/documentation/Understanding-the-parallelism-of-a-Storm-topology.html">Apache Storm Documentation</a>.</p>
 </div>
 <ul class="simple">
-<li>You can specify the number of workers <strong>per topology</strong> using the <code class="docutils literal"><span class="pre">workers</span></code> tag in the topology YAML definition file.</li>
-<li>You can set the <strong>initial</strong> number of executors <strong>per component</strong> with the <code class="docutils literal"><span class="pre">parallelism_hint</span></code> option.</li>
-<li>You can set the number of tasks <strong>per component</strong> (<strong>NOT</strong> per executors) via <code class="docutils literal"><span class="pre">tasks</span></code>.</li>
+<li>You can specify the number of workers <strong>per topology</strong> using the <tt class="docutils literal"><span class="pre">workers</span></tt> tag in the topology YAML definition file.</li>
+<li>You can set the <strong>initial</strong> number of executors <strong>per component</strong> with the <tt class="docutils literal"><span class="pre">parallelism_hint</span></tt> option.</li>
+<li>You can set the number of tasks <strong>per component</strong> (<strong>NOT</strong> per executors) via <tt class="docutils literal"><span class="pre">tasks</span></tt>.</li>
 </ul>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">parallel_topology</span>
 
@@ -178,7 +178,7 @@
 </div>
 <div class="admonition tip">
 <p class="first admonition-title">Tip</p>
-<p class="last">Storm is rather unhappy if you try to use threads in order to parallelize your topology components. Use the <code class="docutils literal"><span class="pre">parallelism_hint</span></code> tag instead.</p>
+<p class="last">Storm is rather unhappy if you try to use threads in order to parallelize your topology components. Use the <tt class="docutils literal"><span class="pre">parallelism_hint</span></tt> tag instead.</p>
 </div>
 </div>
 

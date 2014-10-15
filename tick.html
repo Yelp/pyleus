@@ -150,14 +150,14 @@
   <div class="section" id="timing-using-tick-tuples">
 <span id="tick"></span><h1>Timing using tick tuples<a class="headerlink" href="#timing-using-tick-tuples" title="Permalink to this headline">¶</a></h1>
 <p>Tick tuples are system generated tuples that Storm can send to your bolt if you need to perform some actions at a fixed interval.</p>
-<p>You can use the module level function <a class="reference internal" href="storm/storm.html#pyleus.storm.is_tick" title="pyleus.storm.is_tick"><code class="xref py py-func docutils literal"><span class="pre">pyleus.storm.is_tick()</span></code></a> to tell whether a tuple is a tick tuple or not.</p>
+<p>You can use the module level function <a class="reference internal" href="storm/storm.html#pyleus.storm.is_tick" title="pyleus.storm.is_tick"><tt class="xref py py-func docutils literal"><span class="pre">pyleus.storm.is_tick()</span></tt></a> to tell whether a tuple is a tick tuple or not.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last">You can read more about tick tuples <a class="reference external" href="https://storm.apache.org/2012/08/02/storm080-released.html">here</a>.</p>
 </div>
 <div class="section" id="configure-tick-tuples-interval-for-a-component">
 <h2>Configure tick tuples interval for a component<a class="headerlink" href="#configure-tick-tuples-interval-for-a-component" title="Permalink to this headline">¶</a></h2>
-<p>You can activate and configure tick tuples interval for a component using the <code class="docutils literal"><span class="pre">tick_freq_secs</span></code> option in the topology definition YAML file:</p>
+<p>You can activate and configure tick tuples interval for a component using the <tt class="docutils literal"><span class="pre">tick_freq_secs</span></tt> option in the topology definition YAML file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="o">-</span> <span class="n">bolt</span><span class="p">:</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">tick</span><span class="o">-</span><span class="n">bolt</span>
     <span class="n">module</span><span class="p">:</span> <span class="n">tick_topology</span><span class="o">.</span><span class="n">tick_bolt</span>
@@ -166,12 +166,12 @@
     <span class="n">tick_freq_secs</span><span class="p">:</span> <span class="mf">2.5</span>
 </pre></div>
 </div>
-<p>The specified value has to be <code class="docutils literal"><span class="pre">float</span></code> and it is intended as the interval in seconds between two tick tuples.</p>
-<p>You can retrieve the frequency value from within a bolt using property <code class="docutils literal"><span class="pre">self.conf.tick_tuple_freq</span></code>.</p>
+<p>The specified value has to be <tt class="docutils literal"><span class="pre">float</span></tt> and it is intended as the interval in seconds between two tick tuples.</p>
+<p>You can retrieve the frequency value from within a bolt using property <tt class="docutils literal"><span class="pre">self.conf.tick_tuple_freq</span></tt>.</p>
 </div>
 <div class="section" id="simplebolt-tick-tuple-api">
 <h2>SimpleBolt tick tuple API<a class="headerlink" href="#simplebolt-tick-tuple-api" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><code class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></code></a> offers a nicer API for handling tick tuples. Method <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt.process_tick" title="pyleus.storm.bolt.SimpleBolt.process_tick"><code class="xref py py-meth docutils literal"><span class="pre">process_tick()</span></code></a> will be called instead of <code class="xref py py-meth docutils literal"><span class="pre">process_tuple()</span></code> any time the bolt receives a tick tuple. In this way you can easily separate the code you want to execute for &#8220;real&#8221; tuple from the one you want to executed at a fixed interval.</p>
+<p><a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><tt class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></tt></a> offers a nicer API for handling tick tuples. Method <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.SimpleBolt.process_tick" title="pyleus.storm.bolt.SimpleBolt.process_tick"><tt class="xref py py-meth docutils literal"><span class="pre">process_tick()</span></tt></a> will be called instead of <tt class="xref py py-meth docutils literal"><span class="pre">process_tuple()</span></tt> any time the bolt receives a tick tuple. In this way you can easily separate the code you want to execute for &#8220;real&#8221; tuple from the one you want to executed at a fixed interval.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last">You can find many examples in the <a class="reference external" href="https://github.com/Yelp/pyleus/tree/master/examples">GitHub repo</a>.</p>

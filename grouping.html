@@ -151,13 +151,13 @@
 <span id="groupings"></span><h1>Outuput streams and groupings<a class="headerlink" href="#outuput-streams-and-groupings" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="single-output-streams">
 <h2>Single output streams<a class="headerlink" href="#single-output-streams" title="Permalink to this headline">¶</a></h2>
-<p>You can define a component with a single output stream just assigning a <code class="docutils literal"><span class="pre">list</span></code> or a <code class="docutils literal"><span class="pre">tuple</span></code> to the class attribute <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.OUTPUT_FIELDS" title="pyleus.storm.component.Component.OUTPUT_FIELDS"><code class="xref py py-attr docutils literal"><span class="pre">OUTPUT_FIELDS</span></code></a>.</p>
+<p>You can define a component with a single output stream just assigning a <tt class="docutils literal"><span class="pre">list</span></tt> or a <tt class="docutils literal"><span class="pre">tuple</span></tt> to the class attribute <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.OUTPUT_FIELDS" title="pyleus.storm.component.Component.OUTPUT_FIELDS"><tt class="xref py py-attr docutils literal"><span class="pre">OUTPUT_FIELDS</span></tt></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">CountingBolt</span><span class="p">(</span><span class="n">Bolt</span><span class="p">):</span>
 
     <span class="n">OUTPUT_FIELDS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;word&#39;</span><span class="p">,</span> <span class="s">&#39;counter&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Pyleus also accepts <code class="docutils literal"><span class="pre">namedtuple</span></code> for output fields schema declaration:</p>
+<p>Pyleus also accepts <tt class="docutils literal"><span class="pre">namedtuple</span></tt> for output fields schema declaration:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">Record</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;Record&#39;</span><span class="p">,</span> <span class="s">&#39;year month day value&#39;</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">SampleBolt</span><span class="p">(</span><span class="n">Bolt</span><span class="p">):</span>
@@ -166,7 +166,7 @@
 </pre></div>
 </div>
 <p>This allows you to import your schema in the downstream component and to build code that is more resilient to schema changes (at the price of building nametuples from incoming tuple values). You can find some examples of this technique in the <a class="reference external" href="https://github.com/Yelp/pyleus/tree/master/examples">examples</a> folder.</p>
-<p>When you define a single output stream, all emitted tuples will go to the <code class="docutils literal"><span class="pre">default</span></code> stream and you are then allowed to use the short definition syntax for groupings:</p>
+<p>When you define a single output stream, all emitted tuples will go to the <tt class="docutils literal"><span class="pre">default</span></tt> stream and you are then allowed to use the short definition syntax for groupings:</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">bolt</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my-first-bolt</span>
     <span class="l-Scalar-Plain">module</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my_topology.my_first_bolt</span>
@@ -191,7 +191,7 @@
 </div>
 <div class="section" id="multiple-output-streams">
 <h2>Multiple output streams<a class="headerlink" href="#multiple-output-streams" title="Permalink to this headline">¶</a></h2>
-<p>Storm allows components to define an arbitrary numbers of output streams. For doing that in Pyleus, you need to define your output streams in a <code class="docutils literal"><span class="pre">dict</span></code> as the following:</p>
+<p>Storm allows components to define an arbitrary numbers of output streams. For doing that in Pyleus, you need to define your output streams in a <tt class="docutils literal"><span class="pre">dict</span></tt> as the following:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MultipleBolt</span><span class="p">(</span><span class="n">Bolt</span><span class="p">):</span>
 
     <span class="n">OUTPUT_FIELDS</span> <span class="o">=</span> <span class="p">{</span>

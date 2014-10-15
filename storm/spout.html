@@ -155,30 +155,30 @@
 <p>Module containing the implementation of the Spout component.</p>
 <dl class="class">
 <dt id="pyleus.storm.spout.Spout">
-<em class="property">class </em><code class="descclassname">pyleus.storm.spout.</code><code class="descname">Spout</code><span class="sig-paren">(</span><em>input_stream=None</em>, <em>output_stream=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/spout.html#Spout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.spout.Spout" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pyleus.storm.spout.</tt><tt class="descname">Spout</tt><big>(</big><em>input_stream=None</em>, <em>output_stream=None</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/spout.html#Spout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.spout.Spout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spout component class. Inherit from
-<a class="reference internal" href="component.html#pyleus.storm.component.Component" title="pyleus.storm.component.Component"><code class="xref py py-class docutils literal"><span class="pre">Component</span></code></a>.</p>
+<a class="reference internal" href="component.html#pyleus.storm.component.Component" title="pyleus.storm.component.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a>.</p>
 <dl class="method">
 <dt id="pyleus.storm.spout.Spout.ack">
-<code class="descname">ack</code><span class="sig-paren">(</span><em>tup_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/spout.html#Spout.ack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.spout.Spout.ack" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">ack</tt><big>(</big><em>tup_id</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/spout.html#Spout.ack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.spout.Spout.ack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ack a tuple to the source.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup_id</strong> (<code class="docutils literal"><span class="pre">str</span></code> or <code class="docutils literal"><span class="pre">long</span></code>) &#8211; tuple identifier</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup_id</strong> (<tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">long</span></tt>) &#8211; tuple identifier</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Implement in subclass. Default behaviour is <code class="docutils literal"><span class="pre">pass</span></code>.</p>
+<p class="last">Implement in subclass. Default behaviour is <tt class="docutils literal"><span class="pre">pass</span></tt>.</p>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyleus.storm.spout.Spout.emit">
-<code class="descname">emit</code><span class="sig-paren">(</span><em>values</em>, <em>stream=None</em>, <em>tup_id=None</em>, <em>direct_task=None</em>, <em>need_task_ids=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/spout.html#Spout.emit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.spout.Spout.emit" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">emit</tt><big>(</big><em>values</em>, <em>stream=None</em>, <em>tup_id=None</em>, <em>direct_task=None</em>, <em>need_task_ids=True</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/spout.html#Spout.emit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.spout.Spout.emit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build and send an output tuple command dict and return the ids of
 the tasks to which the tuple was sent by Storm.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -186,15 +186,15 @@ the tasks to which the tuple was sent by Storm.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>values</strong> (<code class="docutils literal"><span class="pre">tuple</span></code> or <code class="docutils literal"><span class="pre">list</span></code>) &#8211; pyleus tuple values to be emitted</li>
-<li><strong>stream</strong> (<code class="docutils literal"><span class="pre">str</span></code>) &#8211; output stream the message is going to belong to, default <code class="docutils literal"><span class="pre">DEFAULT</span></code></li>
-<li><strong>tup_id</strong> (<code class="docutils literal"><span class="pre">str</span></code> or <code class="docutils literal"><span class="pre">long</span></code>) &#8211; identifier that will be used by Storm for tracking the tuple for
+<li><strong>values</strong> (<tt class="docutils literal"><span class="pre">tuple</span></tt> or <tt class="docutils literal"><span class="pre">list</span></tt>) &#8211; pyleus tuple values to be emitted</li>
+<li><strong>stream</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; output stream the message is going to belong to, default <tt class="docutils literal"><span class="pre">DEFAULT</span></tt></li>
+<li><strong>tup_id</strong> (<tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">long</span></tt>) &#8211; identifier that will be used by Storm for tracking the tuple for
 reliability purpose. It will be passed as argument to both
-<a class="reference internal" href="#pyleus.storm.spout.Spout.ack" title="pyleus.storm.spout.Spout.ack"><code class="xref py py-meth docutils literal"><span class="pre">ack()</span></code></a> and <a class="reference internal" href="#pyleus.storm.spout.Spout.fail" title="pyleus.storm.spout.Spout.fail"><code class="xref py py-meth docutils literal"><span class="pre">fail()</span></code></a> when the tuple terminates its
-lifecycle. Default <code class="docutils literal"><span class="pre">None</span></code></li>
-<li><strong>direct_task</strong> (<code class="docutils literal"><span class="pre">int</span></code>) &#8211; task message will be sent to, default None</li>
-<li><strong>need_task_ids</strong> (<code class="docutils literal"><span class="pre">bool</span></code>) &#8211; whether emit should return the ids of the task the message has been
-sent to, default <code class="docutils literal"><span class="pre">True</span></code></li>
+<a class="reference internal" href="#pyleus.storm.spout.Spout.ack" title="pyleus.storm.spout.Spout.ack"><tt class="xref py py-meth docutils literal"><span class="pre">ack()</span></tt></a> and <a class="reference internal" href="#pyleus.storm.spout.Spout.fail" title="pyleus.storm.spout.Spout.fail"><tt class="xref py py-meth docutils literal"><span class="pre">fail()</span></tt></a> when the tuple terminates its
+lifecycle. Default <tt class="docutils literal"><span class="pre">None</span></tt></li>
+<li><strong>direct_task</strong> (<tt class="docutils literal"><span class="pre">int</span></tt>) &#8211; task message will be sent to, default None</li>
+<li><strong>need_task_ids</strong> (<tt class="docutils literal"><span class="pre">bool</span></tt>) &#8211; whether emit should return the ids of the task the message has been
+sent to, default <tt class="docutils literal"><span class="pre">True</span></tt></li>
 </ul>
 </td>
 </tr>
@@ -202,48 +202,48 @@ sent to, default <code class="docutils literal"><span class="pre">True</span></c
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last"><code class="docutils literal"><span class="pre">tup_id</span></code> should be JSON-serializable.</p>
+<p class="last"><tt class="docutils literal"><span class="pre">tup_id</span></tt> should be JSON-serializable.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Omitting <code class="docutils literal"><span class="pre">tup_id</span></code> will disable reliability tracking for that
-tuple. If you provide a value for <code class="docutils literal"><span class="pre">tup_id</span></code>, then you also need to
+<p class="last">Omitting <tt class="docutils literal"><span class="pre">tup_id</span></tt> will disable reliability tracking for that
+tuple. If you provide a value for <tt class="docutils literal"><span class="pre">tup_id</span></tt>, then you also need to
 run at least one Storm <strong>acker</strong> (see <a class="reference internal" href="../reliability.html#reliability"><em>Guaranteeing message processing</em></a>),
 otherwise your topology will hang.</p>
 </div>
 <div class="admonition tip">
 <p class="first admonition-title">Tip</p>
-<p class="last">Setting <code class="docutils literal"><span class="pre">need_task_ids</span></code> to <code class="docutils literal"><span class="pre">False</span></code> really helps in achieving
+<p class="last">Setting <tt class="docutils literal"><span class="pre">need_task_ids</span></tt> to <tt class="docutils literal"><span class="pre">False</span></tt> really helps in achieving
 better performances. You should always do that if your application
 does not leverage task ids.</p>
 </div>
 <div class="admonition danger">
 <p class="first admonition-title">Danger</p>
-<p class="last"><code class="docutils literal"><span class="pre">direct_task</span></code> is not yet supported.</p>
+<p class="last"><tt class="docutils literal"><span class="pre">direct_task</span></tt> is not yet supported.</p>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyleus.storm.spout.Spout.fail">
-<code class="descname">fail</code><span class="sig-paren">(</span><em>tup_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/spout.html#Spout.fail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.spout.Spout.fail" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fail</tt><big>(</big><em>tup_id</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/spout.html#Spout.fail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.spout.Spout.fail" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fail a tuple to the source.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup_id</strong> (<code class="docutils literal"><span class="pre">str</span></code> or <code class="docutils literal"><span class="pre">long</span></code>) &#8211; tuple identifier</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup_id</strong> (<tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">long</span></tt>) &#8211; tuple identifier</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Implement in subclass. Default behaviour is <code class="docutils literal"><span class="pre">pass</span></code>.</p>
+<p class="last">Implement in subclass. Default behaviour is <tt class="docutils literal"><span class="pre">pass</span></tt>.</p>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyleus.storm.spout.Spout.next_tuple">
-<code class="descname">next_tuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/spout.html#Spout.next_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.spout.Spout.next_tuple" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">next_tuple</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/spout.html#Spout.next_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.spout.Spout.next_tuple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Emit the next tuple into the topology.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>

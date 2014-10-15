@@ -157,18 +157,18 @@ SimpleBolt component which takes care of acking/failing tuples and exposing a
 nicer API for handling tick tuples.</p>
 <dl class="class">
 <dt id="pyleus.storm.bolt.Bolt">
-<em class="property">class </em><code class="descclassname">pyleus.storm.bolt.</code><code class="descname">Bolt</code><span class="sig-paren">(</span><em>input_stream=None</em>, <em>output_stream=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#Bolt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.Bolt" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pyleus.storm.bolt.</tt><tt class="descname">Bolt</tt><big>(</big><em>input_stream=None</em>, <em>output_stream=None</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#Bolt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.Bolt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bolt component class. Inherit from
-<a class="reference internal" href="component.html#pyleus.storm.component.Component" title="pyleus.storm.component.Component"><code class="xref py py-class docutils literal"><span class="pre">Component</span></code></a>.</p>
+<a class="reference internal" href="component.html#pyleus.storm.component.Component" title="pyleus.storm.component.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a>.</p>
 <dl class="method">
 <dt id="pyleus.storm.bolt.Bolt.ack">
-<code class="descname">ack</code><span class="sig-paren">(</span><em>tup</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#Bolt.ack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.Bolt.ack" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">ack</tt><big>(</big><em>tup</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#Bolt.ack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.Bolt.ack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ack a tuple.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup</strong> (<a class="reference internal" href="storm.html#pyleus.storm.StormTuple" title="pyleus.storm.StormTuple"><code class="xref py py-class docutils literal"><span class="pre">StormTuple</span></code></a>) &#8211; tuple to ack</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup</strong> (<a class="reference internal" href="storm.html#pyleus.storm.StormTuple" title="pyleus.storm.StormTuple"><tt class="xref py py-class docutils literal"><span class="pre">StormTuple</span></tt></a>) &#8211; tuple to ack</td>
 </tr>
 </tbody>
 </table>
@@ -176,7 +176,7 @@ nicer API for handling tick tuples.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">All tuples need to be acked or failed, independently whether
 you are using Storm reliability features or not. If you are directly
-using <a class="reference internal" href="#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><code class="xref py py-class docutils literal"><span class="pre">Bolt</span></code></a> instead of <a class="reference internal" href="#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><code class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></code></a>, you must
+using <a class="reference internal" href="#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><tt class="xref py py-class docutils literal"><span class="pre">Bolt</span></tt></a> instead of <a class="reference internal" href="#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><tt class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></tt></a>, you must
 call this method or your topology will eventually run out of memory
 or hang.</p>
 </div>
@@ -184,7 +184,7 @@ or hang.</p>
 
 <dl class="method">
 <dt id="pyleus.storm.bolt.Bolt.emit">
-<code class="descname">emit</code><span class="sig-paren">(</span><em>values</em>, <em>stream=None</em>, <em>anchors=None</em>, <em>direct_task=None</em>, <em>need_task_ids=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#Bolt.emit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.Bolt.emit" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">emit</tt><big>(</big><em>values</em>, <em>stream=None</em>, <em>anchors=None</em>, <em>direct_task=None</em>, <em>need_task_ids=True</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#Bolt.emit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.Bolt.emit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build and send an output tuple command dict and return the ids of
 the tasks to which the tuple was sent by Storm.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -192,13 +192,13 @@ the tasks to which the tuple was sent by Storm.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>values</strong> (<code class="docutils literal"><span class="pre">tuple</span></code> or <code class="docutils literal"><span class="pre">list</span></code>) &#8211; pyleus tuple values to be emitted</li>
-<li><strong>stream</strong> (<code class="docutils literal"><span class="pre">str</span></code>) &#8211; output stream the message is going to belong to, default <code class="docutils literal"><span class="pre">DEFAULT</span></code></li>
-<li><strong>anchors</strong> (<code class="docutils literal"><span class="pre">list</span></code> of pyleus tuples) &#8211; list of pyleus tuples the message should be anchored to, default
-<code class="docutils literal"><span class="pre">None</span></code></li>
-<li><strong>direct_task</strong> (<code class="docutils literal"><span class="pre">int</span></code>) &#8211; task message will be sent to, default None</li>
-<li><strong>need_task_ids</strong> (<code class="docutils literal"><span class="pre">bool</span></code>) &#8211; whether emit should return the ids of the task the message has been
-sent to, default <code class="docutils literal"><span class="pre">True</span></code></li>
+<li><strong>values</strong> (<tt class="docutils literal"><span class="pre">tuple</span></tt> or <tt class="docutils literal"><span class="pre">list</span></tt>) &#8211; pyleus tuple values to be emitted</li>
+<li><strong>stream</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; output stream the message is going to belong to, default <tt class="docutils literal"><span class="pre">DEFAULT</span></tt></li>
+<li><strong>anchors</strong> (<tt class="docutils literal"><span class="pre">list</span></tt> of pyleus tuples) &#8211; list of pyleus tuples the message should be anchored to, default
+<tt class="docutils literal"><span class="pre">None</span></tt></li>
+<li><strong>direct_task</strong> (<tt class="docutils literal"><span class="pre">int</span></tt>) &#8211; task message will be sent to, default None</li>
+<li><strong>need_task_ids</strong> (<tt class="docutils literal"><span class="pre">bool</span></tt>) &#8211; whether emit should return the ids of the task the message has been
+sent to, default <tt class="docutils literal"><span class="pre">True</span></tt></li>
 </ul>
 </td>
 </tr>
@@ -206,25 +206,25 @@ sent to, default <code class="docutils literal"><span class="pre">True</span></c
 </table>
 <div class="admonition tip">
 <p class="first admonition-title">Tip</p>
-<p class="last">Setting <code class="docutils literal"><span class="pre">need_task_ids</span></code> to <code class="docutils literal"><span class="pre">False</span></code> really helps in achieving
+<p class="last">Setting <tt class="docutils literal"><span class="pre">need_task_ids</span></tt> to <tt class="docutils literal"><span class="pre">False</span></tt> really helps in achieving
 better performances. You should always do that if your application
 does not leverage task ids.</p>
 </div>
 <div class="admonition danger">
 <p class="first admonition-title">Danger</p>
-<p class="last"><code class="docutils literal"><span class="pre">direct_task</span></code> is not yet supported.</p>
+<p class="last"><tt class="docutils literal"><span class="pre">direct_task</span></tt> is not yet supported.</p>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyleus.storm.bolt.Bolt.fail">
-<code class="descname">fail</code><span class="sig-paren">(</span><em>tup</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#Bolt.fail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.Bolt.fail" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fail</tt><big>(</big><em>tup</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#Bolt.fail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.Bolt.fail" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fail a tuple.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup</strong> (<a class="reference internal" href="storm.html#pyleus.storm.StormTuple" title="pyleus.storm.StormTuple"><code class="xref py py-class docutils literal"><span class="pre">StormTuple</span></code></a>) &#8211; tuple to fail</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup</strong> (<a class="reference internal" href="storm.html#pyleus.storm.StormTuple" title="pyleus.storm.StormTuple"><tt class="xref py py-class docutils literal"><span class="pre">StormTuple</span></tt></a>) &#8211; tuple to fail</td>
 </tr>
 </tbody>
 </table>
@@ -232,7 +232,7 @@ does not leverage task ids.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">All tuples need to be acked or failed, independently whether
 you are using Storm reliability features or not. If you are directly
-using <a class="reference internal" href="#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><code class="xref py py-class docutils literal"><span class="pre">Bolt</span></code></a> instead of <a class="reference internal" href="#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><code class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></code></a>, you must
+using <a class="reference internal" href="#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><tt class="xref py py-class docutils literal"><span class="pre">Bolt</span></tt></a> instead of <a class="reference internal" href="#pyleus.storm.bolt.SimpleBolt" title="pyleus.storm.bolt.SimpleBolt"><tt class="xref py py-class docutils literal"><span class="pre">SimpleBolt</span></tt></a>, you must
 call this method or your topology will eventually run out of memory
 or hang.</p>
 </div>
@@ -240,13 +240,13 @@ or hang.</p>
 
 <dl class="method">
 <dt id="pyleus.storm.bolt.Bolt.process_tuple">
-<code class="descname">process_tuple</code><span class="sig-paren">(</span><em>tup</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#Bolt.process_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.Bolt.process_tuple" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">process_tuple</tt><big>(</big><em>tup</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#Bolt.process_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.Bolt.process_tuple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process the incoming tuple.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup</strong> (<a class="reference internal" href="storm.html#pyleus.storm.StormTuple" title="pyleus.storm.StormTuple"><code class="xref py py-class docutils literal"><span class="pre">StormTuple</span></code></a>) &#8211; pyleus tuple representing the message to be processed</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tup</strong> (<a class="reference internal" href="storm.html#pyleus.storm.StormTuple" title="pyleus.storm.StormTuple"><tt class="xref py py-class docutils literal"><span class="pre">StormTuple</span></tt></a>) &#8211; pyleus tuple representing the message to be processed</td>
 </tr>
 </tbody>
 </table>
@@ -260,13 +260,13 @@ or hang.</p>
 
 <dl class="class">
 <dt id="pyleus.storm.bolt.SimpleBolt">
-<em class="property">class </em><code class="descclassname">pyleus.storm.bolt.</code><code class="descname">SimpleBolt</code><span class="sig-paren">(</span><em>input_stream=None</em>, <em>output_stream=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#SimpleBolt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.SimpleBolt" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pyleus.storm.bolt.</tt><tt class="descname">SimpleBolt</tt><big>(</big><em>input_stream=None</em>, <em>output_stream=None</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#SimpleBolt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.SimpleBolt" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Bolt that automatically acks/fails tuples.</p>
 <p>Implement process_tick() in a subclass to handle tick tuples with a nicer
 API.</p>
 <dl class="method">
 <dt id="pyleus.storm.bolt.SimpleBolt.process_tick">
-<code class="descname">process_tick</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#SimpleBolt.process_tick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.SimpleBolt.process_tick" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">process_tick</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/bolt.html#SimpleBolt.process_tick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.bolt.SimpleBolt.process_tick" title="Permalink to this definition">¶</a></dt>
 <dd><p>Code to be executed when a tick tuple reaches the component.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
