@@ -1,7 +1,7 @@
 Pyleus v\ |version|
 ===================
 
-Pyleus is a Python 2.6+ layer built on top of `Apache Storm`_ making possible to write, build and manage pure Python Storm topologies in a pythonic way.
+Pyleus is a Python 2.6+ layer built on top of `Apache Storm`_ for building Storm topologies in idiomatic Python.
 
 * Pyleus is available on pypi: https://pypi.python.org/pypi/pyleus
 * The source is hosted on github: https://github.com/Yelp/pyleus
