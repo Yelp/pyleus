@@ -202,7 +202,7 @@ Reference
 License
 -------
 
-Pyleus is licensed under Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+Pyleus is licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
 
 
 .. _Apache Storm: https://storm.apache.org/
