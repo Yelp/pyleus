@@ -61,6 +61,7 @@ Documentation
    install
    cli
    configuration
+   contributing
 
 API Documentation
 -----------------
