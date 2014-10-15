@@ -8,21 +8,19 @@ Please visit our `wiki`_.
 About
 -----
 
-Pyleus is a Python layer built on top of Apache Storm making possible to write, build and manage pure Python Storm topologies in a pythonic way.
+Pyleus is a framework for building Apache Storm topologies in idiomatic Python.
 
 With Pyleus you can:
 
-* define a topology writing just a simple YAML file
+* define a topology with a simple YAML file
 
-* list your dependencies in a requirements.txt file (and forget about it)
+* have dependency management with a ``requirements.txt`` file
 
 * run faster thanks to Pyleus’ `MessagePack`_ based serializer
 
 * pass options to your components directly from the YAML file
 
-* leverage built-in support for Storm tick tuples
-
-* use the kafka-spout Java implementation provided by Apache Storm just including it in the YAML file
+* use the Kafka spout built into Storm with only a YAML change
 
 Install
 -------
@@ -52,7 +50,7 @@ Or, submit to a Storm cluster with:
 
    $ pyleus submit -n NIMBUS_IP exclamation_topology.jar
 
-The ``examples`` folder contains several commented Pyleus topologies trying to cover all Pyleus features as much as possible.
+The `examples`_ directory contains several annotated Pyleus topologies that try to cover a many Pyleus features as possible.
 
 Pyleus command line interface
 -----------------------------
@@ -115,14 +113,11 @@ A simple ``pyleus_topology.yaml`` should look like the following:
 
 .. code-block:: yaml
 
-   # This is a very meaningful paragraph
-   # describing my_first_topology
-
    name: my_first_topology
 
    topology:
 
-           - spout:
+       - spout:
            name: my-first-spout
            module: my_first_topology.dummy_spout
     
@@ -148,8 +143,7 @@ This is the code implementing ``dummy_spout.py``:
        OUTPUT_FIELDS = ['sentence', 'name']
 
        def next_tuple(self):
-               self.emit((This is a sentence."I am a stupid ", "spout",))
-
+           self.emit(("This is a sentence.", "spout",))
 
    if __name__ == '__main__':
        DummySpout().run()
@@ -165,12 +159,12 @@ Let's now look at ``dummy_bolt.py``:
 
    class DummyBolt(SimpleBolt):
 
-   OUTPUT_FIELDS = ['sentence']
+       OUTPUT_FIELDS = ['sentence']
 
        def process_tuple(self, tup):
-               sentence, _ = tup.values
-               new_sentence = sentence + "bolt"
-               self.emit((new_sentence,), anchors=[tup])
+           sentence, name = tup.values
+           new_sentence = "{0} says, \"{1}\"".format(name, sentence)
+           self.emit((new_sentence,), anchors=[tup])
 
    if __name__ == '__main__':
        DummyBolt().run()
@@ -178,19 +172,19 @@ Let's now look at ``dummy_bolt.py``:
 Run your topology
 ^^^^^^^^^^^^^^^^^
 
-Run your topology on your local machine for debugging:
+Run the topology on your local machine for debugging:
 
 .. code-block:: shell
 
    pyleus build my_first_topology/pyleus_topology.yaml
-   pyleus local my_first_topology.yaml -d
+   pyleus local my_first_topology.yaml --debug
 
 When you are done, hit ``C-C``.
 
 Configuration File
 ^^^^^^^^^^^^^^^^^^
 
-You can override Pyleus default configuration placing a `.pyleus.conf` configuration file in your home directory:
+You can set default values for many configuration options by placing a ``.pyleus.conf`` configuration file in your home directory:
 
 .. code-block:: none
 
@@ -215,3 +209,4 @@ Pyleus is licensed under Apache License, Version 2.0: http://www.apache.org/lice
 .. _Apache Storm Documentation: https://storm.incubator.apache.org/documentation/Home.html
 .. _MessagePack: http://msgpack.org/
 .. _wiki: http://yelp.github.io/pyleus/
+.. _examples: https://github.com/Yelp/pyleus/tree/develop/examples
