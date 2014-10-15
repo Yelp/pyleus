@@ -184,7 +184,7 @@ When you are done, hit ``C-C``.
 Configuration File
 ^^^^^^^^^^^^^^^^^^
 
-You can set default values for many configuration options by placing a ``.pyleus.conf`` file in your home directory::
+You can set default values for many configuration options by placing a ``.pyleus.conf`` file in your home directory:
 
 .. code-block:: none
 
