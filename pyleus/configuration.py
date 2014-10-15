@@ -32,7 +32,7 @@ invocations.
    jvm_opts: -Djava.io.tmpdir=/home/myuser/tmp
 
    [build]
-   # pypi server to use during the build of your topologies
+   # PyPI server to use during the build of your topologies
    pypi_index_url: http://pypi.ninjacorp.com/simple/
 
    # always use system-site-packages for pyleus virtualenvs (default: false)

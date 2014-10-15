@@ -65,7 +65,7 @@ You can implement the :meth:`~pyleus.storm.component.Component.initialize` metho
 
    class FileSpout(self):
 
-       OPTIONS =['filename']
+       OPTIONS = ['filename']
 
        def initialize(self):
            with open(self.options['filename'], 'r') as f:
