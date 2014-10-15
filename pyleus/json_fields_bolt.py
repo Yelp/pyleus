@@ -37,7 +37,7 @@ class JSONFieldsBolt(SimpleBolt):
         """Extract JSON representation of incoming tuple value and emit based
         on the result of :meth:`~.extract_fields`.
 
-        .. note:: emitted tuples are automatically anchored.
+        .. note:: Emitted tuples are automatically anchored.
         """
         line, = tup.values
         json_dict = json.loads(line)

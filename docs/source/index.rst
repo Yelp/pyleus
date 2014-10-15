@@ -1,39 +1,70 @@
-.. Pyleus documentation master file, created by
-   sphinx-quickstart on Tue Sep 30 08:01:12 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Pyleus |version|
-================
-
-Pyleus Command Line
+Pyleus v\ |version|
 ===================
 
-Run ``pyleus --help`` for all options
+Pyleus is a Python 2.6+ layer built on top of `Apache Storm`_ for building Storm topologies in idiomatic Python.
+
+* Pyleus is available on PyPI: https://pypi.python.org/pypi/pyleus
+* The source is hosted on github: https://github.com/Yelp/pyleus
+
+.. warning::
+
+   Pyleus is **NOT** compatible with Python 3 (yet).
+
+Quick Install
+-------------
+
+Install in a virtualenv:
 
 .. code-block:: none
 
-    $ pyleus build
-    $ pyleus submit
+   $ virtualenv my_venv
+   $ source my_venv/bin/activate
+   $ pip install pyleus
 
-Basic Usage
-===========
+Quick Start
+-----------
 
-See examples in :py:mod:`pyleus.storm.bolt` and :py:mod:`pyleus.storm.spout`
+Build an example:
 
+.. code-block:: none
 
-See `Trac page`_ for details.
+   $ git clone https://github.com/Yelp/pyleus.git
+   $ pyleus build pyleus/examples/exclamation_topology/pyleus_topology.yaml
+
+Run the example locally:
+
+.. code-block:: none
+
+   $ pyleus local exclamation_topology.jar
+
+When you are done, hit ``C-C``.
+
+Run the example on a Storm cluster:
+
+.. code-block:: none
+
+   $ pylues submit -n NIMBUS_IP exclamation_topology.jar
 
 Documentation
-=============
+-------------
 
 .. toctree::
    :maxdepth: 2
 
+   tutorial
+   reliability
+   grouping
+   options
+   parallelism
+   tick
+   logging
+   install
+   cli
    configuration
+   contributing
 
 API Documentation
-=================
+-----------------
 
 .. toctree::
    :maxdepth: 4
@@ -41,10 +72,10 @@ API Documentation
    api
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
 
-.. _Trac page: https://trac.yelpcorp.com/wiki/Pyleus
+.. _Apache Storm: https://storm.incubator.apache.org/

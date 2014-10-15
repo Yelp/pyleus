@@ -7,6 +7,13 @@ of increasing precedence. The latter configuration overrides the previous one.
 #. ~/.config/pyleus.conf
 #. ~/.pyleus.conf
 
+You can always specify a configuration file when running any pyleus CLI command
+as following:
+
+``$ pyleus -c /path/to/config_file CMD``
+
+This will override previous configurations.
+
 Configuration file example
 --------------------------
 The following file contains all options you can configure for all pyleus
@@ -18,21 +25,21 @@ invocations.
    # path to Storm executable (pyleus will automatically look in PATH)
    storm_cmd_path: /usr/share/storm/bin/storm
 
-   # optional: use -s option of pyleus CLI instead
-   storm_cluster_ip: 10.11.12.13
+   # optional: use -n option of pyleus CLI instead
+   nimbus_ip: 10.11.12.13
 
    # java options to pass to Storm CLI
-   jvm_opts: -Djava.io.tmpdir=/nail/tmp
+   jvm_opts: -Djava.io.tmpdir=/home/myuser/tmp
 
    [build]
-   # pypi server to use during the build of your topologies
+   # PyPI server to use during the build of your topologies
    pypi_index_url: http://pypi.ninjacorp.com/simple/
 
    # always use system-site-packages for pyleus virtualenvs (default: false)
    system_site_packages: true
 
    # list of packages to always include in your topologies
-   include_packages: simplejson
+   include_packages: foo bar<4.0 baz==0.1
 """
 from __future__ import absolute_import
 
