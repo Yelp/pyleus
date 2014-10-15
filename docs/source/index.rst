@@ -53,6 +53,7 @@ Documentation
 
    tutorial
    reliability
+   grouping
    options
    parallelism
    tick

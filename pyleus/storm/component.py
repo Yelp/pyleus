@@ -108,7 +108,7 @@ class Component(object):
     #:
     #: .. note:: Specify in subclass.
     #:
-    #: .. seealso:: :ref:`OUTPUT_FIELDS_PAGE`
+    #: .. seealso:: :ref:`groupings`
     OUTPUT_FIELDS = None
 
     #: ``list`` of user-defined options for the component.
