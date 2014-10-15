@@ -97,7 +97,8 @@ Organize your files
 
 This is an example of the directory tree of a simple topology:
 
-.. code-block::
+.. code-block:: shell
+
    my_first_topology/
    |-- my_first_topology/
    |   |-- __init__.py
