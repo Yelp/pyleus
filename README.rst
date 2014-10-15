@@ -205,8 +205,8 @@ License
 Pyleus is licensed under Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
 
 
-.. _Apache Storm: https://storm.incubator.apache.org/
-.. _Apache Storm Documentation: https://storm.incubator.apache.org/documentation/Home.html
+.. _Apache Storm: https://storm.apache.org/
+.. _Apache Storm Documentation: https://storm.apache.org/documentation/Home.html
 .. _MessagePack: http://msgpack.org/
 .. _wiki: http://yelp.github.io/pyleus/
-.. _examples: https://github.com/Yelp/pyleus/tree/develop/examples
+.. _examples: https://github.com/Yelp/pyleus/tree/master/examples
