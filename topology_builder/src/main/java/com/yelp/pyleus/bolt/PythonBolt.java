@@ -30,6 +30,7 @@ public class PythonBolt extends ShellBolt implements IRichBolt {
         } else {
             for (Entry<String, Object> outEntry : this.outputFields.entrySet()) {
                 String stream = outEntry.getKey();
+                @SuppressWarnings("unchecked")
                 List<String> fields = (List<String>) outEntry.getValue();
                 declarer.declareStream(stream, new Fields(fields.toArray(new String[fields.size()])));
             }
