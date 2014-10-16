@@ -1,6 +1,6 @@
 .. _groupings:
 
-Outuput streams and groupings
+Output streams and groupings
 =============================
 
 Single output streams
