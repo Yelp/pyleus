@@ -20,7 +20,6 @@ import backtype.storm.utils.Utils;
 import org.apache.log4j.Logger;
 import org.msgpack.MessagePack;
 import org.msgpack.template.Template;
-import org.msgpack.type.ValueType;
 
 import static org.msgpack.template.Templates.tMap;
 import static org.msgpack.template.Templates.TString;
@@ -46,6 +45,7 @@ public class MessagePackSerializer implements ISerializer {
         this.listTmpl = tList(TValue);
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> getMapFromContext(TopologyContext context) {
         Map context_map = new HashMap();
         context_map.put("taskid", context.getThisTaskId());
@@ -66,7 +66,7 @@ public class MessagePackSerializer implements ISerializer {
 
         Map<String, Value> pidmsg = readMessage();
         Value pid = pidmsg.get("pid");
-        return (Number) pid.asIntegerValue().getInt();
+        return pid.asIntegerValue().getInt();
     }
 
     @Override
