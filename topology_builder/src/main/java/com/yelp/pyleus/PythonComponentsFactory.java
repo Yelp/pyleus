@@ -10,7 +10,6 @@ import com.yelp.pyleus.spout.PythonSpout;
 
 public class PythonComponentsFactory {
 
-    public static final String VIRTUALENV_PATH = "/resources/pyleus_venv/bin/python";
     public static final String VIRTUALENV_INTERPRETER = "pyleus_venv/bin/python";
     public static final String MODULE_OPTION = "-m";
 
