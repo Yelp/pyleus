@@ -124,7 +124,7 @@ public class PyleusTopologyBuilder {
         }
 
         String zkHosts = (String) spec.options.get("zk_hosts");
-        if (topic == null) {
+        if (zkHosts == null) {
             throw new RuntimeException("Kafka spout must have zk_hosts");
         }
 
