@@ -151,12 +151,14 @@ This is the code implementing ``dummy_spout.py``:
 
    from pyleus.storm import Spout
 
+
    class DummySpout(Spout):
 
        OUTPUT_FIELDS = ['sentence', 'name']
 
        def next_tuple(self):
            self.emit(("This is a sentence.", "spout",))
+
 
    if __name__ == '__main__':
        DummySpout().run()
@@ -170,6 +172,7 @@ Let's now look at ``dummy_bolt.py``:
 
    from pyleus.storm import SimpleBolt
 
+
    class DummyBolt(SimpleBolt):
 
        OUTPUT_FIELDS = ['sentence']
@@ -178,6 +181,7 @@ Let's now look at ``dummy_bolt.py``:
            sentence, name = tup.values
            new_sentence = "{0} says, \"{1}\"".format(name, sentence)
            self.emit((new_sentence,), anchors=[tup])
+
 
    if __name__ == '__main__':
        DummyBolt().run()
