@@ -36,6 +36,8 @@ A simple ``pyleus_topology.yaml`` should look like the following:
 
    name: my_first_topology
 
+   workers: 2
+
    topology:
 
        - spout:
@@ -53,6 +55,10 @@ This define a topology where a single bolt subscribe to the output stream of a s
 .. note::
 
    Components names do NOT need to match modules names. This is because the same module may be reused more than once in the same topology, perhaps with different input streams or options.
+
+.. tip::
+
+   If you do not specify the number of workers for your topology, Storm will span just **one** worker. This is perfectly fine if you want to run your topology on ypur local machine, but you may like to change this value when running your topology on a real cluster. You can do that with the ``workers`` option as shown in the example above.
 
 Write your first spout
 ----------------------
