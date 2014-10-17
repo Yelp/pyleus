@@ -58,6 +58,7 @@ Documentation
    parallelism
    tick
    logging
+   yaml
    install
    cli
    configuration

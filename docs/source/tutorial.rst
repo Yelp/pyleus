@@ -22,7 +22,7 @@ When building your topology, the jar file generated from the ``pyleus build`` co
 
 File ``requirements.txt`` should list all the dependencies of the topology to be included in the jar. In this case, this file is empty.
 
-  .. seealso:: If you want to specify a different path for your requirements file, please see :ref:`TODO_REQUIREMENTS_IN_YAML`. If you want to install some dependencies for all yuor topologies, see :ref:`configuration` instead.
+  .. seealso:: If you want to specify a different path for your requirements file, please see :ref:`yaml`. If you want to install some dependencies for all yuor topologies, see :ref:`configuration` instead.
 
 Define the topology layout
 --------------------------
