@@ -15,8 +15,6 @@ import yaml
 import zipfile
 
 from pyleus import __version__
-from pyleus import BASE_JAR
-from pyleus import BASE_JAR_INSTALL_DIR
 from pyleus.cli.topology_spec import TopologySpec
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
 from pyleus.storm.component import DESCRIBE_OPT
@@ -79,7 +77,8 @@ def _remove_pyleus_base_jar(venv):
     """Remove the Pyleus base jar from the virtualenv since it's redundant and
     takes up space. See PYLEUS-74.
     """
-    base_jar_path = os.path.join(venv.path, BASE_JAR_INSTALL_DIR, BASE_JAR)
+    base_jar_path = venv.execute_module("pyleus._base_jar",
+                                        cwd=venv.path).strip()
     os.remove(base_jar_path)
 
 
