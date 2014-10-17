@@ -67,7 +67,7 @@ setup(
     author_email="plucas@yelp.com",
     description="Standard library and deployment tools for using Python "
         "with Storm",
-    url="http://yelp.github.io/pyleus/",
+    url="https://pyleus.org",
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.6",
