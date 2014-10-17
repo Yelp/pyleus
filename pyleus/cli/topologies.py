@@ -13,7 +13,7 @@ def add_storm_cluster_ip_argument(parser):
     ip address from command line.
     """
     parser.add_argument(
-        "-n", "--nimbus-ip", dest="storm_cluster_ip", metavar="NIMBUS_IP",
+        "-n", "--nimbus", dest="storm_cluster_ip", metavar="NIMBUS_IP",
         help="The Nimbus IP address of the Storm cluster to query")
 
 
