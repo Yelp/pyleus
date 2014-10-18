@@ -32,19 +32,19 @@ Command Line
 
   .. code-block:: none
 
-     pyleus submit [-n NIMBUS_IP] /path/to/pyleus_topology.yaml
+     pyleus submit [-n NIMBUS] /path/to/pyleus_topology.yaml
 
 * List all topologies running on a Storm cluster:
 
   .. code-block:: none
 
-     pyleus list [-n NIMBUS_IP]
+     pyleus list [-n NIMBUS]
 
 * Kill a topology running on a Storm cluster:
 
   .. code-block:: none
 
-     pyleus kill [-n NIMBUS_IP] TOPOLOGY_NAME [-w WAIT_TIME]
+     pyleus kill [-n NIMBUS] TOPOLOGY_NAME [-w WAIT_TIME]
 
   Option ``--wait-time`` overrides the duration in seconds Storm waits between deactivation and shutdown. Storm's default is 30 seconds.
 
