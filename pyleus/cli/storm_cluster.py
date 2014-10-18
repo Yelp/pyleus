@@ -56,9 +56,9 @@ class StormCluster(object):
 
         if nimbus is None:
             raise ConfigurationError(
-                "You must specify a storm cluster IP address."
-                " Use option <storm_cluster_ip> in the configuration file"
-                " or the command line option --storm-cluster")
+                "You must specify a Nimbus address. Use the option "
+                "<nimbus> in the configuration file or the command line "
+                "option -n/--nimbus.")
 
         self.nimbus = nimbus
         self.verbose = verbose

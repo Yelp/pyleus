@@ -3,7 +3,7 @@
 from __future__ import absolute_import
 
 from pyleus.cli.commands.subcommand import SubCommand
-from pyleus.cli.topologies import add_storm_cluster_ip_argument
+from pyleus.cli.topologies import add_nimbus_argument
 from pyleus.cli.topologies import kill_topology
 
 
@@ -21,7 +21,7 @@ class KillSubCommand(SubCommand):
             "-w", "--wait-time", dest="wait_time",
             help="Override the duration in seconds Storm waits between "
                  "deactivation and shutdown.")
-        add_storm_cluster_ip_argument(parser)
+        add_nimbus_argument(parser)
 
     def run(self, configs):
         kill_topology(configs)
