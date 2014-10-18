@@ -5,7 +5,6 @@ object. The caller function should handle PyleusError exceptions.
 """
 from __future__ import absolute_import
 
-from cStringIO import StringIO
 import glob
 import re
 import tempfile
@@ -17,6 +16,7 @@ import zipfile
 from pyleus import __version__
 from pyleus.cli.topology_spec import TopologySpec
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
+from pyleus.compat import StringIO
 from pyleus.storm.component import DESCRIBE_OPT
 from pyleus.exception import InvalidTopologyError
 from pyleus.exception import JarError

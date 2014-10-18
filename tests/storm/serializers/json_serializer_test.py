@@ -1,4 +1,3 @@
-from cStringIO import StringIO
 import mock
 
 try:
@@ -7,6 +6,7 @@ try:
 except ImportError:
     import json
 
+from pyleus.compat import StringIO
 from pyleus.storm.serializers.json_serializer import JSONSerializer
 from testing.serializer import SerializerTestCase
 
