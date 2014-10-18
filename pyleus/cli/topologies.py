@@ -13,8 +13,8 @@ def add_storm_cluster_ip_argument(parser):
     ip address from command line.
     """
     parser.add_argument(
-        "-n", "--nimbus", dest="storm_cluster_ip", metavar="NIMBUS_IP",
-        help="The Nimbus IP address of the Storm cluster to query")
+        "-n", "--nimbus", dest="storm_cluster_ip", metavar="NIMBUS",
+        help="The hostname or IP address of the Storm cluster's Nimbus node")
 
 
 def run_topology_locally(jar_path, configs):
