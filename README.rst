@@ -60,7 +60,7 @@ Or, submit to a Storm cluster with:
 
 .. code-block:: shell
 
-   $ pyleus submit -n NIMBUS exclamation_topology.jar
+   $ pyleus submit -n NIMBUS_HOST exclamation_topology.jar
 
 The `examples`_ directory contains several annotated Pyleus topologies that try to cover as many Pyleus features as possible.
 
@@ -83,19 +83,19 @@ Pyleus command line interface
 
   .. code-block:: shell
 
-     $ pyleus submit [-n NIMBUS] /path/to/pyleus_topology.yaml
+     $ pyleus submit [-n NIMBUS_HOST] /path/to/pyleus_topology.yaml
 
 * List all topologies running on a Storm cluster:
 
   .. code-block:: shell
 
-     $ pyleus list [-n NIMBUS]
+     $ pyleus list [-n NIMBUS_HOST]
 
 * Kill a topology running on a Storm cluster:
 
   .. code-block:: shell
 
-     $ pyleus kill [-n NIMBUS] TOPOLOGY_NAME
+     $ pyleus kill [-n NIMBUS_HOST] TOPOLOGY_NAME
 
 Try ``pyleus -h`` for a list of all the available commands or ``pyleus CMD -h`` for any command-specific help.
 

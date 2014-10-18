@@ -43,7 +43,7 @@ Run the example on a Storm cluster:
 
 .. code-block:: none
 
-   $ pyleus submit -n NIMBUS exclamation_topology.jar
+   $ pyleus submit -n NIMBUS_HOST exclamation_topology.jar
 
 Documentation
 -------------
