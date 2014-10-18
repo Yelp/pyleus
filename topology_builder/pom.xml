@@ -98,6 +98,19 @@
                 <exclude>META-INF/*.RSA</exclude>
               </excludes>
             </filter>
+            <filter>
+              <!-- Exclude META-INF/LICENSE from jar, since a directory named
+              'license/' is also created, and this causes problems on systems
+              with case-insensitive filesystems. The origin of these files is
+              unclear; perhaps this plugin overlays the META-INF directories of
+              all dependencies. LICENSE and LICENSE.txt (which will remain) are
+              identical copies of the Apache 2.0 license, so there is no legal
+              issue at stake. -->
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/LICENSE</exclude>
+              </excludes>
+            </filter>
           </filters>
         </configuration>
         <executions>
