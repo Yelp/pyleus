@@ -48,18 +48,19 @@ class StormCluster(object):
     """Object representing an interface to a Storm cluster.
     All the requests are basically translated into Storm commands.
     """
-    def __init__(self, storm_cmd_path, nimbus_ip, verbose, jvm_opts):
+
+    def __init__(self, storm_cmd_path, nimbus, verbose, jvm_opts):
         """Create the cluster object."""
 
         self.storm_cmd_path = storm_cmd_path
 
-        if nimbus_ip is None:
+        if nimbus is None:
             raise ConfigurationError(
                 "You must specify a storm cluster IP address."
                 " Use option <storm_cluster_ip> in the configuration file"
                 " or the command line option --storm-cluster")
 
-        self.nimbus_ip = nimbus_ip
+        self.nimbus = nimbus
         self.verbose = verbose
         self.jvm_opts = jvm_opts
 
@@ -73,7 +74,7 @@ class StormCluster(object):
 
         storm_cmd = [self.storm_cmd_path]
         storm_cmd += cmd
-        storm_cmd += ["-c", "nimbus.host={0}".format(self.nimbus_ip)]
+        storm_cmd += ["-c", "nimbus.host={0}".format(self.nimbus)]
 
         env = _get_storm_cmd_env(self.jvm_opts)
 
