@@ -206,7 +206,7 @@ You can set default values for many configuration options by placing a ``.pyleus
 .. code-block:: none
 
    [storm]
-   nimbus: 10.11.12.13
+   nimbus_host: 10.11.12.13
    jvm_opts: -Djava.io.tmpdir=/home/myuser/tmp
 
    [build]
