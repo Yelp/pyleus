@@ -1,9 +1,9 @@
-from cStringIO import StringIO
 import mock
 import os
 
 import msgpack
 
+from pyleus.compat import BytesIO
 from pyleus.storm.serializers.msgpack_serializer import MsgpackSerializer
 from testing.serializer import SerializerTestCase
 
@@ -14,7 +14,7 @@ class TestMsgpackSerializer(SerializerTestCase):
 
     def test_read_msg_dict(self):
         msg_dict = {
-            'hello': "world",
+            b'hello': b"world",
         }
 
         encoded_msg = msgpack.packb(msg_dict)
@@ -42,7 +42,7 @@ class TestMsgpackSerializer(SerializerTestCase):
         expected_output = msgpack.packb(msg_dict)
 
         with mock.patch.object(
-                self.instance, '_output_stream', StringIO()) as sio:
+                self.instance, '_output_stream', BytesIO()) as sio:
             self.instance.send_msg(msg_dict)
 
         assert sio.getvalue() == expected_output

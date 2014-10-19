@@ -7,4 +7,4 @@ from __future__ import absolute_import
 import pyleus
 
 if __name__ == '__main__':
-    print pyleus.BASE_JAR_PATH
+    print(pyleus.BASE_JAR_PATH)
