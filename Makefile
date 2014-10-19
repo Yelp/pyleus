@@ -9,7 +9,7 @@ bdist_wheel:
 	python setup.py bdist_wheel
 
 test:
-	tox -c tox.ini
+	tox
 
 topology_builder:
 	make -C topology_builder/
