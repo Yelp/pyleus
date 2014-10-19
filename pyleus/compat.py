@@ -7,5 +7,5 @@ else:
     from io import BytesIO
     from io import StringIO
 
-_ = BytesIO
-_ = StringIO
+_ = BytesIO  # pyflakes
+_ = StringIO  # pyflakes
