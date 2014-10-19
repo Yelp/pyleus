@@ -48,32 +48,44 @@ class StormCluster(object):
     """Object representing an interface to a Storm cluster.
     All the requests are basically translated into Storm commands.
     """
-    def __init__(self, storm_cmd_path, nimbus_ip, verbose, jvm_opts):
+
+    def __init__(self, storm_cmd_path, nimbus_host, nimbus_port, verbose,
+                 jvm_opts):
         """Create the cluster object."""
 
         self.storm_cmd_path = storm_cmd_path
 
-        if nimbus_ip is None:
+        if nimbus_host is None:
             raise ConfigurationError(
-                "You must specify a storm cluster IP address."
-                " Use option <storm_cluster_ip> in the configuration file"
-                " or the command line option --storm-cluster")
+                "You must specify the Nimbus host. Use the option "
+                "<nimbus_host> in the configuration file or the command line "
+                "option -n/--nimbus-host.")
 
-        self.nimbus_ip = nimbus_ip
+        self.nimbus_host = nimbus_host
+        self.nimbus_port = nimbus_port
         self.verbose = verbose
         self.jvm_opts = jvm_opts
 
+    def _build_storm_cmd(self, cmd):
+        storm_cmd = [self.storm_cmd_path]
+        storm_cmd += cmd
+        storm_cmd += ["-c", "nimbus.host={0}".format(self.nimbus_host)]
+
+        if self.nimbus_port:
+            storm_cmd += ["-c", "nimbus.thrift.port={0}".format(
+                self.nimbus_port)]
+
+        return storm_cmd
+
     def _exec_storm_cmd(self, cmd, verbose=None):
         """Interface to any Storm command."""
+        storm_cmd = self._build_storm_cmd(cmd)
+
         out_stream = None
         if verbose is None:
             verbose = self.verbose
         if not verbose:
             out_stream = open(os.devnull, "w")
-
-        storm_cmd = [self.storm_cmd_path]
-        storm_cmd += cmd
-        storm_cmd += ["-c", "nimbus.host={0}".format(self.nimbus_ip)]
 
         env = _get_storm_cmd_env(self.jvm_opts)
 

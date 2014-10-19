@@ -54,7 +54,7 @@ You can submit it to a Storm cluster too:
 
 .. code-block:: none
 
-   $ pyleus submit -n NIMBUS_IP exclamation_topology.jar
+   $ pyleus submit -n NIMBUS_HOST exclamation_topology.jar
 
 But since this example writes to ``/tmp``, you might not find it very interesting.
 
