@@ -28,6 +28,9 @@ invocations.
    # optional: use -n option of pyleus CLI instead
    nimbus_host: 10.11.12.13
 
+   # optional: use -p option of pyleus CLI instead
+   nimbus_port: 6628
+
    # java options to pass to Storm CLI
    jvm_opts: -Djava.io.tmpdir=/home/myuser/tmp
 
