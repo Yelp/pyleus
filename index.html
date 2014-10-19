@@ -168,20 +168,28 @@ $ pip install pyleus
 </div>
 <div class="section" id="quick-start">
 <h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
-<p>Build an example:</p>
+<p>First, you will need to download and extract Storm 0.9.2-incubating—the current release—from <a class="reference external" href="https://storm.apache.org/downloads.html">https://storm.apache.org/downloads.html</a>.</p>
+<p>Then create a config file <tt class="docutils literal"><span class="pre">~/.pyleus.conf</span></tt> so Pyleus can find the <tt class="docutils literal"><span class="pre">storm</span></tt> command:</p>
+<div class="highlight-ini"><div class="highlight"><pre>[storm]
+storm_cmd_path: /path/to/apache-storm-0.9.2-incubating/bin/storm
+</pre></div>
+</div>
+<p>Build an example topology:</p>
 <div class="highlight-none"><div class="highlight"><pre>$ git clone https://github.com/Yelp/pyleus.git
 $ pyleus build pyleus/examples/exclamation_topology/pyleus_topology.yaml
 </pre></div>
 </div>
-<p>Run the example locally:</p>
+<p>And run it locally:</p>
 <div class="highlight-none"><div class="highlight"><pre>$ pyleus local exclamation_topology.jar
 </pre></div>
 </div>
-<p>When you are done, hit <tt class="docutils literal"><span class="pre">C-C</span></tt>.</p>
-<p>Run the example on a Storm cluster:</p>
+<p>From another shell, you can run <tt class="docutils literal"><span class="pre">$</span> <span class="pre">tail</span> <span class="pre">-F</span> <span class="pre">/tmp/exclamation_bolt.log</span></tt> to see the results in real-time.</p>
+<p>Press <tt class="docutils literal"><span class="pre">C-C</span></tt> to exit.</p>
+<p>You can submit it to a Storm cluster too:</p>
 <div class="highlight-none"><div class="highlight"><pre>$ pyleus submit -n NIMBUS_IP exclamation_topology.jar
 </pre></div>
 </div>
+<p>But since this example writes to <tt class="docutils literal"><span class="pre">/tmp</span></tt>, you might not find it very interesting.</p>
 </div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
