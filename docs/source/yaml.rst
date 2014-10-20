@@ -3,7 +3,7 @@
 Topology definition YAML syntax
 ===============================
 
-Options whose default is not specified in this page should be intended to use the `default`_ of the correspondent `Apache Storm configuration option`_.
+Options whose default is not specified on this page use the same `default`_ as the corresponding `Apache Storm configuration option`_.
 
 Topology level options
 ----------------------
@@ -42,7 +42,7 @@ Topology level options
 
 * **requirements_filename**\(``str``\)
 
-  Path to the file listing topology requirements. Defautl: ``<yaml_file_dir>/requirements.txt``. Specify ``none`` if a file corresponds to the default path, but you want to ignore it.
+  Path to the file listing topology requirements. Default: ``<yaml_file_dir>/requirements.txt``. Specify ``none`` if a file corresponds to the default path, but you want to ignore it.
 
 * **serializer**\(``str``\)
   
@@ -54,7 +54,7 @@ Topology level options
 
   .. tip::
 
-     If you are on Python 2.6, we strongly recommend `simplejson`_ over `json`_ for better performances. 
+     If you are on Python 2.6, we strongly recommend `simplejson`_ over `json`_ for better performance.
 
 Component level options
 -----------------------
@@ -67,7 +67,7 @@ These options belong to the block associated either with a ``spout`` or a ``bolt
 
 * **module**\(``str``\)[mandatory]
 
-  Python module containing the code for that component (e.g. ``my_topology.my_spout``). Every valid module should contain a class inehriting either from :class:`~pyleus.storm.spout.Spout` or from :class:`~pyleus.storm.bolt.Bolt`. The module should also call the component :meth:`~pyleus.storm.component.Component.run` method when ``__name__ == '__main__'``.
+  Python module containing the code for that component (e.g. ``my_topology.my_spout``). Every valid module should contain a class inheriting either from :class:`~pyleus.storm.spout.Spout` or from :class:`~pyleus.storm.bolt.Bolt`. The module should also call the component :meth:`~pyleus.storm.component.Component.run` method when ``__name__ == '__main__'``.
 
 * **type**\(``str``\)
 
@@ -91,7 +91,7 @@ These options belong to the block associated either with a ``spout`` or a ``bolt
 
 * **tick_freq_secs**\(``float``\)[only for ``bolt``]
 
-  Interval between two consecutive tick tuples. To be intended in seconds. 
+  Interval in seconds between two consecutive tick tuples.
 
 * **options**\(``map``\)
 
