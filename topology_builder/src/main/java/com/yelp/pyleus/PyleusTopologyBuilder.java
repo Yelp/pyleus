@@ -10,7 +10,6 @@ import org.yaml.snakeyaml.error.YAMLException;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
-import backtype.storm.generated.KillOptions;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.IRichBolt;
@@ -18,7 +17,6 @@ import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
-import backtype.storm.utils.Utils;
 import storm.kafka.KafkaSpout;
 import storm.kafka.KeyValueSchemeAsMultiScheme;
 import storm.kafka.SpoutConfig;
@@ -44,8 +42,8 @@ public class PyleusTopologyBuilder {
     public static void handleBolt(final TopologyBuilder builder, final BoltSpec spec,
         final TopologySpec topologySpec) {
 
-        PythonBolt bolt = pyFactory.createPythonBolt((String) spec.module,
-            (Map<String, Object>) spec.options, (String) topologySpec.logging_config, (String) topologySpec.serializer);
+        PythonBolt bolt = pyFactory.createPythonBolt(spec.module,
+                spec.options, topologySpec.logging_config, topologySpec.serializer);
 
         if (spec.output_fields != null) {
             bolt.setOutputFields(spec.output_fields);
@@ -57,7 +55,7 @@ public class PyleusTopologyBuilder {
 
         IRichBolt stormBolt = bolt;
 
-        BoltDeclarer declarer = null;
+        BoltDeclarer declarer;
         if (spec.parallelism_hint != -1) {
             declarer = builder.setBolt(spec.name, stormBolt, spec.parallelism_hint);
         } else {
@@ -71,6 +69,7 @@ public class PyleusTopologyBuilder {
         for (Map<String, Object> grouping : spec.groupings) {
             Map.Entry<String, Object> entry = grouping.entrySet().iterator().next();
             String groupingType = entry.getKey();
+            @SuppressWarnings("unchecked")
             Map<String, Object> groupingMap = (Map<String, Object>) entry.getValue();
             String component = (String) groupingMap.get("component");
             String stream = (String) groupingMap.get("stream");
@@ -80,6 +79,7 @@ public class PyleusTopologyBuilder {
             } else if (groupingType.equals("global_grouping")) {
                 declarer.globalGrouping(component, stream);
             } else if (groupingType.equals("fields_grouping")) {
+                @SuppressWarnings("unchecked")
                 List<String> fields = (List<String>) groupingMap.get("fields");
                 String[] fieldsArray = fields.toArray(new String[fields.size()]);
                 declarer.fieldsGrouping(component, stream, new Fields(fieldsArray));
@@ -105,7 +105,7 @@ public class PyleusTopologyBuilder {
             spout = handlePythonSpout(builder, spec, topologySpec);
         }
 
-        SpoutDeclarer declarer = null;
+        SpoutDeclarer declarer;
         if (spec.parallelism_hint != -1) {
             declarer = builder.setSpout(spec.name, spout, spec.parallelism_hint);
         } else {
@@ -117,14 +117,16 @@ public class PyleusTopologyBuilder {
         }
     }
 
-    public static IRichSpout handleKafkaSpout(final TopologyBuilder builder, final SpoutSpec spec) {
+    public static IRichSpout handleKafkaSpout(
+            @SuppressWarnings("unused") final TopologyBuilder builder,
+            final SpoutSpec spec) {
         String topic = (String) spec.options.get("topic");
         if (topic == null) {
             throw new RuntimeException("Kafka spout must have topic");
         }
 
         String zkHosts = (String) spec.options.get("zk_hosts");
-        if (topic == null) {
+        if (zkHosts == null) {
             throw new RuntimeException("Kafka spout must have zk_hosts");
         }
 
@@ -163,11 +165,13 @@ public class PyleusTopologyBuilder {
         return new KafkaSpout(config);
     }
 
-    public static IRichSpout handlePythonSpout(final TopologyBuilder builder, final SpoutSpec spec,
-        final TopologySpec topologySpec) {
+    public static IRichSpout handlePythonSpout(
+            @SuppressWarnings("unused") final TopologyBuilder builder,
+            final SpoutSpec spec,
+            final TopologySpec topologySpec) {
 
-        PythonSpout spout = pyFactory.createPythonSpout((String) spec.module,
-            (Map<String, Object>) spec.options, (String) topologySpec.logging_config, (String) topologySpec.serializer);
+        PythonSpout spout = pyFactory.createPythonSpout(spec.module,
+                spec.options, topologySpec.logging_config, topologySpec.serializer);
 
         if (spec.output_fields != null) {
             spout.setOutputFields(spec.output_fields);

@@ -29,6 +29,7 @@ public class TopologySpec {
     public Integer max_shellbolt_pending = DEFAULT_MAX_SHELLBOLT_PENDING;
     public String serializer = MSGPACK_SERIALIZER;
     public String logging_config;
+    @SuppressWarnings("unused")
     public String requirements_filename; // Not used in Java.
 
     private static Constructor getConstructor() {

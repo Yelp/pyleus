@@ -26,7 +26,10 @@ invocations.
    storm_cmd_path: /usr/share/storm/bin/storm
 
    # optional: use -n option of pyleus CLI instead
-   nimbus_ip: 10.11.12.13
+   nimbus_host: 10.11.12.13
+
+   # optional: use -p option of pyleus CLI instead
+   nimbus_port: 6628
 
    # java options to pass to Storm CLI
    jvm_opts: -Djava.io.tmpdir=/home/myuser/tmp
@@ -63,8 +66,9 @@ CONFIG_FILES_PATH = [
 Configuration = collections.namedtuple(
     "Configuration",
     "base_jar config_file debug func include_packages output_jar \
-     pypi_index_url storm_cluster_ip storm_cmd_path system_site_packages \
-     topology_path topology_jar topology_name verbose wait_time jvm_opts"
+     pypi_index_url nimbus_host nimbus_port storm_cmd_path \
+     system_site_packages topology_path topology_jar topology_name verbose \
+     wait_time jvm_opts"
 )
 """Namedtuple containing all pyleus configuration values."""
 
@@ -77,7 +81,8 @@ DEFAULTS = Configuration(
     include_packages=None,
     output_jar=None,
     pypi_index_url=None,
-    storm_cluster_ip=None,
+    nimbus_host=None,
+    nimbus_port=None,
     storm_cmd_path=None,
     system_site_packages=False,
     topology_path="pyleus_topology.yaml",

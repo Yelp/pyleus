@@ -1,6 +1,7 @@
 from distutils.command.bdist import bdist as _bdist
 from distutils.core import Command
 import os
+import shutil
 import subprocess
 import sys
 
@@ -8,10 +9,11 @@ from setuptools import setup
 from setuptools.command.sdist import sdist as _sdist
 
 from pyleus import __version__
-from pyleus import BASE_JAR, BASE_JAR_INSTALL_DIR
+from pyleus import BASE_JAR
 
 JAVA_SRC_DIR = "topology_builder/"
 BASE_JAR_SRC = os.path.join(JAVA_SRC_DIR, "dist", BASE_JAR)
+BASE_JAR_DST = os.path.join("pyleus", BASE_JAR)
 
 
 class build_java(Command):
@@ -28,8 +30,12 @@ class build_java(Command):
     def _make_jar(self):
         subprocess.check_call(["make", "-C", JAVA_SRC_DIR])
 
+    def _copy_jar(self):
+        shutil.copy(BASE_JAR_SRC, BASE_JAR_DST)
+
     def run(self):
         self._make_jar()
+        self._copy_jar()
 
 
 class bdist(_bdist):
@@ -67,7 +73,7 @@ setup(
     author_email="plucas@yelp.com",
     description="Standard library and deployment tools for using Python "
         "with Storm",
-    url="http://yelp.github.io/pyleus/",
+    url="https://pyleus.org",
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.6",
@@ -86,8 +92,9 @@ setup(
     install_requires=[
         "PyYAML",
         "msgpack-python",
+        "virtualenv",
     ] + extra_install_requires,
-    data_files=[(BASE_JAR_INSTALL_DIR, [BASE_JAR_SRC])],
+    package_data={'pyleus': [BASE_JAR]},
     cmdclass={
         'build_java': build_java,
         'bdist': bdist,

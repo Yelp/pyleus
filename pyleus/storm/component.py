@@ -158,10 +158,10 @@ class Component(object):
         cofiguration and validation.
         """
 
-        print json.dumps({
+        print(json.dumps({
             "component_type": self.COMPONENT_TYPE,
             "output_fields": _expand_output_fields(self.OUTPUT_FIELDS),
-            "options": _serialize(self.OPTIONS)})
+            "options": _serialize(self.OPTIONS)}))
 
     def initialize_logging(self):
         """Load logging configuration file from command line configuration (if

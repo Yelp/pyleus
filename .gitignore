@@ -1,3 +1,10 @@
+/pyleus/pyleus-base.jar
+.*.swp
+
+#
+# From https://github.com/github/gitignore/blob/master/Python.gitignore
+#
+
 *.py[cod]
 
 # C extensions
@@ -34,6 +41,3 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
-
-# Other
-.*.swp

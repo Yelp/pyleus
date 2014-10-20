@@ -26,6 +26,7 @@ public class PythonSpout extends ShellSpout implements IRichSpout {
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         for(Entry<String, Object> outEntry : this.outputFields.entrySet()) {
             String stream = outEntry.getKey();
+            @SuppressWarnings("unchecked")
             List<String> fields = (List<String>) outEntry.getValue();
             declarer.declareStream(stream, new Fields(fields.toArray(new String[fields.size()])));
         }

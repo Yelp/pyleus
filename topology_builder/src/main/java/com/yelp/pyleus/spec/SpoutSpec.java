@@ -1,6 +1,5 @@
 package com.yelp.pyleus.spec;
 
-import java.util.List;
 import java.util.Map;
 
 public class SpoutSpec {

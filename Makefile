@@ -9,7 +9,7 @@ bdist_wheel:
 	python setup.py bdist_wheel
 
 test:
-	tox -c tox.ini
+	tox
 
 topology_builder:
 	make -C topology_builder/
@@ -18,6 +18,7 @@ clean:
 	rm -rf build/ dist/ pyleus.egg-info/ .tox/
 	find . -name '*.pyc' -delete
 	make -C topology_builder/ clean
+	rm -f pyleus/pyleus-base.jar
 	rm -rf docs/build/
 
 docs:

@@ -81,7 +81,7 @@ This is the code implementing ``dummy_spout.py``:
 
 Every :class:`~pyleus.storm.spout.Spout` must inherit from :class:`~pyleus.storm.spout.Spout` and declare its :attr:`~pyleus.storm.component.Component.OUTPUT_FIELDS` as a ``tuple``, a ``list`` or a ``namedtuple``. The same goes for ``emit`` **first argument**.
 
-Spouts also must define the method :meth:`~pylues.storm.spout.Spout.next_tuple`, that will be called within the component main loop in order to generate a stream of new tuples.
+Spouts also must define the method :meth:`~pyleus.storm.spout.Spout.next_tuple`, that will be called within the component main loop in order to generate a stream of new tuples.
 
 .. note:: Forgetting to call the :meth:`~pyleus.storm.component.Component.run` method will prevent the topology from running.
 

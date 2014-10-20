@@ -24,26 +24,39 @@ Install in a virtualenv:
 Quick Start
 -----------
 
-Build an example:
+First, you will need to download and extract Storm 0.9.2-incubating—the current release—from https://storm.apache.org/downloads.html.
+
+Then create a config file ``~/.pyleus.conf`` so Pyleus can find the ``storm`` command:
+
+.. code-block:: ini
+
+   [storm]
+   storm_cmd_path: /path/to/apache-storm-0.9.2-incubating/bin/storm
+
+Build an example topology:
 
 .. code-block:: none
 
    $ git clone https://github.com/Yelp/pyleus.git
    $ pyleus build pyleus/examples/exclamation_topology/pyleus_topology.yaml
 
-Run the example locally:
+And run it locally:
 
 .. code-block:: none
 
    $ pyleus local exclamation_topology.jar
 
-When you are done, hit ``C-C``.
+From another shell, you can run ``$ tail -F /tmp/exclamation_bolt.log`` to see the results in real-time.
 
-Run the example on a Storm cluster:
+Press ``C-C`` to exit.
+
+You can submit it to a Storm cluster too:
 
 .. code-block:: none
 
-   $ pylues submit -n NIMBUS_IP exclamation_topology.jar
+   $ pyleus submit -n NIMBUS_HOST exclamation_topology.jar
+
+But since this example writes to ``/tmp``, you might not find it very interesting.
 
 Documentation
 -------------

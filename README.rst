@@ -5,6 +5,18 @@ Pyleus is a Python 2.6+ framework for developing and launching `Apache Storm`_ t
 
 Please visit our `wiki`_.
 
+===============  ================
+    master           develop
+===============  ================
+|master-status|  |develop-status|
+===============  ================
+
+.. |master-status| image:: https://travis-ci.org/Yelp/pyleus.svg?branch=master
+    :target: https://travis-ci.org/Yelp/pyleus
+
+.. |develop-status| image:: https://travis-ci.org/Yelp/pyleus.svg?branch=develop
+    :target: https://travis-ci.org/Yelp/pyleus
+
 About
 -----
 
@@ -48,7 +60,7 @@ Or, submit to a Storm cluster with:
 
 .. code-block:: shell
 
-   $ pyleus submit -n NIMBUS_IP exclamation_topology.jar
+   $ pyleus submit -n NIMBUS_HOST exclamation_topology.jar
 
 The `examples`_ directory contains several annotated Pyleus topologies that try to cover as many Pyleus features as possible.
 
@@ -71,19 +83,19 @@ Pyleus command line interface
 
   .. code-block:: shell
 
-     $ pyleus submit [-n NIMBUS_IP] /path/to/pyleus_topology.yaml
+     $ pyleus submit [-n NIMBUS_HOST] /path/to/pyleus_topology.yaml
 
 * List all topologies running on a Storm cluster:
 
   .. code-block:: shell
 
-     $ pyleus list [-n NIMBUS_IP]
+     $ pyleus list [-n NIMBUS_HOST]
 
 * Kill a topology running on a Storm cluster:
 
   .. code-block:: shell
 
-     $ pyleus kill [-n NIMBUS_IP] TOPOLOGY_NAME
+     $ pyleus kill [-n NIMBUS_HOST] TOPOLOGY_NAME
 
 Try ``pyleus -h`` for a list of all the available commands or ``pyleus CMD -h`` for any command-specific help.
 
@@ -97,7 +109,7 @@ Organize your files
 
 This is an example of the directory tree of a simple topology:
 
-.. code-block:: shell
+.. code-block:: none
 
    my_first_topology/
    |-- my_first_topology/
@@ -139,12 +151,14 @@ This is the code implementing ``dummy_spout.py``:
 
    from pyleus.storm import Spout
 
+
    class DummySpout(Spout):
 
        OUTPUT_FIELDS = ['sentence', 'name']
 
        def next_tuple(self):
            self.emit(("This is a sentence.", "spout",))
+
 
    if __name__ == '__main__':
        DummySpout().run()
@@ -158,6 +172,7 @@ Let's now look at ``dummy_bolt.py``:
 
    from pyleus.storm import SimpleBolt
 
+
    class DummyBolt(SimpleBolt):
 
        OUTPUT_FIELDS = ['sentence']
@@ -166,6 +181,7 @@ Let's now look at ``dummy_bolt.py``:
            sentence, name = tup.values
            new_sentence = "{0} says, \"{1}\"".format(name, sentence)
            self.emit((new_sentence,), anchors=[tup])
+
 
    if __name__ == '__main__':
        DummyBolt().run()
@@ -190,7 +206,7 @@ You can set default values for many configuration options by placing a ``.pyleus
 .. code-block:: none
 
    [storm]
-   nimbus_ip: 10.11.12.13
+   nimbus_host: 10.11.12.13
    jvm_opts: -Djava.io.tmpdir=/home/myuser/tmp
 
    [build]
