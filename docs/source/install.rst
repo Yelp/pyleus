@@ -17,6 +17,8 @@ You can install pyleus from PyPI either system-wide or in a virtualenv:
 
    Installing Pyleus from source is **NOT** recommended. Please refer to section :ref:`development_tips` for more info.
 
+   The **recommended** way to install Pyleus is ``pip install pyleus`` either system-wide or in a virtualenv.
+
 Specify your Storm path
 -----------------------
 
