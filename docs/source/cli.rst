@@ -16,7 +16,7 @@ Command Line
 
   If a ``requirements.txt`` file is present in the same directory of the YAML topology definition file, all dependencies listed in the file will be included in the jar.
 
-  .. seealso:: If you want to specify a different path for your requirements file, please see :ref:`TODO_REQUIREMENTS_IN_YAML`. If you want to install some dependencies for all yuor topologies, see :ref:`configuration` instead.
+  .. seealso:: If you want to specify a different path for your requirements file, please see :ref:`yaml`. If you want to install some dependencies for all your topologies, see :ref:`configuration` instead.
 
 * Run a topology locally:
 
