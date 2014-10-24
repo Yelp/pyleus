@@ -144,7 +144,7 @@ public class MessagePackSerializer implements ISerializer {
             case RAW:
                 return element.asRawValue().getString();
             case INTEGER:
-                return element.asIntegerValue().getInt();
+                return element.asIntegerValue().getLong();
             case FLOAT:
                 return element.asFloatValue().getFloat();
             case BOOLEAN:
