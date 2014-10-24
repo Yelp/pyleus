@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Topology definition YAML syntax &mdash; pyleus 0.2.2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="pyleus 0.2.2 documentation" href="index.html"/>
+        <link rel="next" title="Install" href="install.html"/>
+        <link rel="prev" title="Logging" href="logging.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> pyleus</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Write your first topology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#organize-your-files">Organize your files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#define-the-topology-layout">Define the topology layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#write-your-first-spout">Write your first spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#write-your-first-bolt">Write your first bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#run-your-topology">Run your topology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">Guaranteeing message processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#track-tuples-in-your-spout">Track tuples in your Spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#anchor-tuples-in-your-bolt">Anchor tuples in your Bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reliability.html#tune-your-topology">Tune your topology</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="grouping.html">Output streams and groupings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="grouping.html#single-output-streams">Single output streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grouping.html#multiple-output-streams">Multiple output streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grouping.html#available-stream-groupings">Available stream groupings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Component runtime customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="options.html#pass-options-to-components">Pass options to components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#access-component-configuration-and-context">Access component configuration and context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#setup-component-at-startup">Setup component at startup</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="parallelism.html">Tune topology parallelism</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tick.html">Timing using tick tuples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tick.html#configure-tick-tuples-interval-for-a-component">Configure tick tuples interval for a component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tick.html#simplebolt-tick-tuple-api">SimpleBolt tick tuple API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="logging.html#topology-level-configuration">Topology level configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Topology definition YAML syntax</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#topology-level-options">Topology level options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#component-level-options">Component level options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#specify-your-storm-path">Specify your Storm path</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file-example">Configuration file example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="storm/storm.html">pyleus.storm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/component.html">pyleus.storm.component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/spout.html">pyleus.storm.spout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm/bolt.html">pyleus.storm.bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json_fields_bolt.html">pyleus.json_fields_bolt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">pyleus.testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exception.html">pyleus.exception</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">pyleus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Topology definition YAML syntax</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/yaml.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="topology-definition-yaml-syntax">
+<span id="yaml"></span><h1>Topology definition YAML syntax<a class="headerlink" href="#topology-definition-yaml-syntax" title="Permalink to this headline">¶</a></h1>
+<p>Options whose default is not specified on this page use the same <a class="reference external" href="https://github.com/apache/storm/blob/master/conf/defaults.yaml">default</a> as the corresponding <a class="reference external" href="https://storm.incubator.apache.org/apidocs/backtype/storm/Config.html">Apache Storm configuration option</a>.</p>
+<div class="section" id="topology-level-options">
+<h2>Topology level options<a class="headerlink" href="#topology-level-options" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><strong>name</strong>(<tt class="docutils literal"><span class="pre">str</span></tt>)[mandatory]</p>
+<p>Name assigned to your topology.</p>
+</li>
+<li><p class="first"><strong>topology</strong>(<tt class="docutils literal"><span class="pre">seq</span></tt>)[mandatory]</p>
+<p>Sequence containing all components of the topology, where each component is a <tt class="docutils literal"><span class="pre">map</span></tt>. Allowed components: <tt class="docutils literal"><span class="pre">spout</span></tt>, <tt class="docutils literal"><span class="pre">bolt</span></tt>.</p>
+</li>
+<li><p class="first"><strong>workers</strong>(<tt class="docutils literal"><span class="pre">int</span></tt>)</p>
+<p>Number of workers to be spawned.</p>
+</li>
+<li><p class="first"><strong>ackers</strong>(<tt class="docutils literal"><span class="pre">int</span></tt>)</p>
+<p>Number of executors for ackers to be spawned. Corresponds to Storm <tt class="docutils literal"><span class="pre">TOPOLOGY_ACKER_EXECUTORS</span></tt>.</p>
+</li>
+<li><p class="first"><strong>max_spout_pending</strong>(<tt class="docutils literal"><span class="pre">int</span></tt>)</p>
+<p>Maximum number of tuples that can be pending on a spout task at any given time.</p>
+</li>
+<li><p class="first"><strong>message_timeout_secs</strong>(<tt class="docutils literal"><span class="pre">int</span></tt>)</p>
+<p>Maximum amount of time given to the topology to fully process a message emitted by a spout.</p>
+</li>
+<li><p class="first"><strong>max_shellbot_pending</strong>(<tt class="docutils literal"><span class="pre">int</span></tt>)</p>
+<p>Maximum pending tuples in one ShellBolt. Default: 1</p>
+</li>
+<li><p class="first"><strong>logging_conf</strong>(<tt class="docutils literal"><span class="pre">str</span></tt>)</p>
+<p>Path to logging configuration file. Default: <tt class="docutils literal"><span class="pre">&lt;yaml_file_dir&gt;/pyleus_logging.conf</span></tt>. Specify <tt class="docutils literal"><span class="pre">none</span></tt> if a file corresponds to the default path, but you want to ignore it.</p>
+</li>
+<li><p class="first"><strong>requirements_filename</strong>(<tt class="docutils literal"><span class="pre">str</span></tt>)</p>
+<p>Path to the file listing topology requirements. Default: <tt class="docutils literal"><span class="pre">&lt;yaml_file_dir&gt;/requirements.txt</span></tt>. Specify <tt class="docutils literal"><span class="pre">none</span></tt> if a file corresponds to the default path, but you want to ignore it.</p>
+</li>
+<li><p class="first"><strong>serializer</strong>(<tt class="docutils literal"><span class="pre">str</span></tt>)</p>
+<p>Serializer used by Pyleus for Stom multilang messages. Allowed: <tt class="docutils literal"><span class="pre">msgpack</span></tt>, <tt class="docutils literal"><span class="pre">json</span></tt>. Default: <tt class="docutils literal"><span class="pre">msgpack</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you want to use JSON as encoding format Storm multilang messages, you can switch between Python standard library <a class="reference external" href="https://docs.python.org/2/library/json.html">json</a> module and <a class="reference external" href="http://simplejson.readthedocs.org/en/latest/">simplejson</a> module specifying <tt class="docutils literal"><span class="pre">simplejson</span></tt> in the <strong>requirements</strong> for your topology.</p>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">If you are on Python 2.6, we strongly recommend <a class="reference external" href="http://simplejson.readthedocs.org/en/latest/">simplejson</a> over <a class="reference external" href="https://docs.python.org/2/library/json.html">json</a> for better performance.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="component-level-options">
+<h2>Component level options<a class="headerlink" href="#component-level-options" title="Permalink to this headline">¶</a></h2>
+<p>These options belong to the block associated either with a <tt class="docutils literal"><span class="pre">spout</span></tt> or a <tt class="docutils literal"><span class="pre">bolt</span></tt> component.</p>
+<ul>
+<li><p class="first"><strong>name</strong>(<tt class="docutils literal"><span class="pre">str</span></tt>)[mandatory]</p>
+<p>Name assigned to the component.</p>
+</li>
+<li><p class="first"><strong>module</strong>(<tt class="docutils literal"><span class="pre">str</span></tt>)[mandatory]</p>
+<p>Python module containing the code for that component (e.g. <tt class="docutils literal"><span class="pre">my_topology.my_spout</span></tt>). Every valid module should contain a class inheriting either from <a class="reference internal" href="storm/spout.html#pyleus.storm.spout.Spout" title="pyleus.storm.spout.Spout"><tt class="xref py py-class docutils literal"><span class="pre">Spout</span></tt></a> or from <a class="reference internal" href="storm/bolt.html#pyleus.storm.bolt.Bolt" title="pyleus.storm.bolt.Bolt"><tt class="xref py py-class docutils literal"><span class="pre">Bolt</span></tt></a>. The module should also call the component <a class="reference internal" href="storm/component.html#pyleus.storm.component.Component.run" title="pyleus.storm.component.Component.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> method when <tt class="docutils literal"><span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></tt>.</p>
+</li>
+<li><p class="first"><strong>type</strong>(<tt class="docutils literal"><span class="pre">str</span></tt>)</p>
+<p>Ad-hoc option to be used instead of <tt class="docutils literal"><span class="pre">module</span></tt> to specify the Storm Kafka Spout component. Allowed: <tt class="docutils literal"><span class="pre">kafka</span></tt>, <tt class="docutils literal"><span class="pre">python</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only inside a <tt class="docutils literal"><span class="pre">spout</span></tt> block, you can specify <tt class="docutils literal"><span class="pre">type:</span> <span class="pre">kafka</span></tt> <strong>instead</strong> of <tt class="docutils literal"><span class="pre">module</span></tt>.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Refer to this <a class="reference external" href="https://github.com/Yelp/pyleus/tree/master/examples/kafka_spout">example</a> for all kafka related options.</p>
+</div>
+</li>
+<li><p class="first"><strong>parallelism_hint</strong>(<tt class="docutils literal"><span class="pre">int</span></tt>)</p>
+<p>Initial number of executors per component.</p>
+</li>
+<li><p class="first"><strong>tasks</strong>(<tt class="docutils literal"><span class="pre">int</span></tt>)</p>
+<p>Number of tasks per executor.</p>
+</li>
+<li><p class="first"><strong>tick_freq_secs</strong>(<tt class="docutils literal"><span class="pre">float</span></tt>)[only for <tt class="docutils literal"><span class="pre">bolt</span></tt>]</p>
+<p>Interval in seconds between two consecutive tick tuples.</p>
+</li>
+<li><p class="first"><strong>options</strong>(<tt class="docutils literal"><span class="pre">map</span></tt>)</p>
+<p>Block containing options to be passed to the component.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="options.html#options"><em>Component runtime customization</em></a>.</p>
+</div>
+</li>
+<li><p class="first"><strong>groupings</strong>(<tt class="docutils literal"><span class="pre">seq</span></tt>)[mandatory only for <tt class="docutils literal"><span class="pre">bolt</span></tt>]</p>
+<p>Sequence of groupings specifying the input streams for the component.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">For grouping specific syntax, please refer to <a class="reference internal" href="grouping.html#groupings"><em>Output streams and groupings</em></a>.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="install.html" class="btn btn-neutral float-right" title="Install"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="logging.html" class="btn btn-neutral" title="Logging"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013–2014 Yelp.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Pyleus v0.2.1 &mdash; pyleus 0.2.1 documentation</title>
+  <title>Pyleus v0.2.2 &mdash; pyleus 0.2.2 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="pyleus 0.2.1 documentation" href="#"/>
+    <link rel="top" title="pyleus 0.2.2 documentation" href="#"/>
         <link rel="next" title="Write your first topology" href="tutorial.html"/> 
 
   
@@ -93,7 +93,15 @@
 <li class="toctree-l2"><a class="reference internal" href="logging.html#topology-level-configuration">Topology level configuration</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yaml.html">Topology definition YAML syntax</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yaml.html#topology-level-options">Topology level options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yaml.html#component-level-options">Component level options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#specify-your-storm-path">Specify your Storm path</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file-example">Configuration file example</a></li>
@@ -135,7 +143,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="#">Docs</a> &raquo;</li>
       
-    <li>Pyleus v0.2.1</li>
+    <li>Pyleus v0.2.2</li>
       <li class="wy-breadcrumbs-aside">
         
           <a href="_sources/index.txt" rel="nofollow"> View page source</a>
@@ -147,11 +155,11 @@
           <div role="main">
             
   <div class="section" id="pyleus-vversion">
-<h1>Pyleus v0.2.1<a class="headerlink" href="#pyleus-vversion" title="Permalink to this headline">¶</a></h1>
+<h1>Pyleus v0.2.2<a class="headerlink" href="#pyleus-vversion" title="Permalink to this headline">¶</a></h1>
 <p>Pyleus is a Python 2.6+ layer built on top of <a class="reference external" href="https://storm.incubator.apache.org/">Apache Storm</a> for building Storm topologies in idiomatic Python.</p>
 <ul class="simple">
 <li>Pyleus is available on PyPI: <a class="reference external" href="https://pypi.python.org/pypi/pyleus">https://pypi.python.org/pypi/pyleus</a></li>
-<li>The source is hosted on github: <a class="reference external" href="https://github.com/Yelp/pyleus">https://github.com/Yelp/pyleus</a></li>
+<li>The source is hosted on GitHub: <a class="reference external" href="https://github.com/Yelp/pyleus">https://github.com/Yelp/pyleus</a></li>
 </ul>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
@@ -186,7 +194,7 @@ $ pyleus build pyleus/examples/exclamation_topology/pyleus_topology.yaml
 <p>From another shell, you can run <tt class="docutils literal"><span class="pre">$</span> <span class="pre">tail</span> <span class="pre">-F</span> <span class="pre">/tmp/exclamation_bolt.log</span></tt> to see the results in real-time.</p>
 <p>Press <tt class="docutils literal"><span class="pre">C-C</span></tt> to exit.</p>
 <p>You can submit it to a Storm cluster too:</p>
-<div class="highlight-none"><div class="highlight"><pre>$ pyleus submit -n NIMBUS_IP exclamation_topology.jar
+<div class="highlight-none"><div class="highlight"><pre>$ pyleus submit -n NIMBUS_HOST exclamation_topology.jar
 </pre></div>
 </div>
 <p>But since this example writes to <tt class="docutils literal"><span class="pre">/tmp</span></tt>, you might not find it very interesting.</p>
@@ -231,7 +239,15 @@ $ pyleus build pyleus/examples/exclamation_topology/pyleus_topology.yaml
 <li class="toctree-l2"><a class="reference internal" href="logging.html#topology-level-configuration">Topology level configuration</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yaml.html">Topology definition YAML syntax</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yaml.html#topology-level-options">Topology level options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yaml.html#component-level-options">Component level options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#specify-your-storm-path">Specify your Storm path</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file-example">Configuration file example</a></li>
@@ -304,7 +320,7 @@ $ pyleus build pyleus/examples/exclamation_topology/pyleus_topology.yaml
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.1',
+            VERSION:'0.2.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Command Line &mdash; pyleus 0.2.1 documentation</title>
+  <title>Command Line &mdash; pyleus 0.2.2 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="pyleus 0.2.1 documentation" href="index.html"/>
+    <link rel="top" title="pyleus 0.2.2 documentation" href="index.html"/>
         <link rel="next" title="Configuration" href="configuration.html"/>
         <link rel="prev" title="Install" href="install.html"/> 
 
@@ -94,7 +94,15 @@
 <li class="toctree-l2"><a class="reference internal" href="logging.html#topology-level-configuration">Topology level configuration</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yaml.html">Topology definition YAML syntax</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yaml.html#topology-level-options">Topology level options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yaml.html#component-level-options">Component level options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#specify-your-storm-path">Specify your Storm path</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Command Line</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file-example">Configuration file example</a></li>
@@ -160,7 +168,7 @@ Option <tt class="docutils literal"><span class="pre">--output</span></tt> allow
 <p>If a <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> file is present in the same directory of the YAML topology definition file, all dependencies listed in the file will be included in the jar.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last">If you want to specify a different path for your requirements file, please see <em class="xref std std-ref">TODO_REQUIREMENTS_IN_YAML</em>. If you want to install some dependencies for all yuor topologies, see <a class="reference internal" href="configuration.html#configuration"><em>Configuration</em></a> instead.</p>
+<p class="last">If you want to specify a different path for your requirements file, please see <a class="reference internal" href="yaml.html#yaml"><em>Topology definition YAML syntax</em></a>. If you want to install some dependencies for all your topologies, see <a class="reference internal" href="configuration.html#configuration"><em>Configuration</em></a> instead.</p>
 </div>
 </li>
 <li><p class="first">Run a topology locally:</p>
@@ -171,17 +179,17 @@ Option <tt class="docutils literal"><span class="pre">--output</span></tt> allow
 <p>The <tt class="docutils literal"><span class="pre">debug</span></tt> option will print evry tuple flowing through the topology.</p>
 </li>
 <li><p class="first">Submit a topology to a Storm cluster:</p>
-<div class="highlight-none"><div class="highlight"><pre>pyleus submit [-n NIMBUS_IP] /path/to/pyleus_topology.yaml
+<div class="highlight-none"><div class="highlight"><pre>pyleus submit [-n NIMBUS_HOST] [-p NIMBUS_PORT] /path/to/pyleus_topology.yaml
 </pre></div>
 </div>
 </li>
 <li><p class="first">List all topologies running on a Storm cluster:</p>
-<div class="highlight-none"><div class="highlight"><pre>pyleus list [-n NIMBUS_IP]
+<div class="highlight-none"><div class="highlight"><pre>pyleus list [-n NIMBUS_HOST] [-p NIMBUS_PORT]
 </pre></div>
 </div>
 </li>
 <li><p class="first">Kill a topology running on a Storm cluster:</p>
-<div class="highlight-none"><div class="highlight"><pre>pyleus kill [-n NIMBUS_IP] TOPOLOGY_NAME [-w WAIT_TIME]
+<div class="highlight-none"><div class="highlight"><pre>pyleus kill [-n NIMBUS_HOST] [-p NIMBUS_PORT] TOPOLOGY_NAME [-w WAIT_TIME]
 </pre></div>
 </div>
 <p>Option <tt class="docutils literal"><span class="pre">--wait-time</span></tt> overrides the duration in seconds Storm waits between deactivation and shutdown. Storm&#8217;s default is 30 seconds.</p>
@@ -240,7 +248,7 @@ Option <tt class="docutils literal"><span class="pre">--output</span></tt> allow
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.1',
+            VERSION:'0.2.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
