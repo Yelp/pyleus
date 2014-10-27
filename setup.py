@@ -60,6 +60,11 @@ class sdist(_sdist):
         _sdist.run(self)
 
 
+def readme():
+    with open("README.rst") as f:
+        return f.read()
+
+
 extra_install_requires = []
 if sys.version_info < (2, 7):
     # argparse is in the standard library of Python >= 2.7
@@ -73,6 +78,7 @@ setup(
     author_email="plucas@yelp.com",
     description="Standard library and deployment tools for using Python "
         "with Storm",
+    long_description=readme(),
     url="http://pyleus.org",
     classifiers=[
         "Programming Language :: Python",
