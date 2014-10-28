@@ -1,9 +1,8 @@
-import mock
 import os
 
 import msgpack
 
-from pyleus.compat import BytesIO
+from pyleus.compat import BytesIO, mock
 from pyleus.storm.serializers.msgpack_serializer import MsgpackSerializer
 from testing.serializer import SerializerTestCase
 

@@ -1,7 +1,6 @@
 import os
 
-import mock
-
+from pyleus.compat import mock
 import pyleus.utils as utils
 
 

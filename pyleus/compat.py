@@ -1,11 +1,11 @@
-import sys
 
-if sys.version_info[0] < 3:
-    from cStringIO import StringIO
-    BytesIO = StringIO
-else:
-    from io import BytesIO
-    from io import StringIO
+try:
+    # In python 3.3+ mock got included in the standard library...
+    from unittest import mock
+except ImportError:
+    import mock
 
-_ = BytesIO  # pyflakes
-_ = StringIO  # pyflakes
+from six.moves import builtins, configparser, cStringIO as StringIO
+from six import BytesIO
+
+assert mock and builtins and configparser and StringIO and BytesIO

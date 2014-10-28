@@ -1,10 +1,9 @@
 from collections import namedtuple
 import contextlib
 
-import mock
-from mock import call, sentinel
 import pytest
 
+from pyleus.compat import mock
 from pyleus.storm import StormTuple, Bolt, SimpleBolt
 from pyleus.testing import ComponentTestCase
 
@@ -33,26 +32,18 @@ class TestBolt(ComponentTestCase):
 
     @contextlib.contextmanager
     def _test_emit_helper(self, expected_command_dict):
-        patches = contextlib.nested(
-            mock.patch.object(self.instance, 'read_taskid'),
-            mock.patch.object(self.instance, 'send_command'),
-        )
-
-        with patches as (mock_read_taskid, mock_send_command):
-            yield mock_send_command
+        with mock.patch.object(self.instance, 'read_taskid') as mock_read_taskid:
+            with mock.patch.object(self.instance, 'send_command') as mock_send_command:
+                yield mock_send_command
 
         mock_read_taskid.assert_called_once_with()
         mock_send_command.assert_called_once_with('emit', expected_command_dict)
 
     @contextlib.contextmanager
     def _test_emit_helper_no_taskid(self, expected_command_dict):
-        patches = contextlib.nested(
-            mock.patch.object(self.instance, 'read_taskid'),
-            mock.patch.object(self.instance, 'send_command'),
-        )
-
-        with patches as (mock_read_taskid, mock_send_command):
-            yield mock_send_command
+        with mock.patch.object(self.instance, 'read_taskid') as mock_read_taskid:
+            with mock.patch.object(self.instance, 'send_command') as mock_send_command:
+                yield mock_send_command
 
         assert mock_read_taskid.call_count == 0
         mock_send_command.assert_called_once_with('emit', expected_command_dict)
@@ -109,12 +100,12 @@ class TestBolt(ComponentTestCase):
     def test_emit_with_stream(self):
         expected_command_dict = {
             'anchors': [],
-            'stream': sentinel.stream,
+            'stream': mock.sentinel.stream,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), stream=sentinel.stream)
+            self.instance.emit((1, 2, 3), stream=mock.sentinel.stream)
 
     def test_emit_with_anchors(self):
         expected_command_dict = {
@@ -130,12 +121,12 @@ class TestBolt(ComponentTestCase):
     def test_emit_with_direct_task(self):
         expected_command_dict = {
             'anchors': [],
-            'task': sentinel.direct_task,
+            'task': mock.sentinel.direct_task,
             'tuple': (1, 2, 3),
         }
 
         with self._test_emit_helper(expected_command_dict):
-            self.instance.emit((1, 2, 3), direct_task=sentinel.direct_task)
+            self.instance.emit((1, 2, 3), direct_task=mock.sentinel.direct_task)
 
     def test_emit_with_bad_values(self):
         with pytest.raises(AssertionError):
@@ -151,23 +142,22 @@ class TestSimpleBolt(ComponentTestCase):
 
     @pytest.fixture(autouse=True)
     def setup_mocks(self, request):
-        patches = contextlib.nested(
-            mock.patch.object(self.instance, 'process_tick'),
-            mock.patch.object(self.instance, 'process_tuple'),
-            mock.patch.object(self.instance, 'ack'),
-        )
+        patches = mock.patch.multiple(self.instance, process_tick=mock.DEFAULT,
+                                      process_tuple=mock.DEFAULT, ack=mock.DEFAULT)
 
         request.addfinalizer(lambda: patches.__exit__(None, None, None))
-        self.mock_process_tick, self.mock_process_tuple, self.mock_ack \
-            = patches.__enter__()
+        values = patches.__enter__()
+        self.mock_process_tick = values['process_tick']
+        self.mock_process_tuple = values['process_tuple']
+        self.mock_ack = values['ack']
 
     def test_ack(self):
         self.instance._process_tuple(self.TICK)
         self.instance._process_tuple(self.TUPLE)
 
         self.mock_ack.assert_has_calls([
-            call(self.TICK),
-            call(self.TUPLE),
+            mock.call(self.TICK),
+            mock.call(self.TUPLE),
         ])
 
     def test_tick(self):

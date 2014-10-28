@@ -1,6 +1,6 @@
-import mock
 import pytest
 
+from pyleus.compat import mock
 from pyleus.storm.serializers.serializer import Serializer
 
 

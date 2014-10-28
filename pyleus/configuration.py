@@ -47,12 +47,12 @@ invocations.
 from __future__ import absolute_import
 
 import collections
-import ConfigParser
 import os
 
 from pyleus import BASE_JAR_PATH
 from pyleus.utils import expand_path
 from pyleus.exception import ConfigurationError
+from pyleus.compat import configparser
 
 
 # Configuration files paths in order of increasing precedence
@@ -129,7 +129,7 @@ def load_configuration(cmd_line_file):
         _validate_config_file(cmd_line_file)
         config_files_hierarchy.append(cmd_line_file)
 
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.SafeConfigParser()
     config.read(config_files_hierarchy)
 
     configs = update_configuration(

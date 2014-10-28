@@ -1,13 +1,12 @@
-import __builtin__
 import os
 import subprocess
 
-import mock
 import pytest
 
 from pyleus import exception
 from pyleus.cli import virtualenv_proxy
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
+from pyleus.compat import mock, builtins
 
 
 VENV_PATH = "/tmp/my/beloved/venv"
@@ -38,7 +37,7 @@ class TestVirtualenvProxyTopLevelFunctions(object):
 
 class TestVirtualenvProxyCreation(object):
 
-    @mock.patch.object(__builtin__, 'open', autospec=True)
+    @mock.patch.object(builtins, 'open', autospec=True)
     @mock.patch.object(VirtualenvProxy, '_create_virtualenv', autospec=True)
     def test___init__(self, mock_create, mock_open):
         mock_open.return_value = 42
@@ -51,7 +50,7 @@ class TestVirtualenvProxyCreation(object):
         assert mock_open.call_count == 1
         assert venv._out_stream is None
 
-    @mock.patch.object(__builtin__, 'open', autospec=True)
+    @mock.patch.object(builtins, 'open', autospec=True)
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
     def test__create_virtualenv_system_site_packages(
             self, mock_cmd, mock_open):
@@ -65,7 +64,7 @@ class TestVirtualenvProxyCreation(object):
             err_msg=mock.ANY
         )
 
-    @mock.patch.object(__builtin__, 'open', autospec=True)
+    @mock.patch.object(builtins, 'open', autospec=True)
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
     def test__create_virtualenv_no_system_site_packages(
             self, mock_cmd, mock_open):
@@ -83,7 +82,7 @@ class TestVirtualenvProxyCreation(object):
 class TestVirtualenvProxyMethods(object):
 
     @pytest.fixture(autouse=True)
-    @mock.patch.object(__builtin__, 'open', autospec=True)
+    @mock.patch.object(builtins, 'open', autospec=True)
     @mock.patch.object(VirtualenvProxy, '_create_virtualenv', autospec=True)
     def setup_virtualenv(self, mock_create, mock_open):
         self.venv = VirtualenvProxy(VENV_PATH,

@@ -1,5 +1,3 @@
-import mock
-from mock import sentinel
 import pytest
 
 from pyleus.configuration import Configuration, DEFAULTS
@@ -7,22 +5,23 @@ import pyleus.cli.topologies
 from pyleus.cli.topologies import kill_topology
 from pyleus.cli.topologies import list_topologies
 from pyleus.cli.topologies import submit_topology
+from pyleus.compat import mock
 
 
 @pytest.fixture
 def configs():
-    """Create a mock Configuration object with sentinel values
+    """Create a mock Configuration object with mock.sentinel values
 
     Eg.
 
         Configuration(
-            base_jar=sentinel.base_jar,
-            config_file=sentinel.config_file,
+            base_jar=mock.sentinel.base_jar,
+            config_file=mock.sentinel.config_file,
             ...
         )
     """
     return Configuration(**dict(
-        (k, getattr(sentinel, k))
+        (k, getattr(mock.sentinel, k))
         for k in DEFAULTS._asdict().keys()
     ))
 
@@ -32,7 +31,7 @@ def test_submit_topology(configs):
 
     with mock.patch.object(pyleus.cli.topologies, 'StormCluster',
             return_value=mock_storm_cluster) as mock_ctr:
-        submit_topology(sentinel.jar_path, configs)
+        submit_topology(mock.sentinel.jar_path, configs)
 
     mock_ctr.assert_called_once_with(
         configs.storm_cmd_path,
@@ -42,7 +41,7 @@ def test_submit_topology(configs):
         configs.jvm_opts,
     )
 
-    mock_storm_cluster.submit.assert_called_once_with(sentinel.jar_path)
+    mock_storm_cluster.submit.assert_called_once_with(mock.sentinel.jar_path)
 
 
 def test_kill_topology(configs):

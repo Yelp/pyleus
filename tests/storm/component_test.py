@@ -1,13 +1,11 @@
-import contextlib
 import logging.config
 import os.path
-
-import mock
 
 from pyleus.storm import StormTuple
 from pyleus.storm.component import DEFAULT_LOGGING_CONFIG_PATH
 from pyleus.storm.serializers.serializer import Serializer
 from pyleus.testing import ComponentTestCase
+from pyleus.compat import mock, builtins
 
 
 class TestComponent(ComponentTestCase):
@@ -110,7 +108,7 @@ class TestComponent(ComponentTestCase):
         assert storm_tuple == expected_storm_tuple
 
     def test__create_pidfile(self):
-        with mock.patch('__builtin__.open') as mock_open:
+        with mock.patch.object(builtins, 'open', autospec=True) as mock_open:
             self.instance._create_pidfile("pid_dir", "pid")
 
         mock_open.assert_called_once_with("pid_dir/pid", 'a')
@@ -128,13 +126,13 @@ class TestComponent(ComponentTestCase):
         patch__create_pidfile = mock.patch.object(
             self.instance, '_create_pidfile')
 
-        patches = contextlib.nested(
-            patch_serializer, patch_os_getpid, patch__create_pidfile)
+        with patch_serializer as mock_serializer:
+            with patch_os_getpid as mock_os_getpid:
+                with patch__create_pidfile as mock__create_pidfile:
+                    mock_serializer.read_msg.return_value = handshake_msg
+                    conf, context = self.instance._init_component()
 
-        with patches as (mock_serializer, _, mock__create_pidfile):
-            mock_serializer.read_msg.return_value = handshake_msg
-            conf, context = self.instance._init_component()
-
+        mock_os_getpid.assert_called_once_with()
         mock_serializer.send_msg.assert_called_once_with({'pid': 1234})
         mock__create_pidfile.assert_called_once_with("pidDir", 1234)
 

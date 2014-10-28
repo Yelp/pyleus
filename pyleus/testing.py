@@ -1,9 +1,9 @@
 """Helper functions and classes for testing."""
 from __future__ import absolute_import
 
-import mock
 import pytest
 
+from pyleus.compat import mock
 from pyleus.storm.component import Component
 
 

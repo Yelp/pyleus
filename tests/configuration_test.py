@@ -1,10 +1,10 @@
 import os
 
-import mock
 import pytest
 
 from pyleus import configuration
 from pyleus import exception
+from pyleus.compat import mock
 
 
 class TestConfiguration(object):
