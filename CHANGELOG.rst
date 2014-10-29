@@ -4,6 +4,7 @@
 BUG FIXES:
 
 * Fix project URL in ``setup.py``. [GH-49]
+* Fix loss of precision during Java serialization. [GH-53]
 
 0.2.2 (October 24, 2014)
 ------------------------
