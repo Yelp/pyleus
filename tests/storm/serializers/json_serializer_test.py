@@ -4,7 +4,8 @@ try:
 except ImportError:
     import json
 
-from pyleus.compat import StringIO, mock
+from pyleus.compat import StringIO
+from pyleus.testing import mock
 from pyleus.storm.serializers.json_serializer import JSONSerializer
 from testing.serializer import SerializerTestCase
 

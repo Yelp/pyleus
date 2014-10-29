@@ -3,7 +3,12 @@ from __future__ import absolute_import
 
 import pytest
 
-from pyleus.compat import mock
+try:
+    # In python 3.3+ mock got included in the standard library...
+    from unittest import mock
+except ImportError:
+    import mock
+
 from pyleus.storm.component import Component
 
 

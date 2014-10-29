@@ -6,7 +6,8 @@ import pytest
 from pyleus import exception
 from pyleus.cli import virtualenv_proxy
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
-from pyleus.compat import mock, builtins
+from pyleus.compat import builtins
+from pyleus.testing import mock
 
 
 VENV_PATH = "/tmp/my/beloved/venv"

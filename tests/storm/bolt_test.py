@@ -3,9 +3,8 @@ import contextlib
 
 import pytest
 
-from pyleus.compat import mock
 from pyleus.storm import StormTuple, Bolt, SimpleBolt
-from pyleus.testing import ComponentTestCase
+from pyleus.testing import ComponentTestCase, mock
 
 
 class TestBolt(ComponentTestCase):

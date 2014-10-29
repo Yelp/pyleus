@@ -6,7 +6,7 @@ from pyleus.cli.storm_cluster import _get_storm_cmd_env
 from pyleus.cli.storm_cluster import STORM_JAR_JVM_OPTS
 from pyleus.cli.storm_cluster import StormCluster
 from pyleus.cli.storm_cluster import TOPOLOGY_BUILDER_CLASS
-from pyleus.compat import mock
+from pyleus.testing import mock
 
 
 class TestGetStormCmdEnd(object):

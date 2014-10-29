@@ -5,7 +5,7 @@ import pyleus.cli.topologies
 from pyleus.cli.topologies import kill_topology
 from pyleus.cli.topologies import list_topologies
 from pyleus.cli.topologies import submit_topology
-from pyleus.compat import mock
+from pyleus.testing import mock
 
 
 @pytest.fixture

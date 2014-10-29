@@ -1,9 +1,8 @@
 from collections import namedtuple
 import contextlib
 
-from pyleus.compat import mock
 from pyleus.storm import Spout
-from pyleus.testing import ComponentTestCase
+from pyleus.testing import ComponentTestCase, mock
 
 
 class TestSpout(ComponentTestCase):
