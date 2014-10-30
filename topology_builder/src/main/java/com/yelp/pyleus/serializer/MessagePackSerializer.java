@@ -146,7 +146,7 @@ public class MessagePackSerializer implements ISerializer {
             case INTEGER:
                 return element.asIntegerValue().getLong();
             case FLOAT:
-                return element.asFloatValue().getFloat();
+                return element.asFloatValue().getDouble();
             case BOOLEAN:
                 return element.asBooleanValue().getBoolean();
             case NIL:
