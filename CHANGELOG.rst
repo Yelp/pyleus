@@ -1,6 +1,10 @@
 0.2.3 (unreleased)
 ------------------
 
+IMPROVEMENTS:
+
+* Preliminary Python 3 support. [GH-15]
+
 BUG FIXES:
 
 * Fix project URL in ``setup.py``. [GH-49]
