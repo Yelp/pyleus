@@ -4,8 +4,7 @@ import os.path
 from pyleus.storm import StormTuple
 from pyleus.storm.component import DEFAULT_LOGGING_CONFIG_PATH
 from pyleus.storm.serializers.serializer import Serializer
-from pyleus.testing import ComponentTestCase, mock
-from pyleus.compat import builtins
+from pyleus.testing import ComponentTestCase, mock, builtins
 
 
 class TestComponent(ComponentTestCase):

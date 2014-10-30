@@ -3,8 +3,7 @@ import pytest
 from pyleus.cli.commands import subcommand
 from pyleus.cli.commands.subcommand import SubCommand
 from pyleus.exception import ConfigurationError
-from pyleus.compat import builtins
-from pyleus.testing import mock
+from pyleus.testing import mock, builtins
 
 
 class TestSubCommand(object):

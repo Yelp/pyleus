@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 import pytest
+from six.moves import builtins
 
 try:
     # In python 3.3+ mock got included in the standard library...
@@ -26,3 +27,5 @@ class ComponentTestCase(object):
             input_stream=self.mock_input_stream,
             output_stream=self.mock_output_stream,
         )
+
+assert builtins  # pyflakes

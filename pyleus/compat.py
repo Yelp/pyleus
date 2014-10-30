@@ -1,4 +1,4 @@
-from six.moves import builtins, configparser, cStringIO as StringIO
+from six.moves import configparser, cStringIO as StringIO
 from six import BytesIO
 
-assert builtins and configparser and StringIO and BytesIO
+assert configparser and StringIO and BytesIO  # pyflakes
