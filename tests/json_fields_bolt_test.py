@@ -1,8 +1,7 @@
-import mock
 import pytest
 
 from pyleus.json_fields_bolt import JSONFieldsBolt
-from pyleus.testing import ComponentTestCase
+from pyleus.testing import ComponentTestCase, mock
 
 
 class TestJSONFieldsBolt(ComponentTestCase):

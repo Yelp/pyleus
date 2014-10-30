@@ -1,11 +1,9 @@
-import __builtin__
-
-import mock
 import pytest
 
 from pyleus.cli.commands import subcommand
 from pyleus.cli.commands.subcommand import SubCommand
 from pyleus.exception import ConfigurationError
+from pyleus.testing import mock, builtins
 
 
 class TestSubCommand(object):
@@ -29,7 +27,7 @@ class TestSubCommand(object):
     @mock.patch.object(
         subcommand, "_ensure_storm_path_in_configs", autospec=True)
     @mock.patch.object(subcommand, "update_configuration", autospec=True)
-    @mock.patch.object(__builtin__, "vars", autospec=True)
+    @mock.patch.object(builtins, "vars", autospec=True)
     @mock.patch.object(SubCommand, "run")
     def test_run_subcommand(
             self, mock_run, mock_vars, mock_update, mock_ensure, mock_load,

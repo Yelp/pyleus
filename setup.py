@@ -99,6 +99,7 @@ setup(
         "PyYAML",
         "msgpack-python",
         "virtualenv",
+        "six",
     ] + extra_install_requires,
     package_data={'pyleus': [BASE_JAR]},
     cmdclass={

@@ -201,7 +201,7 @@ class BoltSpec(ComponentSpec):
                 " one type. Found: {1}"
                 .format(self.name, group.keys()))
 
-        group_type = group.keys()[0]
+        group_type = list(group.keys())[0]
 
         if (group_type not in self.GROUPINGS_LIST):
             raise InvalidTopologyError(
@@ -285,7 +285,7 @@ class BoltSpec(ComponentSpec):
         component match with all the other specs.
         """
         for group in self.groupings:
-            group_type = group.keys()[0]
+            group_type = list(group.keys())[0]
             group_spec = group[group_type]
 
             self._verify_grouping_format(group_type, group_spec)

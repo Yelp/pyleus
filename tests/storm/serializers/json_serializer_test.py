@@ -1,5 +1,3 @@
-import mock
-
 try:
     import simplejson as json
     _ = json # pyflakes
@@ -7,6 +5,7 @@ except ImportError:
     import json
 
 from pyleus.compat import StringIO
+from pyleus.testing import mock
 from pyleus.storm.serializers.json_serializer import JSONSerializer
 from testing.serializer import SerializerTestCase
 

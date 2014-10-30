@@ -3,12 +3,12 @@ import os
 import shutil
 import zipfile
 
-import mock
 import pytest
 
 from pyleus import __version__
 from pyleus import exception
 from pyleus.cli import build
+from pyleus.testing import mock
 
 
 class TestBuild(object):

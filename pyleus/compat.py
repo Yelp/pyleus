@@ -1,11 +1,4 @@
-import sys
+from six.moves import configparser, cStringIO as StringIO
+from six import BytesIO
 
-if sys.version_info[0] < 3:
-    from cStringIO import StringIO
-    BytesIO = StringIO
-else:
-    from io import BytesIO
-    from io import StringIO
-
-_ = BytesIO  # pyflakes
-_ = StringIO  # pyflakes
+assert configparser and StringIO and BytesIO  # pyflakes
