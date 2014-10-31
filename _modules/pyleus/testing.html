@@ -158,8 +158,14 @@
 <span class="sd">&quot;&quot;&quot;Helper functions and classes for testing.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
-<span class="kn">import</span> <span class="nn">mock</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="n">builtins</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c"># In python 3.3+ mock got included in the standard library...</span>
+    <span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">mock</span>
 
 <span class="kn">from</span> <span class="nn">pyleus.storm.component</span> <span class="kn">import</span> <span class="n">Component</span>
 
@@ -177,7 +183,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">INSTANCE_CLS</span><span class="p">(</span>
             <span class="n">input_stream</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mock_input_stream</span><span class="p">,</span>
             <span class="n">output_stream</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mock_output_stream</span><span class="p">,</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span>
+</div></div>
+<span class="k">assert</span> <span class="n">builtins</span>  <span class="c"># pyflakes</span>
 </pre></div>
 
           </div>
