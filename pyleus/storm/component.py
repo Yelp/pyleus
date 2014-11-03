@@ -231,9 +231,9 @@ class Component(object):
             self.initialize_serializer()
             self.setup_component()
             self.run_component()
-        except Exception as e:
+        except:
             log.exception("Exception in {0}.run".format(self.COMPONENT_TYPE))
-            self.error(traceback.format_exc(e))
+            self.error(traceback.format_exc())
 
     def run_component(self):
         """Run the main loop of the component. Implemented in Bolt and
