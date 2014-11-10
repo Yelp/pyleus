@@ -119,6 +119,10 @@ class Bolt(Component):
 
         command_dict = {
             'anchors': [anchor.id for anchor in anchors],
+            # Latest versions of simplejson serialize namedtuple as dict,
+            # which is not what storm expects as tuple.
+            # Cast always to tuple in order to have a consistent
+            # behaviour among msgpack, json and simplejson.
             'tuple': tuple(values),
         }
 
