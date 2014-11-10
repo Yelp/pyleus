@@ -36,7 +36,7 @@ Pyleus patch numbers look like ``MAJOR.MINOR.PATH``. While Pyleus ``MAJOR < 1``,
 
 We do not increment versions for documentation and other non-code changes.
 
-.. _development:
+.. _development_tips:
 
 Development tips
 ----------------
@@ -47,7 +47,7 @@ This means that if you change something in ``topology_builder`` or ``pyleus/stor
 
 A workaround to the problem may be to run a local PyPI server from the folder where the modified Pyleus package lives and use the canonical PyPI server as fallback for all other Python packages:
 
-.. code-block:: shell
+.. code-block:: bash
 
    $ virtualenv mylocalpypi
    $ source bin/activate/mylocalpypi
@@ -64,7 +64,7 @@ Then write a ``.pyleus.conf`` like the following and put it in your home directo
 
 In this way, after any change you do, you just need to
 
-.. code-block:: shell
+.. code-block:: bash
 
    make clean && make all
 
