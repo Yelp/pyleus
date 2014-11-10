@@ -31,6 +31,8 @@ public class TopologySpec {
     public String logging_config;
     @SuppressWarnings("unused")
     public String requirements_filename; // Not used in Java.
+    @SuppressWarnings("unused")
+    public String python_interpreter; // Not used in Java.
 
     private static Constructor getConstructor() {
         Constructor constructor = new Constructor(TopologySpec.class);

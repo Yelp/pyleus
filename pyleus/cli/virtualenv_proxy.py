@@ -36,12 +36,14 @@ class VirtualenvProxy(object):
                  system_site_packages=False,
                  pypi_index_url=None,
                  use_wheel=True,
+                 python_interpreter=None,
                  verbose=False):
         """Creates the virtualenv with the options specified"""
         self.path = path
         self._system_site_packages = system_site_packages
         self._pypi_index_url = pypi_index_url
         self._use_wheel = use_wheel
+        self._python_interpreter = python_interpreter
 
         self._verbose = verbose
         self._out_stream = None
@@ -57,10 +59,13 @@ class VirtualenvProxy(object):
         if self._system_site_packages:
             cmd.append("--system-site-packages")
 
+        if self._python_interpreter:
+            cmd.extend(["--python", self._python_interpreter])
+
         _exec_shell_cmd(cmd,
                         stdout=self._out_stream, stderr=self._err_stream,
                         err_msg="Failed to create virtualenv: {0}".
-                            format(self.path))
+                                format(self.path))
 
     def install_package(self, package):
         """Interface to `pip install SINGLE_PACKAGE`"""

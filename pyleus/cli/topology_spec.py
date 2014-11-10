@@ -54,10 +54,8 @@ class TopologySpec(object):
                     "Unknown serializer. Allowed: {0}. Found: {1}"
                     .format(SERIALIZERS, specs["serializer"]))
 
-        if "requirements_filename" in specs:
-            self.requirements_filename = specs["requirements_filename"]
-        else:
-            self.requirements_filename = None
+        self.requirements_filename = specs.get("requirements_filename")
+        self.python_interpreter = specs.get("python_interpreter")
 
         self.topology = []
         for component in specs["topology"]:

@@ -84,7 +84,7 @@ def _remove_pyleus_base_jar(venv):
 
 def _set_up_virtualenv(venv_name, tmp_dir, req,
                        include_packages, system_site_packages,
-                       pypi_index_url, verbose):
+                       pypi_index_url, python_interpreter, verbose):
     """Create a virtualenv with the specified options and the default packages
     specified in configuration. Then run `pip install -r [requirements file]`.
     """
@@ -92,6 +92,7 @@ def _set_up_virtualenv(venv_name, tmp_dir, req,
         os.path.join(tmp_dir, venv_name),
         system_site_packages=system_site_packages,
         pypi_index_url=pypi_index_url,
+        python_interpreter=python_interpreter,
         verbose=verbose
     )
 
@@ -171,6 +172,8 @@ def _create_pyleus_jar(original_topology_spec, topology_dir, base_jar,
     if not requirements_filename:
         requirements_filename = DEFAULT_REQUIREMENTS_FILENAME
 
+    python_interpreter = original_topology_spec.python_interpreter
+
     venv = os.path.join(topology_dir, VIRTUALENV_NAME)
     req = os.path.join(topology_dir, requirements_filename)
     if not os.path.isfile(req):
@@ -199,6 +202,7 @@ def _create_pyleus_jar(original_topology_spec, topology_dir, base_jar,
         include_packages=include_packages,
         system_site_packages=system_site_packages,
         pypi_index_url=pypi_index_url,
+        python_interpreter=python_interpreter,
         verbose=verbose)
 
     # Assemble the full version of the topolgy yaml file from the user yaml and

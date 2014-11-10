@@ -52,6 +52,20 @@ class TestVirtualenvProxyCreation(object):
 
     @mock.patch.object(builtins, 'open', autospec=True)
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
+    def test__create_virtualenv_no_options(
+            self, mock_cmd, mock_open):
+        venv = VirtualenvProxy(VENV_PATH,
+                               system_site_packages=False,
+                               verbose=True)
+        mock_cmd.assert_called_once_with(
+            ["virtualenv", VENV_PATH],
+            stdout=venv._out_stream,
+            stderr=venv._err_stream,
+            err_msg=mock.ANY
+        )
+
+    @mock.patch.object(builtins, 'open', autospec=True)
+    @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
     def test__create_virtualenv_system_site_packages(
             self, mock_cmd, mock_open):
         venv = VirtualenvProxy(VENV_PATH,
@@ -66,13 +80,14 @@ class TestVirtualenvProxyCreation(object):
 
     @mock.patch.object(builtins, 'open', autospec=True)
     @mock.patch.object(virtualenv_proxy, '_exec_shell_cmd', autospec=True)
-    def test__create_virtualenv_no_system_site_packages(
+    def test__create_virtualenv_python_interpreter(
             self, mock_cmd, mock_open):
+        path = "python2.7"
         venv = VirtualenvProxy(VENV_PATH,
-                               system_site_packages=False,
+                               python_interpreter=path,
                                verbose=True)
         mock_cmd.assert_called_once_with(
-            ["virtualenv", VENV_PATH],
+            ["virtualenv", VENV_PATH, "--python", path],
             stdout=venv._out_stream,
             stderr=venv._err_stream,
             err_msg=mock.ANY
