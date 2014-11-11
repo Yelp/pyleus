@@ -113,6 +113,9 @@ class Spout(Component):
         assert isinstance(values, list) or isinstance(values, tuple)
 
         command_dict = {
+            # Different versions of simplejson serialize namedtuples differently.
+            # Cast to tuple in order to have consistent
+            # behavior between msgpack, json and simplejson.
             'tuple': tuple(values),
         }
 

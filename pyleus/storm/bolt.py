@@ -119,6 +119,9 @@ class Bolt(Component):
 
         command_dict = {
             'anchors': [anchor.id for anchor in anchors],
+            # Different versions of simplejson serialize namedtuples differently.
+            # Cast to tuple in order to have consistent
+            # behavior between msgpack, json and simplejson.
             'tuple': tuple(values),
         }
 
