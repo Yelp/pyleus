@@ -44,6 +44,10 @@ Topology level options
 
   Path to the file listing topology requirements. Default: ``<yaml_file_dir>/requirements.txt``. Specify ``none`` if a file corresponds to the default path, but you want to ignore it.
 
+* **python_interpreter**\(``str``\)
+
+  The Python interpreter to use to create the topology virtualenv (exposes ``virtualenv`` ``--python`` option). Default: the interpreter that virtualenv was installed with (``/usr/bin/python``).
+
 * **serializer**\(``str``\)
   
   Serializer used by Pyleus for Stom multilang messages. Allowed: ``msgpack``, ``json``. Default: ``msgpack``.

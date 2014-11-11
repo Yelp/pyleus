@@ -70,6 +70,7 @@ class TestBuild(object):
             include_packages=["fruit", "ninja==7.7.7"],
             system_site_packages=True,
             pypi_index_url="http://pypi-ninja.ninjacorp.com/simple",
+            python_interpreter="python2.7",
             verbose=False)
         expected_install = [
             mock.call("pyleus=={0}".format(__version__)),
@@ -92,6 +93,7 @@ class TestBuild(object):
             include_packages=["fruit", "ninja==7.7.7"],
             system_site_packages=True,
             pypi_index_url="http://pypi-ninja.ninjacorp.com/simple",
+            python_interpreter="python2.7",
             verbose=False)
         expected_install = [
             mock.call("pyleus=={0}".format(__version__)),
