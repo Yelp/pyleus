@@ -3,7 +3,7 @@
 Contributing
 ============
 
-Anyone and everyone is encouraged to contribute to Pyleus. You can contribute by forking the `GitHub repo`_ and making a pull request or opening an issue.
+Everyone is encouraged to contribute to Pyleus. You can contribute by forking the `GitHub repo`_ and making a pull request or opening an issue.
 
 .. note::
 
@@ -29,7 +29,7 @@ New releases are planned and managed by committers, but you are welcome to parti
 Versioning
 ----------
 
-Pyleus patch numbers look like ``MAJOR.MINOR.PATH``. While Pyleus ``MAJOR < 1``, the software has to be considered in **beta** and therefore the following rules apply:
+Pyleus version numbers look like ``MAJOR.MINOR.PATH``. While Pyleus ``MAJOR < 1``, the software has to be considered in **beta** and therefore the following rules apply:
 
 1. A ``MINOR`` version change should be considered significant and might introduce non-backward-compatible changes
 2. A ``PATCH`` version change may add functionality in a backward-compatible manner and/or bug fixes and/or minor improvements (e.g., fixing bugs, performance improvements, code cleanup/refactoring)
