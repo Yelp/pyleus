@@ -134,7 +134,7 @@ Run your topology on your local machine for debugging:
 .. code-block:: none
 
    pyleus build my_first_topology/pyleus_topology.yaml
-   pyleus local my_first_topology.yaml -d
+   pyleus local my_first_topology.jar -d
 
 The ``-debug`` option will print all tuples flowing through the topology.
 
