@@ -3,7 +3,7 @@ import time
 
 from pyleus.storm import Spout
 
-log = logging.getLogger("line_spout")
+log = logging.getLogger("logging_example.line_spout")
 
 
 class LineSpout(Spout):
