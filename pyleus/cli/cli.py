@@ -50,5 +50,5 @@ def main():
         cls().init_subparser(subparsers)
 
     args = parser.parse_args()
-    logging.basicConfig(level=logging.DEBUG if args.verbose else logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG if args.verbose else logging.WARNING)
     args.func(args)
