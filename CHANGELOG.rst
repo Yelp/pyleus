@@ -3,7 +3,7 @@
 
 FEATURES:
 
-* Specify Python interpreter as yaml option [GH-54]
+* Specify Python interpreter as yaml option. [GH-54]
 
 IMPROVEMENTS:
 
@@ -12,10 +12,10 @@ IMPROVEMENTS:
 
 BUG FIXES:
 
-* Fix project URL in ``setup.py`` [GH-49]
+* Fix project URL in ``setup.py``. [GH-49]
 * Fix loss of precision during Java serialization. [GH-53]
-* Fix call to traceback.format_exc [GH-56]
-* FIx logger name for LineSpout in /examples/logging [GH-69]
+* Fix call to traceback.format_exc. [GH-56]
+* FIx logger name for LineSpout in /examples/logging. [GH-69]
 
 0.2.2 (October 24, 2014)
 ------------------------
