@@ -1,14 +1,21 @@
 0.2.3 (unreleased)
 ------------------
 
+FEATURES:
+
+* Specify Python interpreter as yaml option. [GH-54]
+
 IMPROVEMENTS:
 
 * Preliminary Python 3 support. [GH-15]
+* Updates to documentation.
 
 BUG FIXES:
 
 * Fix project URL in ``setup.py``. [GH-49]
 * Fix loss of precision during Java serialization. [GH-53]
+* Fix call to traceback.format_exc. [GH-56]
+* FIx logger name for LineSpout in /examples/logging. [GH-69]
 
 0.2.2 (October 24, 2014)
 ------------------------
