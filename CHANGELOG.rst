@@ -1,4 +1,4 @@
-0.2.3 (unreleased)
+0.2.3 (December 8, 2014)
 ------------------
 
 FEATURES:
