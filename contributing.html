@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contributing &mdash; pyleus 0.2.2 documentation</title>
+  <title>Contributing &mdash; pyleus 0.2.3 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="pyleus 0.2.2 documentation" href="index.html"/>
+    <link rel="top" title="pyleus 0.2.3 documentation" href="index.html"/>
         <link rel="next" title="API Documentation" href="api.html"/>
         <link rel="prev" title="Configuration" href="configuration.html"/> 
 
@@ -108,7 +108,13 @@
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file-example">Configuration file example</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Contributing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#manual-testing">Manual testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#repo-organization">Repo organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#versioning">Versioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-tips">Development tips</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
@@ -156,8 +162,60 @@
           <div role="main">
             
   <div class="section" id="contributing">
-<span id="id1"></span><h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
-<p>Anyone and everyone is encouraged to contribute to Pyleus. You can contribute forking the <a class="reference external" href="https://github.com/Yelp/pyleus">GitHub repo</a> and making a pull request.</p>
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>Everyone is encouraged to contribute to Pyleus. You can contribute by forking the <a class="reference external" href="https://github.com/Yelp/pyleus">GitHub repo</a> and making a pull request or opening an issue.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Please run <tt class="docutils literal"><span class="pre">make</span></tt>, <tt class="docutils literal"><span class="pre">make</span> <span class="pre">test</span></tt> and <tt class="docutils literal"><span class="pre">make</span> <span class="pre">docs</span></tt> to verify that everything works as expected <strong>before</strong> submitting a pull request.</p>
+</div>
+<p>A pull request will be merged to the <a class="reference external" href="https://github.com/Yelp/pyleus/tree/develop">develop</a> branch by a committer after it receives at least two <cite>+1</cite> from two different committers. In case of urgent pull requests (e. g. fixing a disruptive bug right after a new release), a single committer can approve and merge them.</p>
+<div class="section" id="manual-testing">
+<h2>Manual testing<a class="headerlink" href="#manual-testing" title="Permalink to this headline">¶</a></h2>
+<p>At the current state of the project, Pyleus does have tests covering Python code, while the Java code is lacking automated tests.</p>
+<p>For this reason, we kindly ask you to manually test your changes if they involve changes to the Java code or at least to ask a project committer to do that. We are working for improving the situation as soon as possible.</p>
+<p>You can use topologies living in the <a class="reference external" href="https://github.com/Yelp/pyleus/tree/develop/examples">examples</a> folder for manual testing.</p>
+</div>
+<div class="section" id="repo-organization">
+<h2>Repo organization<a class="headerlink" href="#repo-organization" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/Yelp/pyleus/tree/master">master</a> branch has the latest stable release, while all development is carried on the <a class="reference external" href="https://github.com/Yelp/pyleus/tree/develop">develop</a> branch. You can find all previous releases on <a class="reference external" href="https://github.com/Yelp/pyleus/releases">releases</a> page on GitHub.</p>
+<p>New releases are planned and managed by committers, but you are welcome to participate or ask for one.</p>
+</div>
+<div class="section" id="versioning">
+<h2>Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h2>
+<p>Pyleus version numbers look like <tt class="docutils literal"><span class="pre">MAJOR.MINOR.PATH</span></tt>. While Pyleus <tt class="docutils literal"><span class="pre">MAJOR</span> <span class="pre">&lt;</span> <span class="pre">1</span></tt>, the software has to be considered in <strong>beta</strong> and therefore the following rules apply:</p>
+<ol class="arabic simple">
+<li>A <tt class="docutils literal"><span class="pre">MINOR</span></tt> version change should be considered significant and might introduce non-backward-compatible changes</li>
+<li>A <tt class="docutils literal"><span class="pre">PATCH</span></tt> version change may add functionality in a backward-compatible manner and/or bug fixes and/or minor improvements (e.g., fixing bugs, performance improvements, code cleanup/refactoring)</li>
+</ol>
+<p>We do not increment versions for documentation and other non-code changes.</p>
+</div>
+<div class="section" id="development-tips">
+<span id="id1"></span><h2>Development tips<a class="headerlink" href="#development-tips" title="Permalink to this headline">¶</a></h2>
+<p>If you are willing to contribute to Pyleus, you need to know that Pyleus <strong>automatically adds itself as a dependency to your topology under the hood</strong>.</p>
+<p>This means that if you change something in <tt class="docutils literal"><span class="pre">topology_builder</span></tt> or <tt class="docutils literal"><span class="pre">pyleus/storm</span></tt>, you probably will still run topologies including the Pyleus code available on PyPI, instead of the one that you just modified.</p>
+<p>A workaround to the problem may be to run a local PyPI server from the folder where the modified Pyleus package lives and use the canonical PyPI server as fallback for all other Python packages:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>virtualenv mylocalpypi
+<span class="nv">$ </span><span class="nb">source </span>bin/activate/mylocalpypi
+<span class="nv">$ </span>pip install pypiserver
+<span class="nv">$ </span>pypi-server -p <span class="m">7778</span> --fallback-url https://pypi.python.org/simple/ pyleus/dist/
+</pre></div>
+</div>
+<p>Then write a <tt class="docutils literal"><span class="pre">.pyleus.conf</span></tt> like the following and put it in your home directory:</p>
+<div class="highlight-ini"><div class="highlight"><pre>[build]
+pypi_index_url: http://0.0.0.0:7778/simple/
+</pre></div>
+</div>
+<p>In this way, after any change you do, you just need to</p>
+<div class="highlight-bash"><div class="highlight"><pre>make clean <span class="o">&amp;&amp;</span> make all
+</pre></div>
+</div>
+<p>in order to have your updated Pyleus code installed into your topologies.</p>
+<p>If you modify <tt class="docutils literal"><span class="pre">topology_builder</span></tt> or you want to make changes to <tt class="docutils literal"><span class="pre">pyleus/cli</span></tt>, you may also need to uninstall and reinstall Pyleus in your development environment.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To verify you are including the right Pyleus code, you may just <tt class="docutils literal"><span class="pre">vim</span> <span class="pre">your_topology.jar</span></tt> and look for the changes you made.</p>
+</div>
+</div>
 </div>
 
 
@@ -198,7 +256,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.2',
+            VERSION:'0.2.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

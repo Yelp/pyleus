@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Write your first topology &mdash; pyleus 0.2.2 documentation</title>
+  <title>Write your first topology &mdash; pyleus 0.2.3 documentation</title>
   
 
   
@@ -28,9 +28,9 @@
   
 
   
-    <link rel="top" title="pyleus 0.2.2 documentation" href="index.html"/>
+    <link rel="top" title="pyleus 0.2.3 documentation" href="index.html"/>
         <link rel="next" title="Guaranteeing message processing" href="reliability.html"/>
-        <link rel="prev" title="Pyleus v0.2.2" href="index.html"/> 
+        <link rel="prev" title="Pyleus v0.2.3" href="index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -108,7 +108,13 @@
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file-example">Configuration file example</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#manual-testing">Manual testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#repo-organization">Repo organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#versioning">Versioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#development-tips">Development tips</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
@@ -282,7 +288,7 @@
 <h2>Run your topology<a class="headerlink" href="#run-your-topology" title="Permalink to this headline">¶</a></h2>
 <p>Run your topology on your local machine for debugging:</p>
 <div class="highlight-none"><div class="highlight"><pre>pyleus build my_first_topology/pyleus_topology.yaml
-pyleus local my_first_topology.yaml -d
+pyleus local my_first_topology.jar -d
 </pre></div>
 </div>
 <p>The <tt class="docutils literal"><span class="pre">-debug</span></tt> option will print all tuples flowing through the topology.</p>
@@ -299,7 +305,7 @@ pyleus local my_first_topology.yaml -d
         <a href="reliability.html" class="btn btn-neutral float-right" title="Guaranteeing message processing"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Pyleus v0.2.2"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Pyleus v0.2.3"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -328,7 +334,7 @@ pyleus local my_first_topology.yaml -d
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.2',
+            VERSION:'0.2.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
