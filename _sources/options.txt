@@ -45,7 +45,7 @@ It is worth noting that you have access to a copy of Storm configuration and con
 
 .. code-block:: python
 
-   topology_name = self.config['storm.id']
+   topology_name = self.conf['storm.id']
    taskid = self.context['taskid']
 
 While the content of ``self.conf`` is rather easy to imagine, ``self.context`` contains information like the following:

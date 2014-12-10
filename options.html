@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Component runtime customization &mdash; pyleus 0.2.3 documentation</title>
+  <title>Component runtime customization &mdash; pyleus 0.2.4 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="pyleus 0.2.3 documentation" href="index.html"/>
+    <link rel="top" title="pyleus 0.2.4 documentation" href="index.html"/>
         <link rel="next" title="Tune topology parallelism" href="parallelism.html"/>
         <link rel="prev" title="Output streams and groupings" href="grouping.html"/> 
 
@@ -194,7 +194,7 @@
 <div class="section" id="access-component-configuration-and-context">
 <h2>Access component configuration and context<a class="headerlink" href="#access-component-configuration-and-context" title="Permalink to this headline">¶</a></h2>
 <p>It is worth noting that you have access to a copy of Storm configuration and context for each component. You can access them at any time through <tt class="docutils literal"><span class="pre">self.conf</span></tt> and <tt class="docutils literal"><span class="pre">self.context</span></tt> dictionaries like in the following example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">topology_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;storm.id&#39;</span><span class="p">]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">topology_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">[</span><span class="s">&#39;storm.id&#39;</span><span class="p">]</span>
 <span class="n">taskid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s">&#39;taskid&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -261,7 +261,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.3',
+            VERSION:'0.2.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
