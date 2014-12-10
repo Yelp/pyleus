@@ -83,7 +83,7 @@ Pyleus command line interface
 
   .. code-block:: shell
 
-     $ pyleus submit [-n NIMBUS_HOST] /path/to/pyleus_topology.yaml
+     $ pyleus submit [-n NIMBUS_HOST] /path/to/topology.jar
 
 * List all topologies running on a Storm cluster:
 
