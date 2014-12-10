@@ -1,3 +1,10 @@
+0.2.4 (unreleased)
+------------------
+
+BUG FIXES:
+
+* Don't delete system-installed base jar on build. [GH-74]
+
 0.2.3 (December 8, 2014)
 ------------------
 
@@ -15,7 +22,7 @@ BUG FIXES:
 * Fix project URL in ``setup.py``. [GH-49]
 * Fix loss of precision during Java serialization. [GH-53]
 * Fix call to traceback.format_exc. [GH-56]
-* FIx logger name for LineSpout in /examples/logging. [GH-69]
+* Fix logger name for LineSpout in /examples/logging. [GH-69]
 
 0.2.2 (October 24, 2014)
 ------------------------
