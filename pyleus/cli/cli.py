@@ -4,6 +4,7 @@ based on arguments provided.
 from __future__ import absolute_import
 
 import argparse
+import logging
 
 from pyleus import __version__
 from pyleus.cli.commands.build_subcommand import BuildSubCommand
@@ -49,4 +50,5 @@ def main():
         cls().init_subparser(subparsers)
 
     args = parser.parse_args()
+    logging.basicConfig(level=logging.DEBUG if args.verbose else logging.WARNING)
     args.func(args)
