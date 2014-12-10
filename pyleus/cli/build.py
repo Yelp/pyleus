@@ -28,7 +28,7 @@ YAML_FILENAME = "pyleus_topology.yaml"
 DEFAULT_REQUIREMENTS_FILENAME = "requirements.txt"
 VIRTUALENV_NAME = "pyleus_venv"
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 def _open_jar(base_jar):
@@ -120,7 +120,7 @@ def _assemble_full_topology_yaml(spec, venv, resources_dir):
     """
     for component in spec.topology:
         if component.type == "python":
-            logger.debug('Assemble component module: {0}'.format(component.module))
+            log.debug('Assemble component module: {0}'.format(component.module))
             description = venv.execute_module(module=component.module,
                                               args=[DESCRIBE_OPT],
                                               cwd=resources_dir)
