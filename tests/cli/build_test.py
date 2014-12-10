@@ -136,3 +136,44 @@ class TestBuild(object):
 
         build._build_output_path(None, "bar")
         mock_ex_path.assert_called_with("bar.jar")
+
+    def test__path_contained_by(self):
+        p1 = '/foo//bar/baz/../stuff/'
+        p2 = '/a/b/c/d/../../../../foo/bar/stufff'
+        p3 = '/a/b/c/d/../../../../foo/bar/stuff/11'
+        assert not build._path_contained_by(p1, p2)
+        assert build._path_contained_by(p1, p3)
+
+    def test__remove_pyleus_base_jar(self):
+        """Remove the base jar if it is inside the virtualenv"""
+        mock_venv_path = "/path/to/venv"
+
+        def mock_execute_module(module, cwd):
+            return "/path/to/venv/inside.jar"
+
+        mock_venv = mock.Mock(
+            path=mock_venv_path,
+            execute_module=mock_execute_module,
+        )
+
+        with mock.patch.object(os, 'remove') as mock_remove:
+            build._remove_pyleus_base_jar(mock_venv)
+
+        mock_remove.assert_called_once_with("/path/to/venv/inside.jar")
+
+    def test__remove_pyleus_base_jar_no_remove(self):
+        """Do not remove the base jar if it is outside the virtualenv"""
+        mock_venv_path = "/path/to/venv"
+
+        def mock_execute_module(module, cwd):
+            return "/foo/bar/outside.jar"
+
+        mock_venv = mock.Mock(
+            path=mock_venv_path,
+            execute_module=mock_execute_module,
+        )
+
+        with mock.patch.object(os, 'remove') as mock_remove:
+            build._remove_pyleus_base_jar(mock_venv)
+
+        assert not mock_remove.called
