@@ -1,4 +1,4 @@
-0.2.4 (unreleased)
+0.2.4 (December 10, 2014)
 ------------------
 
 BUG FIXES:

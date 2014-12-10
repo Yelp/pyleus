@@ -6,7 +6,7 @@
 
   <groupId>com.yelp.pyleus</groupId>
   <artifactId>pyleus-base</artifactId>
-  <version>0.2.3</version>
+  <version>0.2.4</version>
   <packaging>jar</packaging>
   <name>Pyleus Topology Base JAR</name>
 
