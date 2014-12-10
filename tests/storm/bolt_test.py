@@ -14,7 +14,7 @@ class TestBolt(ComponentTestCase):
     def test_ack(self):
         tup = mock.Mock(id=1234)
 
-        with mock.patch.object(self.instance, 'send_command') as \
+        with mock.patch.object(self.instance, 'send_command', autospec=True) as \
                 mock_send_command:
             self.instance.ack(tup)
 
@@ -23,7 +23,7 @@ class TestBolt(ComponentTestCase):
     def test_fail(self):
         tup = mock.Mock(id=1234)
 
-        with mock.patch.object(self.instance, 'send_command') as \
+        with mock.patch.object(self.instance, 'send_command', autospec=True) as \
                 mock_send_command:
             self.instance.fail(tup)
 
@@ -31,8 +31,8 @@ class TestBolt(ComponentTestCase):
 
     @contextlib.contextmanager
     def _test_emit_helper(self, expected_command_dict):
-        with mock.patch.object(self.instance, 'read_taskid') as mock_read_taskid:
-            with mock.patch.object(self.instance, 'send_command') as mock_send_command:
+        with mock.patch.object(self.instance, 'read_taskid', autospec=True) as mock_read_taskid:
+            with mock.patch.object(self.instance, 'send_command', autospec=True) as mock_send_command:
                 yield mock_send_command
 
         mock_read_taskid.assert_called_once_with()
@@ -40,8 +40,8 @@ class TestBolt(ComponentTestCase):
 
     @contextlib.contextmanager
     def _test_emit_helper_no_taskid(self, expected_command_dict):
-        with mock.patch.object(self.instance, 'read_taskid') as mock_read_taskid:
-            with mock.patch.object(self.instance, 'send_command') as mock_send_command:
+        with mock.patch.object(self.instance, 'read_taskid', autospec=True) as mock_read_taskid:
+            with mock.patch.object(self.instance, 'send_command', autospec=True) as mock_send_command:
                 yield mock_send_command
 
         assert mock_read_taskid.call_count == 0

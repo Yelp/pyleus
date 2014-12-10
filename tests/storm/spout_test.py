@@ -10,7 +10,7 @@ class TestSpout(ComponentTestCase):
     INSTANCE_CLS = Spout
 
     def test__sync(self):
-        with mock.patch.object(self.instance, 'send_command') \
+        with mock.patch.object(self.instance, 'send_command', autospec=True) \
                as mock_send_command:
             self.instance._sync()
 
@@ -18,8 +18,8 @@ class TestSpout(ComponentTestCase):
 
     @contextlib.contextmanager
     def _test_emit_helper(self, expected_command_dict):
-        with mock.patch.object(self.instance, 'read_taskid') as mock_read_taskid:
-            with mock.patch.object(self.instance, 'send_command') as mock_send_command:
+        with mock.patch.object(self.instance, 'read_taskid', autospec=True) as mock_read_taskid:
+            with mock.patch.object(self.instance, 'send_command', autospec=True) as mock_send_command:
                 yield mock_send_command
 
         mock_read_taskid.assert_called_once_with()
@@ -27,8 +27,8 @@ class TestSpout(ComponentTestCase):
 
     @contextlib.contextmanager
     def _test_emit_no_taskid_helper(self, expected_command_dict):
-        with mock.patch.object(self.instance, 'read_taskid') as mock_read_taskid:
-            with mock.patch.object(self.instance, 'send_command') as mock_send_command:
+        with mock.patch.object(self.instance, 'read_taskid', autospec=True) as mock_read_taskid:
+            with mock.patch.object(self.instance, 'send_command', autospec=True) as mock_send_command:
                 yield mock_send_command
 
         assert mock_read_taskid.call_count == 0
@@ -108,21 +108,21 @@ class TestSpout(ComponentTestCase):
 
     def test__handle_command_next(self):
         msg = dict(command='next')
-        with mock.patch.object(self.instance, 'next_tuple') as mock_next_tuple:
+        with mock.patch.object(self.instance, 'next_tuple', autospec=True) as mock_next_tuple:
             self.instance._handle_command(msg)
 
         mock_next_tuple.assert_called_once_with()
 
     def test__handle_command_ack(self):
         msg = dict(command='ack', id=mock.sentinel.tuple_id)
-        with mock.patch.object(self.instance, 'ack') as mock_ack:
+        with mock.patch.object(self.instance, 'ack', autospec=True) as mock_ack:
             self.instance._handle_command(msg)
 
         mock_ack.assert_called_once_with(mock.sentinel.tuple_id)
 
     def test__handle_command_fail(self):
         msg = dict(command='fail', id=mock.sentinel.tuple_id)
-        with mock.patch.object(self.instance, 'fail') as mock_fail:
+        with mock.patch.object(self.instance, 'fail', autospec=True) as mock_fail:
             self.instance._handle_command(msg)
 
         mock_fail.assert_called_once_with(mock.sentinel.tuple_id)

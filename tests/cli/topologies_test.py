@@ -30,7 +30,7 @@ def test_submit_topology(configs):
     mock_storm_cluster = mock.Mock()
 
     with mock.patch.object(pyleus.cli.topologies, 'StormCluster',
-            return_value=mock_storm_cluster) as mock_ctr:
+            return_value=mock_storm_cluster, autospec=True) as mock_ctr:
         submit_topology(mock.sentinel.jar_path, configs)
 
     mock_ctr.assert_called_once_with(
@@ -48,7 +48,7 @@ def test_kill_topology(configs):
     mock_storm_cluster = mock.Mock()
 
     with mock.patch.object(pyleus.cli.topologies, 'StormCluster',
-            return_value=mock_storm_cluster) as mock_ctr:
+            return_value=mock_storm_cluster, autospec=True) as mock_ctr:
         kill_topology(configs)
 
     mock_ctr.assert_called_once_with(
@@ -66,7 +66,7 @@ def test_list_topologies(configs):
     mock_storm_cluster = mock.Mock()
 
     with mock.patch.object(pyleus.cli.topologies, 'StormCluster',
-            return_value=mock_storm_cluster) as mock_ctr:
+            return_value=mock_storm_cluster, autospec=True) as mock_ctr:
         list_topologies(configs)
 
     mock_ctr.assert_called_once_with(

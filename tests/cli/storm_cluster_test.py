@@ -52,7 +52,7 @@ class TestStormCluster(object):
                              "nimbus.thrift.port=4321"]
 
     def test_submit(self, cluster):
-        with mock.patch.object(cluster, '_exec_storm_cmd') as mock_exec:
+        with mock.patch.object(cluster, '_exec_storm_cmd', autospec=True) as mock_exec:
             cluster.submit(mock.sentinel.jar_path)
 
         mock_exec.assert_called_once_with(["jar", mock.sentinel.jar_path, TOPOLOGY_BUILDER_CLASS])
