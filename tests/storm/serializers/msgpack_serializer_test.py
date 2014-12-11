@@ -20,7 +20,7 @@ class TestMsgpackSerializer(SerializerTestCase):
         encoded_msg = msgpack.packb(msg_dict)
 
         with mock.patch.object(
-                os, 'read', return_value=encoded_msg):
+                os, 'read', return_value=encoded_msg, autospec=True):
 
             assert self.instance.read_msg() == msg_dict
 
@@ -30,7 +30,7 @@ class TestMsgpackSerializer(SerializerTestCase):
         encoded_msg = msgpack.packb(msg_list)
 
         with mock.patch.object(
-                os, 'read', return_value=encoded_msg):
+                os, 'read', return_value=encoded_msg, autospec=True):
 
             assert self.instance.read_msg() == msg_list
 
