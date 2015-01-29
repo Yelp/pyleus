@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 import logging
 
-from pyleus.storm import is_tick, StormWentAwayError
+from pyleus.storm import is_tick, is_heartbeat, StormWentAwayError
 from pyleus.storm.component import Component
 
 log = logging.getLogger(__name__)
@@ -36,7 +36,10 @@ class Bolt(Component):
 
         .. note: Implement in Bolt middleware subclass.
         """
-        return self.process_tuple(tup)
+        if is_heartbeat(tup):
+            self.sync()
+        else:
+            return self.process_tuple(tup)
 
     def run_component(self):
         """Bolt main loop."""
@@ -80,6 +83,11 @@ class Bolt(Component):
         self.send_command('fail', {
             'id': tup.id,
         })
+
+    def sync(self):
+        """Respond to heartbeat.
+        """
+        self.send_command('sync')
 
     def emit(
             self, values,
@@ -158,9 +166,12 @@ class SimpleBolt(Bolt):
 
     def _process_tuple(self, tup):
         """SimpleBolt middleware level tuple processing."""
-        if is_tick(tup):
-            self.process_tick()
+        if is_heartbeat(tup):
+            self.sync()
         else:
-            self.process_tuple(tup)
+            if is_tick(tup):
+                self.process_tick()
+            else:
+                self.process_tuple(tup)
 
-        self.ack(tup)
+            self.ack(tup)
