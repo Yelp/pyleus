@@ -23,21 +23,16 @@ class TestBolt(ComponentTestCase):
     def test_heartbeat(self):
         heartbeat = StormTuple(None, None, '__heartbeat', -1, [])
 
-        patches = mock.patch.multiple(self.instance, process_tuple=mock.DEFAULT,
-                                      ack=mock.DEFAULT, send_command=mock.DEFAULT)
+        with mock.patch.multiple(self.instance,
+                process_tuple=mock.DEFAULT,
+                ack=mock.DEFAULT,
+                send_command=mock.DEFAULT) as values:
 
-        values = patches.__enter__()
-        mock_process_tuple = values['process_tuple']
-        mock_ack = values['ack']
-        mock_send_command = values['send_command']
+            self.instance._process_tuple(heartbeat)
 
-        self.instance._process_tuple(heartbeat)
-
-        mock_send_command.assert_called_once_with('sync')
-        assert not mock_process_tuple.called
-        assert not mock_ack.called
-
-        patches.__exit__(None, None, None)
+            values['send_command'].assert_called_once_with('sync')
+            assert not values['process_tuple'].called
+            assert not values['ack'].called
 
     def test_fail(self):
         tup = mock.Mock(id=1234)
