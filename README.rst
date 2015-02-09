@@ -47,6 +47,8 @@ From PyPI:
 
 You do **NOT** need to install pyleus on your Storm cluster. That’s cool, isn't it?
 
+However, if you are going to use ``system_site_packages: true`` in your config file, you should be aware that the environment of your Storm nodes needs to match the one on the machine used for building the topology. This means you actually **have to install** pyleus on your Storm cluster in this case.
+
 Try it out!
 -----------
 
