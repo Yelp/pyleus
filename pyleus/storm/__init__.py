@@ -29,6 +29,16 @@ def is_tick(tup):
     return tup.comp == '__system' and tup.stream == '__tick'
 
 
+def is_heartbeat(tup):
+    """Tell whether the tuple is a heartbeat tuple or not.
+    :param tup: tuple to investigate
+    :type tup: :class:`~.StormTuple`
+    :return: ``True`` if the tuple is a heartbeat tuple, ``False`` otherwise
+    :rtype: ``bool``
+    """
+    return tup.task == -1 and tup.stream == '__heartbeat'
+
+
 class StormWentAwayError(Exception):
     """Raised when the connection between the component and Storm terminates.
     """

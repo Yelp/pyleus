@@ -20,6 +20,20 @@ class TestBolt(ComponentTestCase):
 
         mock_send_command.assert_called_once_with('ack', {'id': tup.id})
 
+    def test_heartbeat(self):
+        heartbeat = StormTuple(None, None, '__heartbeat', -1, [])
+
+        with mock.patch.multiple(self.instance,
+                process_tuple=mock.DEFAULT,
+                ack=mock.DEFAULT,
+                send_command=mock.DEFAULT) as values:
+
+            self.instance._process_tuple(heartbeat)
+
+            values['send_command'].assert_called_once_with('sync')
+            assert not values['process_tuple'].called
+            assert not values['ack'].called
+
     def test_fail(self):
         tup = mock.Mock(id=1234)
 
@@ -137,18 +151,21 @@ class TestSimpleBolt(ComponentTestCase):
     INSTANCE_CLS = SimpleBolt
 
     TICK = StormTuple(None, '__system', '__tick', None, None)
+    HEARTBEAT = StormTuple(None, None, '__heartbeat', -1, [])
     TUPLE = StormTuple(None, None, None, None, None)
 
     @pytest.fixture(autouse=True)
     def setup_mocks(self, request):
         patches = mock.patch.multiple(self.instance, process_tick=mock.DEFAULT,
-                                      process_tuple=mock.DEFAULT, ack=mock.DEFAULT)
+                                      process_tuple=mock.DEFAULT, ack=mock.DEFAULT,
+                                      sync=mock.DEFAULT)
 
         request.addfinalizer(lambda: patches.__exit__(None, None, None))
         values = patches.__enter__()
         self.mock_process_tick = values['process_tick']
         self.mock_process_tuple = values['process_tuple']
         self.mock_ack = values['ack']
+        self.mock_sync = values['sync']
 
     def test_ack(self):
         self.instance._process_tuple(self.TICK)
@@ -164,6 +181,13 @@ class TestSimpleBolt(ComponentTestCase):
 
         self.mock_process_tick.assert_called_once_with()
         assert not self.mock_process_tuple.called
+
+    def test_heartbeat(self):
+        self.instance._process_tuple(self.HEARTBEAT)
+
+        self.mock_sync.assert_called_once_with()
+        assert not self.mock_process_tuple.called
+        assert not self.mock_ack.called
 
     def test_tuple(self):
         self.instance._process_tuple(self.TUPLE)
