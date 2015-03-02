@@ -152,9 +152,9 @@ public class PyleusTopologyBuilder {
             config.forceFromStart = forceFromStart;
         }
 
-        Long startOffsetTime = (Long) spec.options.get("start_offset_time");
+        Object startOffsetTime = spec.options.get("start_offset_time");
         if (startOffsetTime != null) {
-            config.startOffsetTime = startOffsetTime;
+            config.startOffsetTime = Long.valueOf(startOffsetTime.toString());
         }
 
         // TODO: this mandates that messages are UTF-8. We should allow for binary data
