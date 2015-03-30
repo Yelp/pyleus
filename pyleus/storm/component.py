@@ -325,37 +325,68 @@ class Component(object):
 
         self._serializer.send_msg(command_dict)
 
-    def log(self, msg, level=None):
-        """Send a log message. Available log levels are LOG_TRACE, LOG_DEBUG,
-        LOG_INFO, LOG_WARN, LOG_ERROR.
+    def log(self, msg, level=LOG_INFO):
+        """Send a log message.
+
+        :param msg: log message
+        :type msg: ``str``
+        :param level:
+         log levels defined as constants in :mod:`pyleus.storm`.
+         Allowed: ``LOG_TRACE``, ``LOG_DEBUG``, ``LOG_INFO``, ``LOG_WARN``,
+         ``LOG_ERROR``. Default: ``LOG_INFO``
+        :type stream: ``int``
         """
         self.send_command('log', {
             'msg': msg,
-            'level': level or LOG_INFO,
+            'level': level,
         })
 
     def log_trace(self, msg):
-        """Send a log message with level LOG_TRACE."""
+        """Send a log message with level LOG_TRACE.
+
+        :param msg: log message
+        :type msg: ``str``
+        """
         self.log(msg, level=LOG_TRACE)
 
     def log_debug(self, msg):
-        """Send a log message with level LOG_DEBUG."""
+        """Send a log message with level LOG_DEBUG.
+
+        :param msg: log message
+        :type msg: ``str``
+        """
         self.log(msg, level=LOG_DEBUG)
 
     def log_info(self, msg):
-        """Send a log message with level LOG_INFO."""
+        """Send a log message with level LOG_INFO.
+
+        :param msg: log message
+        :type msg: ``str``
+        """
         self.log(msg, level=LOG_INFO)
 
     def log_warn(self, msg):
-        """Send a log message with level LOG_WARN."""
+        """Send a log message with level LOG_WARN.
+
+        :param msg: log message
+        :type msg: ``str``
+        """
         self.log(msg, level=LOG_WARN)
 
     def log_error(self, msg):
-        """Send a log message with level LOG_ERROR."""
+        """Send a log message with level LOG_ERROR.
+
+        :param msg: log message
+        :type msg: ``str``
+        """
         self.log(msg, level=LOG_ERROR)
 
     def error(self, msg):
-        """Send an error message."""
+        """Send an error message.
+
+        :param msg: error message
+        :type msg: ``str``
+        """
         self.send_command('error', {
             'msg': msg,
         })
