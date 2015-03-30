@@ -18,6 +18,11 @@ except ImportError:
     import json
 
 from pyleus.storm import DEFAULT_STREAM
+from pyleus.storm import LOG_TRACE
+from pyleus.storm import LOG_DEBUG
+from pyleus.storm import LOG_INFO
+from pyleus.storm import LOG_WARN
+from pyleus.storm import LOG_ERROR
 from pyleus.storm import StormTuple
 from pyleus.storm.serializers.msgpack_serializer import MsgpackSerializer
 from pyleus.storm.serializers.json_serializer import JSONSerializer
@@ -320,11 +325,34 @@ class Component(object):
 
         self._serializer.send_msg(command_dict)
 
-    def log(self, msg):
-        """Send a log message."""
+    def log(self, msg, level=None):
+        """Send a log message. Available log levels are LOG_TRACE, LOG_DEBUG,
+        LOG_INFO, LOG_WARN, LOG_ERROR.
+        """
         self.send_command('log', {
             'msg': msg,
+            'level': level or LOG_INFO,
         })
+
+    def log_trace(self, msg):
+        """Send a log message with level LOG_TRACE."""
+        self.log(msg, level=LOG_TRACE)
+
+    def log_debug(self, msg):
+        """Send a log message with level LOG_DEBUG."""
+        self.log(msg, level=LOG_DEBUG)
+
+    def log_info(self, msg):
+        """Send a log message with level LOG_INFO."""
+        self.log(msg, level=LOG_INFO)
+
+    def log_warn(self, msg):
+        """Send a log message with level LOG_WARN."""
+        self.log(msg, level=LOG_WARN)
+
+    def log_error(self, msg):
+        """Send a log message with level LOG_ERROR."""
+        self.log(msg, level=LOG_ERROR)
 
     def error(self, msg):
         """Send an error message."""
