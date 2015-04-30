@@ -91,7 +91,7 @@ These options belong to the block associated either with a ``spout`` or a ``bolt
 
 * **tasks**\(``int``\)
 
-  Number of tasks per executor.
+  Number of tasks per component.
 
 * **tick_freq_secs**\(``float``\)[only for ``bolt``]
 
