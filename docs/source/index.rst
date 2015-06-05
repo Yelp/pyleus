@@ -26,7 +26,7 @@ Quick Start
 
 First, you will need to download and extract Storm 0.9.4 from https://storm.apache.org/downloads.html.
 
-.. note:: Pyleus 0.3.0 is not compatible with Storm 0.9.2 or older. Use Pyleus 0.2.x for older versions of Storm.
+.. note:: Pyleus 0.3.0 is not compatible with Storm 0.9.2 or older. Use Pyleus 0.2.4 for older versions of Storm.
 
 Then create a config file ``~/.pyleus.conf`` so Pyleus can find the ``storm`` command:
 
