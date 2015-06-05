@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyleus.storm.bolt &mdash; pyleus 0.2.4 documentation</title>
+  <title>pyleus.storm.bolt &mdash; pyleus 0.3.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="pyleus 0.2.4 documentation" href="../../../index.html"/>
+    <link rel="top" title="pyleus 0.3.0 documentation" href="../../../index.html"/>
         <link rel="up" title="pyleus.storm" href="../storm.html"/> 
 
   
@@ -171,7 +171,7 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">pyleus.storm</span> <span class="kn">import</span> <span class="n">is_tick</span><span class="p">,</span> <span class="n">StormWentAwayError</span>
+<span class="kn">from</span> <span class="nn">pyleus.storm</span> <span class="kn">import</span> <span class="n">is_tick</span><span class="p">,</span> <span class="n">is_heartbeat</span><span class="p">,</span> <span class="n">StormWentAwayError</span>
 <span class="kn">from</span> <span class="nn">pyleus.storm.component</span> <span class="kn">import</span> <span class="n">Component</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
@@ -201,7 +201,10 @@
 
 <span class="sd">        .. note: Implement in Bolt middleware subclass.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_tuple</span><span class="p">(</span><span class="n">tup</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_heartbeat</span><span class="p">(</span><span class="n">tup</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sync</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_tuple</span><span class="p">(</span><span class="n">tup</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">run_component</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Bolt main loop.&quot;&quot;&quot;</span>
@@ -245,6 +248,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="s">&#39;fail&#39;</span><span class="p">,</span> <span class="p">{</span>
             <span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="n">tup</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
         <span class="p">})</span>
+</div>
+<div class="viewcode-block" id="Bolt.sync"><a class="viewcode-back" href="../../../storm/bolt.html#pyleus.storm.bolt.Bolt.sync">[docs]</a>    <span class="k">def</span> <span class="nf">sync</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Respond to heartbeat.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="s">&#39;sync&#39;</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Bolt.emit"><a class="viewcode-back" href="../../../storm/bolt.html#pyleus.storm.bolt.Bolt.emit">[docs]</a>    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span>
@@ -323,12 +331,15 @@
 </div>
     <span class="k">def</span> <span class="nf">_process_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tup</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;SimpleBolt middleware level tuple processing.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">is_tick</span><span class="p">(</span><span class="n">tup</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">process_tick</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">is_heartbeat</span><span class="p">(</span><span class="n">tup</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sync</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">process_tuple</span><span class="p">(</span><span class="n">tup</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">is_tick</span><span class="p">(</span><span class="n">tup</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process_tick</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process_tuple</span><span class="p">(</span><span class="n">tup</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">ack</span><span class="p">(</span><span class="n">tup</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ack</span><span class="p">(</span><span class="n">tup</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -359,7 +370,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.2.4',
+            VERSION:'0.3.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

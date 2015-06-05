@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyleus.storm.component &mdash; pyleus 0.2.4 documentation</title>
+  <title>pyleus.storm.component &mdash; pyleus 0.3.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="pyleus 0.2.4 documentation" href="../index.html"/>
+    <link rel="top" title="pyleus 0.3.0 documentation" href="../index.html"/>
         <link rel="up" title="API Documentation" href="../api.html"/>
         <link rel="next" title="pyleus.storm.spout" href="spout.html"/>
         <link rel="prev" title="pyleus.storm" href="storm.html"/> 
@@ -210,6 +210,20 @@ component.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pyleus.storm.component.Component.error">
+<tt class="descname">error</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/component.html#Component.error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.component.Component.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an error message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; error message</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyleus.storm.component.Component.initialize">
 <tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/component.html#Component.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.component.Component.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called after component has been launched, but before processing any
@@ -218,6 +232,96 @@ tuples. You can use this method to setup your component.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">Implement in subclass.</p>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyleus.storm.component.Component.log">
+<tt class="descname">log</tt><big>(</big><em>msg</em>, <em>level=2</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/component.html#Component.log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.component.Component.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a log message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>msg</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; log message</li>
+<li><strong>level</strong> &#8211; log levels defined as constants in <a class="reference internal" href="storm.html#module-pyleus.storm" title="pyleus.storm"><tt class="xref py py-mod docutils literal"><span class="pre">pyleus.storm</span></tt></a>.
+Allowed: <tt class="docutils literal"><span class="pre">LOG_TRACE</span></tt>, <tt class="docutils literal"><span class="pre">LOG_DEBUG</span></tt>, <tt class="docutils literal"><span class="pre">LOG_INFO</span></tt>, <tt class="docutils literal"><span class="pre">LOG_WARN</span></tt>,
+<tt class="docutils literal"><span class="pre">LOG_ERROR</span></tt>. Default: <tt class="docutils literal"><span class="pre">LOG_INFO</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyleus.storm.component.Component.log_debug">
+<tt class="descname">log_debug</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/component.html#Component.log_debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.component.Component.log_debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a log message with level LOG_DEBUG.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; log message</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyleus.storm.component.Component.log_error">
+<tt class="descname">log_error</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/component.html#Component.log_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.component.Component.log_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a log message with level LOG_ERROR.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; log message</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyleus.storm.component.Component.log_info">
+<tt class="descname">log_info</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/component.html#Component.log_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.component.Component.log_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a log message with level LOG_INFO.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; log message</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyleus.storm.component.Component.log_trace">
+<tt class="descname">log_trace</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/component.html#Component.log_trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.component.Component.log_trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a log message with level LOG_TRACE.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; log message</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyleus.storm.component.Component.log_warn">
+<tt class="descname">log_warn</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="../_modules/pyleus/storm/component.html#Component.log_warn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleus.storm.component.Component.log_warn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a log message with level LOG_WARN.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<tt class="docutils literal"><span class="pre">str</span></tt>) &#8211; log message</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -319,7 +423,7 @@ while spouts are not supposed to use tick tuples at all.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.2.4',
+            VERSION:'0.3.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
