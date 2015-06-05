@@ -1,3 +1,18 @@
+0.3.0 (June 5, 2015)
+--------------------
+
+BACKWARDS INCOMPATIBILITIES:
+
+* Storm < 0.9.3 no longer supported.
+
+IMPROVEMENTS:
+
+* Storm 0.9.4 support.
+
+BUG FIXES:
+
+* Fix ClassCastException in java code. [GH-94]
+
 0.2.4 (December 10, 2014)
 ------------------
 
