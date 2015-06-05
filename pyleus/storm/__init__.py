@@ -6,6 +6,12 @@ from collections import namedtuple
 
 DEFAULT_STREAM = "default"
 
+LOG_TRACE = 0
+LOG_DEBUG = 1
+LOG_INFO = 2
+LOG_WARN = 3
+LOG_ERROR = 4
+
 StormTuple = namedtuple('StormTuple', "id comp stream task values")
 """Namedtuple representing a Storm tuple.
 
