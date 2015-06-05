@@ -3,7 +3,7 @@ Pyleus
 
 Pyleus is a Python 2.6+ framework for developing and launching `Apache Storm`_ topologies.
 
-Please visit our `wiki`_.
+Please visit our `documentation`_.
 
 ===============  ================
     master           develop
@@ -104,7 +104,7 @@ Try ``pyleus -h`` for a list of all the available commands or ``pyleus CMD -h`` 
 Write your first topology
 -------------------------
 
-Please refer to the `wiki`_ for a more detailed tutorial.
+Please refer to the `documentation`_ for a more detailed tutorial.
 
 Organize your files
 ^^^^^^^^^^^^^^^^^^^
@@ -227,5 +227,5 @@ Pyleus is licensed under the Apache License, Version 2.0: http://www.apache.org/
 .. _Apache Storm: https://storm.apache.org/
 .. _Apache Storm Documentation: https://storm.apache.org/documentation/Home.html
 .. _MessagePack: http://msgpack.org/
-.. _wiki: http://yelp.github.io/pyleus/
+.. _documentation: http://pyleus.org/
 .. _examples: https://github.com/Yelp/pyleus/tree/master/examples
