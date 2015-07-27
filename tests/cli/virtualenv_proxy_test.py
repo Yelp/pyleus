@@ -10,7 +10,8 @@ from pyleus.testing import mock, builtins
 
 
 VENV_PATH = "/tmp/my/beloved/venv"
-PYPI_URL = "http://pypi-ninja.ninjacorp.com/simple"
+PYPI_HOST = "pypi-ninja.ninjacorp.com"
+PYPI_URL = "http://{}/simple".format(PYPI_HOST)
 
 
 class TestVirtualenvProxyTopLevelFunctions(object):
@@ -111,6 +112,7 @@ class TestVirtualenvProxyMethods(object):
             [
                 "{0}/bin/pip".format(VENV_PATH), "install", "Ninja==7.7.7",
                 "-i", PYPI_URL,
+                "--trusted-host", PYPI_HOST,
                 '--use-wheel',
             ],
             stdout=self.venv._out_stream,
