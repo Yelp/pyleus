@@ -46,6 +46,10 @@ class TopologySpec(object):
             self.message_timeout_secs = specs["message_timeout_secs"]
         if "logging_config" in specs:
             self.logging_config = specs["logging_config"]
+
+        if "sleep_spout_wait_strategy_time_ms" in specs:
+            self.sleep_spout_wait_strategy_time_ms = specs["sleep_spout_wait_strategy_time_ms"]
+
         if "serializer" in specs:
             if specs["serializer"] in SERIALIZERS:
                 self.serializer = specs["serializer"]

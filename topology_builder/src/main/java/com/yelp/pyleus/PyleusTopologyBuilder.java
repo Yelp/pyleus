@@ -319,6 +319,10 @@ public class PyleusTopologyBuilder {
                 conf.setNumAckers(spec.ackers);
             }
 
+            if (spec.sleep_spout_wait_strategy_time_ms != -1) {
+                conf.put(Config.TOPOLOGY_SLEEP_SPOUT_WAIT_STRATEGY_TIME_MS, spec.sleep_spout_wait_strategy_time_ms);
+            }
+
             try {
                 StormSubmitter.submitTopology(spec.name, conf, topology);
             } catch (Exception e) {

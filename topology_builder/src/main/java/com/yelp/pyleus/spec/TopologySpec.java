@@ -27,6 +27,7 @@ public class TopologySpec {
     public Integer message_timeout_secs = -1;
     public Integer ackers = -1;
     public Integer max_shellbolt_pending = DEFAULT_MAX_SHELLBOLT_PENDING;
+    public Integer sleep_spout_wait_strategy_time_ms = -1;
     public String serializer = MSGPACK_SERIALIZER;
     public String logging_config;
     @SuppressWarnings("unused")
