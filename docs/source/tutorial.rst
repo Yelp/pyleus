@@ -100,7 +100,7 @@ Let's now look at ``dummy_bolt.py``:
 
    class DummyBolt(SimpleBolt):
 
-   OUTPUT_FIELDS = ['sentence']
+       OUTPUT_FIELDS = ['sentence']
 
        def process_tuple(self, tup):
            sentence, name = tup.values
