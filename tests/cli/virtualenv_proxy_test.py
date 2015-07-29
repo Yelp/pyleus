@@ -111,7 +111,6 @@ class TestVirtualenvProxyMethods(object):
             [
                 "{0}/bin/pip".format(VENV_PATH), "install", "Ninja==7.7.7",
                 "-i", PYPI_URL,
-                "--trusted-host", PYPI_HOST,
                 '--use-wheel',
             ],
             stdout=self.venv._out_stream,
