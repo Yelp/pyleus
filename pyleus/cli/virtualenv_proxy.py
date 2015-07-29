@@ -12,7 +12,6 @@ from __future__ import absolute_import
 
 import os
 import subprocess
-from six.moves.urllib.parse import urlparse
 
 from pyleus.exception import VirtualenvError
 
@@ -74,8 +73,6 @@ class VirtualenvProxy(object):
 
         if self._pypi_index_url is not None:
             cmd += ["-i", self._pypi_index_url]
-            url = urlparse(self._pypi_index_url)
-            cmd += ["--trusted-host", url.hostname]
 
         if self._use_wheel:
             cmd += ['--use-wheel']
