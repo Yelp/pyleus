@@ -50,6 +50,9 @@ class TopologySpec(object):
         if "sleep_spout_wait_strategy_time_ms" in specs:
             self.sleep_spout_wait_strategy_time_ms = specs["sleep_spout_wait_strategy_time_ms"]
 
+        if "worker_childopts_xmx" in specs:
+            self.worker_child_opts_xmx = specs["worker_childopts_xmx"]
+
         if "serializer" in specs:
             if specs["serializer"] in SERIALIZERS:
                 self.serializer = specs["serializer"]

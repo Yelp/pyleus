@@ -4,6 +4,7 @@
 # Pyleus. https://github.com/nathanmarz/storm/wiki/Tutorial
 name: exclamation_topology
 sleep_spout_wait_strategy_time_ms: 1000
+worker_childopts_xmx: -Xmx2048m
 topology:
 
     - spout:

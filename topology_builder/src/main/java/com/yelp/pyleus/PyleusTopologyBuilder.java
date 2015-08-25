@@ -17,6 +17,8 @@ import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
+import backtype.storm.spout.SchemeAsMultiScheme;
+import backtype.storm.spout.RawScheme;
 import storm.kafka.KafkaSpout;
 import storm.kafka.KeyValueSchemeAsMultiScheme;
 import storm.kafka.SpoutConfig;
@@ -157,10 +159,15 @@ public class PyleusTopologyBuilder {
             config.startOffsetTime = Long.valueOf(startOffsetTime.toString());
         }
 
+        Boolean binaryData = (Boolean) spec.options.get("binary_data", false);
         // TODO: this mandates that messages are UTF-8. We should allow for binary data
         // in the future, or once users can have Java components, let them provide their
         // own JSON serialization method. Or wait on STORM-138.
-        config.scheme = new KeyValueSchemeAsMultiScheme(new StringKeyValueScheme());
+        if (binaryData) {
+            config.scheme = new RawSchemeAsMultiScheme(new RawScheme());
+        } else {
+            config.scheme = new KeyValueSchemeAsMultiScheme(new StringKeyValueScheme());
+        }
 
         return new KafkaSpout(config);
     }
@@ -321,6 +328,10 @@ public class PyleusTopologyBuilder {
 
             if (spec.sleep_spout_wait_strategy_time_ms != -1) {
                 conf.put(Config.TOPOLOGY_SLEEP_SPOUT_WAIT_STRATEGY_TIME_MS, spec.sleep_spout_wait_strategy_time_ms);
+            }
+
+            if (spec.worker_childopts_xmx != "") {
+                conf.put(Config.TOPOLOGY_WORKER_CHILDOPTS, spec.worker_childopts_xmx)
             }
 
             try {
