@@ -113,6 +113,10 @@ public class PyleusTopologyBuilder {
         } else {
             declarer = builder.setSpout(spec.name, spout);
         }
+        String worker_xmx = (String) spec.options.get("worker_xmx");
+        if (worker_xmx != null) {
+            declarer.addConfiguration(Config.WORKER_CHILDOPTS, worker_xmx);
+        }
 
         if (spec.tasks != -1) {
             declarer.setNumTasks(spec.tasks);
