@@ -70,6 +70,10 @@ In this way, after any change you do, you just need to
 
 in order to have your updated Pyleus code installed into your topologies.
 
+.. tip::
+
+   If you are using ``pip >= 7.0.0``, you may need to specify ``trusted-host: 0.0.0.0`` in your ``pip.conf`` `file`_ (read `pip docs`_ for more info).
+
 If you modify ``topology_builder`` or you want to make changes to ``pyleus/cli``, you may also need to uninstall and reinstall Pyleus in your development environment.
 
 .. note::
@@ -81,3 +85,5 @@ If you modify ``topology_builder`` or you want to make changes to ``pyleus/cli``
 .. _develop: https://github.com/Yelp/pyleus/tree/develop
 .. _master: https://github.com/Yelp/pyleus/tree/master
 .. _releases: https://github.com/Yelp/pyleus/releases
+.. _pip docs: https://pip.pypa.io/en/latest/news.html
+.. _file: https://pip.pypa.io/en/latest/user_guide.html?highlight=conf#config-file

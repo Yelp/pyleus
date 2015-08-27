@@ -32,7 +32,7 @@ Command Line
 
   .. code-block:: none
 
-     pyleus submit [-n NIMBUS_HOST] [-p NIMBUS_PORT] /path/to/pyleus_topology.yaml
+     pyleus submit [-n NIMBUS_HOST] [-p NIMBUS_PORT] /path/to/topology.jar
 
 * List all topologies running on a Storm cluster:
 
