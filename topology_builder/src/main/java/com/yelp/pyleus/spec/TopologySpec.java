@@ -22,6 +22,7 @@ public class TopologySpec {
 
     public String name;
     public List<ComponentSpec> topology;
+    public Boolean topology_debug = false;
     public Integer workers = -1;
     public Integer max_spout_pending = -1;
     public Integer message_timeout_secs = -1;

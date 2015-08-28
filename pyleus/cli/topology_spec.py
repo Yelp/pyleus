@@ -34,6 +34,8 @@ class TopologySpec(object):
                 " Found: {0}".format(_as_list(specs)))
 
         self.name = specs["name"]
+        if "topology_debug" in specs:
+            self.topology_debug = specs["topology_debug"]
         if "workers" in specs:
             self.workers = specs["workers"]
         if "ackers" in specs:

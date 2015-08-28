@@ -306,7 +306,7 @@ public class PyleusTopologyBuilder {
             runLocally(spec.name, topology, debug, spec.serializer);
         } else {
             Config conf = new Config();
-            conf.setDebug(false);
+            conf.setDebug(spec.topology_debug);
 
             setSerializer(conf, spec.serializer);
 
