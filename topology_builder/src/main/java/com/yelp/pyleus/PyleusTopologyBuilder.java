@@ -113,10 +113,6 @@ public class PyleusTopologyBuilder {
         } else {
             declarer = builder.setSpout(spec.name, spout);
         }
-        String worker_xmx = (String) spec.options.get("worker_xmx");
-        if (worker_xmx != null) {
-            declarer.addConfiguration(Config.WORKER_CHILDOPTS, worker_xmx);
-        }
 
         if (spec.tasks != -1) {
             declarer.setNumTasks(spec.tasks);
@@ -163,10 +159,8 @@ public class PyleusTopologyBuilder {
             config.startOffsetTime = Long.valueOf(startOffsetTime.toString());
         }
 
+        // support binary data
         Boolean binaryData = (Boolean) spec.options.get("binary_data");
-        // TODO: this mandates that messages are UTF-8. We should allow for binary data
-        // in the future, or once users can have Java components, let them provide their
-        // own JSON serialization method. Or wait on STORM-138.
         if (binaryData != null) {
             config.scheme = new SchemeAsMultiScheme(new RawScheme());
         } else {
@@ -336,6 +330,18 @@ public class PyleusTopologyBuilder {
 
             if (spec.worker_childopts_xmx != "") {
                 conf.put(Config.TOPOLOGY_WORKER_CHILDOPTS, spec.worker_childopts_xmx);
+            }
+
+            if (spec.executor_receive_buffer_size != -1) {
+                conf.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, spec.executor_receive_buffer_size);
+            }
+
+            if (spec.executor_send_buffer_size != -1) {
+                conf.put(Config.TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE, spec.executor_send_buffer_size);
+            }
+
+            if (spec.transfer_buffer_size != -1) {
+                conf.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE, spec.transfer_buffer_size);
             }
 
             try {

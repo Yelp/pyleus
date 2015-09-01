@@ -55,6 +55,15 @@ class TopologySpec(object):
         if "worker_childopts_xmx" in specs:
             self.worker_childopts_xmx = specs["worker_childopts_xmx"]
 
+        if "executor_receive_buffer_size" in specs:
+            self.executor_receive_buffer_size = specs["executor_receive_buffer_size"]
+
+        if "executor_send_buffer_size" in specs:
+            self.executor_send_buffer_size = specs["executor_send_buffer_size"]
+
+        if "transfer_buffer_size" in specs:
+            self.transfer_buffer_size = specs["transfer_buffer_size"]
+
         if "serializer" in specs:
             if specs["serializer"] in SERIALIZERS:
                 self.serializer = specs["serializer"]
