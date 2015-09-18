@@ -34,7 +34,6 @@ public class PyleusTopologyBuilder {
 
     public static final String YAML_FILENAME = "/resources/pyleus_topology.yaml";
     public static final String KAFKA_ZK_ROOT_FMT = "/pyleus-kafka-offsets/%s";
-    public static final String KAFKA_BROKER_ZK_PATH = "/brokers/";
     public static final String KAFKA_CONSUMER_ID_FMT = "pyleus-%s";
     public static final String MSGPACK_SERIALIZER_CLASS = "com.yelp.pyleus.serializer.MessagePackSerializer";
 
@@ -137,9 +136,6 @@ public class PyleusTopologyBuilder {
         }
         
         String brokerZkPath = (String) spec.options.get("broker_zk_path");
-        if (brokerZkPath == null) {
-        	brokerZkPath = KAFKA_BROKER_ZK_PATH;
-        }
         
         String consumerId = (String) spec.options.get("consumer_id");
         if (consumerId == null) {
@@ -147,7 +143,7 @@ public class PyleusTopologyBuilder {
         }
 
         SpoutConfig config = new SpoutConfig(
-            new ZkHosts(zkHosts,brokerZkPath),
+            brokerZkPath == null ? new ZkHosts(zkHosts) : new ZkHosts(zkHosts,brokerZkPath),
             topic,
             zkRoot,
             consumerId
