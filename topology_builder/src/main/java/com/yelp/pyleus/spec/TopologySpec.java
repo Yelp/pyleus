@@ -22,11 +22,19 @@ public class TopologySpec {
 
     public String name;
     public List<ComponentSpec> topology;
+    public Boolean topology_debug = false;
     public Integer workers = -1;
     public Integer max_spout_pending = -1;
     public Integer message_timeout_secs = -1;
     public Integer ackers = -1;
     public Integer max_shellbolt_pending = DEFAULT_MAX_SHELLBOLT_PENDING;
+
+    public Integer sleep_spout_wait_strategy_time_ms = -1;
+    public String worker_childopts_xmx = "";
+    public Integer executor_receive_buffer_size = -1;
+    public Integer executor_send_buffer_size = -1;
+    public Integer transfer_buffer_size = -1;
+
     public String serializer = MSGPACK_SERIALIZER;
     public String logging_config;
     @SuppressWarnings("unused")

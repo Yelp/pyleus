@@ -3,7 +3,6 @@
 # The topology used as example in the Storm tutorial has been implemented with
 # Pyleus. https://github.com/nathanmarz/storm/wiki/Tutorial
 name: exclamation_topology
-
 topology:
 
     - spout:

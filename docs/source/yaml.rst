@@ -21,24 +21,48 @@ Topology level options
   Number of workers to be spawned.
 
 * **ackers**\(``int``\)
-  
+
   Number of executors for ackers to be spawned. Corresponds to Storm ``TOPOLOGY_ACKER_EXECUTORS``.
 
 * **max_spout_pending**\(``int``\)
-  
+
   Maximum number of tuples that can be pending on a spout task at any given time.
 
 * **message_timeout_secs**\(``int``\)
-  
+
   Maximum amount of time given to the topology to fully process a message emitted by a spout.
 
 * **max_shellbot_pending**\(``int``\)
-  
+
   Maximum pending tuples in one ShellBolt. Default: 1
+
+* **topology_debug**\(``boolean``\)
+
+  Enable running topology in DEBUG mode. Corresponds to Storm ``TOPOLOGY_DEBUG``.
+
+* **sleep_spout_wait_strategy_time_ms**\(``int``\)
+
+  The amount of milliseconds the SleepEmptyEmitStrategy should sleep for.
+
+* **worker_childopts_xmx**\(``str``\)
+
+  Topology-specific options for the worker child process, it is initially used to set heap size for worker. Corresponds to Storm ``TOPOLOGY_WORKER_CHILDOPTS``
+
+* **executor_receive_buffer_size**\(``int``\)
+
+  The size of the Disruptor receive queue for each executor. Must be a power of 2. Corresponds to Storm ``TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE``
+
+* **executor_send_buffer_size**\(``int``\)
+
+  The size of the Disruptor send queue for each executor. Must be a power of 2. Corresponds to Storm ``TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE``
+
+* **transfer_buffer_size**\(``int``\)
+
+  The size of the Disruptor transfer queue for each worker. Corresponds to Storm ``TOPOLOGY_TRANSFER_BUFFER_SIZE``
 
 * **logging_conf**\(``str``\)
 
-  Path to logging configuration file. Default: ``<yaml_file_dir>/pyleus_logging.conf``. Specify ``none`` if a file corresponds to the default path, but you want to ignore it. 
+  Path to logging configuration file. Default: ``<yaml_file_dir>/pyleus_logging.conf``. Specify ``none`` if a file corresponds to the default path, but you want to ignore it.
 
 * **requirements_filename**\(``str``\)
 
@@ -49,12 +73,12 @@ Topology level options
   The Python interpreter to use to create the topology virtualenv (exposes ``virtualenv`` ``--python`` option). Default: the interpreter that virtualenv was installed with (``/usr/bin/python``).
 
 * **serializer**\(``str``\)
-  
+
   Serializer used by Pyleus for Stom multilang messages. Allowed: ``msgpack``, ``json``. Default: ``msgpack``.
 
   .. note::
 
-     If you want to use JSON as encoding format Storm multilang messages, you can switch between Python standard library `json`_ module and `simplejson`_ module specifying ``simplejson`` in the **requirements** for your topology. 
+     If you want to use JSON as encoding format Storm multilang messages, you can switch between Python standard library `json`_ module and `simplejson`_ module specifying ``simplejson`` in the **requirements** for your topology.
 
   .. tip::
 
@@ -63,7 +87,7 @@ Topology level options
 Component level options
 -----------------------
 
-These options belong to the block associated either with a ``spout`` or a ``bolt`` component. 
+These options belong to the block associated either with a ``spout`` or a ``bolt`` component.
 
 * **name**\(``str``\)[mandatory]
 
@@ -78,15 +102,15 @@ These options belong to the block associated either with a ``spout`` or a ``bolt
   Ad-hoc option to be used instead of ``module`` to specify the Storm Kafka Spout component. Allowed: ``kafka``, ``python``.
 
   .. note::
-     
+
      Only inside a ``spout`` block, you can specify ``type: kafka`` **instead** of ``module``.
 
   .. seealso::
-     
+
      Refer to this `example`_ for all kafka related options.
 
 * **parallelism_hint**\(``int``\)
-  
+
   Initial number of executors per component.
 
 * **tasks**\(``int``\)
@@ -115,6 +139,6 @@ These options belong to the block associated either with a ``spout`` or a ``bolt
 
 .. _json: https://docs.python.org/2/library/json.html
 .. _simplejson: http://simplejson.readthedocs.org/en/latest/
-.. _default: https://github.com/apache/storm/blob/master/conf/defaults.yaml 
+.. _default: https://github.com/apache/storm/blob/master/conf/defaults.yaml
 .. _Apache Storm configuration option: https://storm.incubator.apache.org/apidocs/backtype/storm/Config.html
 .. _example: https://github.com/Yelp/pyleus/tree/master/examples/kafka_spout

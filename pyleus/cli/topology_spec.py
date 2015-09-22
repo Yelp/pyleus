@@ -34,6 +34,8 @@ class TopologySpec(object):
                 " Found: {0}".format(_as_list(specs)))
 
         self.name = specs["name"]
+        if "topology_debug" in specs:
+            self.topology_debug = specs["topology_debug"]
         if "workers" in specs:
             self.workers = specs["workers"]
         if "ackers" in specs:
@@ -46,6 +48,22 @@ class TopologySpec(object):
             self.message_timeout_secs = specs["message_timeout_secs"]
         if "logging_config" in specs:
             self.logging_config = specs["logging_config"]
+
+        if "sleep_spout_wait_strategy_time_ms" in specs:
+            self.sleep_spout_wait_strategy_time_ms = specs["sleep_spout_wait_strategy_time_ms"]
+
+        if "worker_childopts_xmx" in specs:
+            self.worker_childopts_xmx = specs["worker_childopts_xmx"]
+
+        if "executor_receive_buffer_size" in specs:
+            self.executor_receive_buffer_size = specs["executor_receive_buffer_size"]
+
+        if "executor_send_buffer_size" in specs:
+            self.executor_send_buffer_size = specs["executor_send_buffer_size"]
+
+        if "transfer_buffer_size" in specs:
+            self.transfer_buffer_size = specs["transfer_buffer_size"]
+
         if "serializer" in specs:
             if specs["serializer"] in SERIALIZERS:
                 self.serializer = specs["serializer"]

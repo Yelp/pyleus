@@ -33,3 +33,6 @@ topology:
             # The offset time to start with if from_start is true.
             # Defaults to the earliest offset time in the stream.
             start_offset_time: 1398971060
+
+            # support binary data like google protobuf
+            binary_data: true

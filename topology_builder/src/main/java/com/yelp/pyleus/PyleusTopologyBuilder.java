@@ -17,6 +17,8 @@ import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
+import backtype.storm.spout.SchemeAsMultiScheme;
+import backtype.storm.spout.RawScheme;
 import storm.kafka.KafkaSpout;
 import storm.kafka.KeyValueSchemeAsMultiScheme;
 import storm.kafka.SpoutConfig;
@@ -163,10 +165,13 @@ public class PyleusTopologyBuilder {
             config.startOffsetTime = Long.valueOf(startOffsetTime.toString());
         }
 
-        // TODO: this mandates that messages are UTF-8. We should allow for binary data
-        // in the future, or once users can have Java components, let them provide their
-        // own JSON serialization method. Or wait on STORM-138.
-        config.scheme = new KeyValueSchemeAsMultiScheme(new StringKeyValueScheme());
+        // support binary data
+        Boolean binaryData = (Boolean) spec.options.get("binary_data");
+        if (binaryData != null) {
+            config.scheme = new SchemeAsMultiScheme(new RawScheme());
+        } else {
+            config.scheme = new KeyValueSchemeAsMultiScheme(new StringKeyValueScheme());
+        }
 
         return new KafkaSpout(config);
     }
@@ -301,7 +306,7 @@ public class PyleusTopologyBuilder {
             runLocally(spec.name, topology, debug, spec.serializer);
         } else {
             Config conf = new Config();
-            conf.setDebug(false);
+            conf.setDebug(spec.topology_debug);
 
             setSerializer(conf, spec.serializer);
 
@@ -323,6 +328,26 @@ public class PyleusTopologyBuilder {
 
             if (spec.ackers != -1) {
                 conf.setNumAckers(spec.ackers);
+            }
+
+            if (spec.sleep_spout_wait_strategy_time_ms != -1) {
+                conf.put(Config.TOPOLOGY_SLEEP_SPOUT_WAIT_STRATEGY_TIME_MS, spec.sleep_spout_wait_strategy_time_ms);
+            }
+
+            if (spec.worker_childopts_xmx != "") {
+                conf.put(Config.TOPOLOGY_WORKER_CHILDOPTS, spec.worker_childopts_xmx);
+            }
+
+            if (spec.executor_receive_buffer_size != -1) {
+                conf.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, spec.executor_receive_buffer_size);
+            }
+
+            if (spec.executor_send_buffer_size != -1) {
+                conf.put(Config.TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE, spec.executor_send_buffer_size);
+            }
+
+            if (spec.transfer_buffer_size != -1) {
+                conf.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE, spec.transfer_buffer_size);
             }
 
             try {
