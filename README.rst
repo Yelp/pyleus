@@ -12,10 +12,10 @@ Please visit our `documentation`_.
 ===============  ================
 
 .. |master-status| image:: https://travis-ci.org/Yelp/pyleus.svg?branch=master
-    :target: https://travis-ci.org/Yelp/pyleus
+    :target: https://travis-ci.org/YelpArchive/pyleus
 
 .. |develop-status| image:: https://travis-ci.org/Yelp/pyleus.svg?branch=develop
-    :target: https://travis-ci.org/Yelp/pyleus
+    :target: https://travis-ci.org/YelpArchive/pyleus
 
 About
 -----
